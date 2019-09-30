@@ -27,7 +27,21 @@ public class TeleBot {
 
 	public void Move(double forwardSpeed, double rightSpeed){
 		// TODO: put code here that makes robot move to the right
+
+		double sum=Math.abs(forwardSpeed)+Math.abs(rightSpeed);
+		if(sum > 1.0){
+			forwardSpeed/=sum;
+			rightSpeed/=sum;
+		}
+
+		hardware.frontLeftDrive.setPower(-forwardSpeed-rightSpeed);//
+		hardware.rearLeftDrive.setPower(-forwardSpeed+rightSpeed);//
+		hardware.frontRightDrive.setPower(forwardSpeed-rightSpeed);//
+		hardware.rearRightDrive.setPower(forwardSpeed+rightSpeed);//
+
+
 	}
+
 
 	//============================================
 	// TODO: put other high level operations here.

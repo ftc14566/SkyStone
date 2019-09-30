@@ -24,10 +24,14 @@ public class Hardware {
 //	public Servo lifter_lock;
 
 	public void init(HardwareMap hardwareMap) {
-		frontLeftDrive = hardwareMap.get(DcMotor.class, "fl");
-		frontRightDrive = hardwareMap.get(DcMotor.class, "fr");
-		rearLeftDrive = hardwareMap.get(DcMotor.class, "rl");
-		rearRightDrive = hardwareMap.get(DcMotor.class, "rr");
+		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
+		frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightWheel");
+		frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
+		rearLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
+		rearRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 	}
 
 
