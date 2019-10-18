@@ -37,7 +37,7 @@ public class TelemetryTestOpMode extends OpMode {
     public void loop() {
 
         // move
-        bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
+        //bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 
         telemetry.addData("Stick X",gamepad1.left_stick_x);
         telemetry.addData("Stick Y",gamepad1.left_stick_y);

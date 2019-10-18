@@ -13,9 +13,13 @@ public class Hardware {
 	// static final double     COUNTS_PER_MOTOR_REV    = 288 ;
 	// static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
+
 	//==============================
 	// Add Hardware Properties here:
 	//==============================
+
+	public double safetyCap = .95;
+
 	public DcMotor frontLeftDrive;
 	public DcMotor frontRightDrive;
 	public DcMotor rearLeftDrive;
