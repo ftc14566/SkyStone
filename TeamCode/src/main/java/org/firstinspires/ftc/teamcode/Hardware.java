@@ -18,7 +18,9 @@ public class Hardware {
 	// Add Hardware Properties here:
 	//==============================
 
-	public double safetyCap = .95;
+	//public double safetyCap = .95;
+
+
 
 	public DcMotor frontLeftDrive;
 	public DcMotor frontRightDrive;
@@ -29,13 +31,13 @@ public class Hardware {
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
-		frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		frontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightWheel");
-		frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
-		rearLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rearLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
-		rearRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 	}
 
 

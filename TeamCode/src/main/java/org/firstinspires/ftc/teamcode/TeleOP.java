@@ -2,21 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.hardware.*;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.util.*;
-import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
 
 @TeleOp(name="TeleOP", group="Iterative Opmode")
 public class TeleOP extends OpMode {
-
 	private TeleBot bot;
-	private Hardware hardware = new Hardware();
 
 	@Override
 	public void init() {
 
+		Hardware hardware = new Hardware();
 		hardware.init( hardwareMap );
 		bot = new TeleBot(hardware);
 
@@ -27,7 +21,6 @@ public class TeleOP extends OpMode {
 	 */
 	@Override
 	public void init_loop() {
-
 	}
 
 	/*
@@ -42,33 +35,19 @@ public class TeleOP extends OpMode {
 	 */
 	@Override
 	public void loop() {
-		//bot.Move(gamepad1.left_stick_y,gamepad1.left_stick_x);
 
-		// move robot
-		//TODO: Choose control style (Tank, standard, etc.)
-		if(gamepad1.left_stick_y != 0)
-			bot.RaiseElevator();
-		else if(gamepad1.b)
-			bot.LowerElevator();
 
-		// other items...
+		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
+		bot.SpinRight(gamepad1.right_stick_x);
+		telemetry.addData("Stick X",gamepad1.left_stick_x);
+		telemetry.addData("Stick Y",gamepad1.left_stick_y);
+		telemetry.addData("Spin",gamepad1.right_stick_x);
+		telemetry.update();
 	}
 
-	public void Move(double safetyCap) {
-		double leftSpeed = gamepad1.left_stick_y;
-		double rightSpeed = gamepad1.right_stick_y;
 
-		double leftWheels = Range.clip(leftSpeed, safetyCap, -safetyCap);
-		double rightWheels = Range.clip(rightSpeed, safetyCap, -safetyCap);
-
-	}
-
-	/*
-	 * Code to run ONCE after the driver hits STOP
-	 */
 	@Override
 	public void stop() {
 	}
-
 
 }
