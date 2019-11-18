@@ -8,6 +8,17 @@ public class TeleBot {
 		this.hardware = hardware;
 	}
 
+	public void colorSensorsYellow(){
+		while(hardware.leftColorSensor.red() <= 235 && hardware.leftColorSensor.red() >= 213 && hardware.rightColorSensor.red() <= 235 && hardware.rightColorSensor.red() >= 213){
+			while(hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235 && hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235){
+				while(hardware.leftColorSensor.blue() <= 52 && hardware.leftColorSensor.blue() >= 52 && hardware.rightColorSensor.blue() <= 52 && hardware.rightColorSensor.blue() >= 52){
+					//TODO Block Collector Code
+					this.Move(0.0, 0.0); //STOP
+				}
+			}
+		}
+	}
+
 	public void DriveForward(double speed){
 		this.Move(speed,0.0);
 	}
@@ -48,4 +59,3 @@ public class TeleBot {
 	public void LowerElevator(){}
 
 }
-
