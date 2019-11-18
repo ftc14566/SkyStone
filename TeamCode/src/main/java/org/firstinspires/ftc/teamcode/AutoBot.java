@@ -1,113 +1,81 @@
 package org.firstinspires.ftc.teamcode;
 
-//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @Autonomous(name="AutoBot", group="Linear Opmode")
-//@Disabled
-public class AutoBot extends LinearOpMode {
+public class AutoBot {
 
-	// Declare OpMode members.
+	private Hardware hardware;
+	private LinearOpMode opMode;
 
-	private ElapsedTime runtime = new ElapsedTime();
+	public double defaultDriveSpeed = 0.2;
+	public double defaultSpinSpeed = 0.2;
+	public double defaultStrafeSpeed = 0.2;
+	static final double     COUNTS_PER_MOTOR_REV    = 288 ;
+	static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
+	static final double     WHEEL_DIAMETER_INCHES   = 6.75 ;// For figuring circumference
+	static final double     WHEEL_SEPARATION = 15.25 ;
+	static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) /
+			(WHEEL_DIAMETER_INCHES * 3.1415);
+	static final double     TURN_SPEED              = 0.3;
+	static final double     TIME_PER_INCH           = 0.5;
 
-	private int counts_per_rev = 2240;
-	private double wheel_diameter = 4;
-	private double counts_per_inch = (counts_per_rev) / (wheel_diameter * 3.1415);
-	protected Hardware bot;
-
-	public void stopAndResetEncoders(){
-		bot.frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		bot.rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		bot.frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		bot.rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+	public void resetEncoder(){
+		hardware.frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		hardware.frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		hardware.rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		hardware.rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+	}
+	public void encoderRun() {
+		hardware.frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		hardware.frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		hardware.rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		hardware.rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 	}
 
-	public void runWithoutEncoders(){
-		bot.frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		bot.rearLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		bot.frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		bot.rearRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+	public AutoBot(Hardware hardware, LinearOpMode opMode){
+		this.hardware = hardware;
+		resetEncoder();
+
 	}
 
-	public void runUsingEncoder(){
-		bot.frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		bot.rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		bot.frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		bot.rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+	public void DriveForward(double inches, double speed ){
+
+		while(opMode.opModeIsActive()){
+			resetEncoder();
+		}
 	}
 
-	public void determineDistance(double distance){
-		int new_front_left_position = bot.frontLeftDrive.getCurrentPosition() + (int)(distance * counts_per_inch);
-		int new_rear_left_position = bot.rearLeftDrive.getCurrentPosition() + (int)(distance * counts_per_inch);
-		int new_front_right_position = bot.frontRightDrive.getCurrentPosition() + (int)(distance * counts_per_inch);
-		int new_rear_right_position = bot.rearRightDrive.getCurrentPosition() + (int)(distance * counts_per_inch);
-		setTargets(new_front_left_position, new_rear_left_position, new_front_right_position, new_rear_right_position);
+	public void SpinRight(double degrees, double speed){
+
+		while(opMode.opModeIsActive()){
+			resetEncoder();
+		}
 	}
 
-	public void setTargets(int frontLeft, int rearLeft, int frontRight, int rearRight){
-		bot.frontLeftDrive.setTargetPosition(frontLeft);
-		bot.rearLeftDrive.setTargetPosition(rearLeft);
-		bot.frontRightDrive.setTargetPosition(frontRight);
-		bot.rearRightDrive.setTargetPosition(rearRight);
+	public void StrafeRight(double inches,double speed){
+
+		while(opMode.opModeIsActive()) {
+			resetEncoder();
+		}
 	}
 
-	public void runPosition(){
-		bot.frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		bot.rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		bot.frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		bot.rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-	}
 
-	public void runMotors(double howFast){
-		bot.frontLeftDrive.setPower(howFast);
-		bot.rearLeftDrive.setPower(howFast);
-		bot.frontRightDrive.setPower(howFast);
-		bot.rearRightDrive.setPower(howFast);
-	}
+	//============================================
+	// TODO: put other high level autonomous operations here.
+	//============================================
+	//public void GrabBlock(){}
+	//public void ReleaseBlock(){}
+	//public void RaiseElevator(double inches){}
+	//public void ExtendArm(){}
+	//public void RetractArm(){}
 
-	public void stopMotors(){
-		bot.frontLeftDrive.setPower(0);
-		bot.rearLeftDrive.setPower(0);
-		bot.frontRightDrive.setPower(0);
-		bot.rearRightDrive.setPower(0);
-	}
 
-	public void driveForwards(double inches, double speed) {
-		stopAndResetEncoders();
-		runUsingEncoder();
-		determineDistance(inches);
-		runPosition();
-		runMotors(speed);
-
-		while (opModeIsActive() && ((bot.frontLeftDrive.isBusy() || bot.rearLeftDrive.isBusy()) || (bot.frontRightDrive.isBusy() || bot.rearRightDrive.isBusy()))) {
-	}
-		idle();
-
-		stopMotors();
-		runWithoutEncoders();
-	}
-
-	@Override
-	public void runOpMode() {
-		//hardware.frontLeftDrive.setPower(.5);
-		bot = new Hardware();
-		bot.init(hardwareMap);
-		// Wait for the game to start (driver presses PLAY)
-		waitForStart();
-		runtime.reset();
-
-		driveForwards(10, .3);
-	}
 }
-
-
