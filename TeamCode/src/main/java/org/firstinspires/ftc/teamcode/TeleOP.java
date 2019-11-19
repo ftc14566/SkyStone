@@ -47,6 +47,7 @@ public class TeleOP extends OpMode {
 
 		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 		bot.SpinRight(gamepad1.right_stick_x);
+		bot.raiseElevators(gamepad2.left_stick_y, .25);
 		telemetry.addData("Stick X",gamepad1.left_stick_x);
 		telemetry.addData("Stick Y",gamepad1.left_stick_y);
 		telemetry.addData("Spin",gamepad1.right_stick_x);

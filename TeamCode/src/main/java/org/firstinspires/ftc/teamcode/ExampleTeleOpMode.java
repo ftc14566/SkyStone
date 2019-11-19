@@ -41,10 +41,10 @@ public class ExampleTeleOpMode extends OpMode {
 		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 
 		// raise/lower elevator
-		if(gamepad1.a)
-			bot.RaiseElevator();
-		else if(gamepad1.b)
-			bot.LowerElevator();
+		//if(gamepad1.a)
+		//	bot.RaiseElevator();
+		//else if(gamepad1.b)
+		//	bot.LowerElevator();
 
 		// other items...
 	}

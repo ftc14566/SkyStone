@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 public class TeleBot {
 
 	private Hardware hardware;
@@ -18,6 +20,19 @@ public class TeleBot {
 			}
 		}
 	}
+
+	public void raiseElevators(double elevatorBind, double rate){
+		if(elevatorBind >= .25)
+			hardware.leftTowerMotor.setPower(rate);
+			hardware.rightTowerMotor.setPower(rate);
+		if(elevatorBind <= -.25) {
+			hardware.leftTowerMotor.setPower(-rate);
+			hardware.rightTowerMotor.setPower(-rate);
+		}
+
+	}
+
+
 
 	public void DriveForward(double speed){
 		this.Move(speed,0.0);
@@ -53,9 +68,4 @@ public class TeleBot {
 
 
 	}
-
-
-	public void RaiseElevator(){}
-	public void LowerElevator(){}
-
 }

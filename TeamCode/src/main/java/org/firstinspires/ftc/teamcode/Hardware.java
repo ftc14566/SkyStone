@@ -39,10 +39,10 @@ public class Hardware {
 		rearLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
 		rearRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-		leftTowerMotor = hardwareMap.get(DcMotor.class, "leftTower");
+		leftTowerMotor = hardwareMap.get(DcMotor.class, "leftTowerMotor");
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-		rightTowerMotor = hardwareMap.get(DcMotor.class, "rightTower");
-		rightTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+		rightTowerMotor = hardwareMap.get(DcMotor.class, "rightTowerMotor");
+		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 		leftColorSensor = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
 		leftColorSensor.red();
 		leftColorSensor.green();
