@@ -20,6 +20,8 @@ public class Hardware {
 	public DcMotor frontRightDrive;
 	public DcMotor rearLeftDrive;
 	public DcMotor rearRightDrive;
+	public DcMotor leftTowerMotor;
+	public DcMotor rightTowerMotor;
 //	public Servo marker_servo;
 //	public Servo lifter_lock;
 
@@ -32,6 +34,10 @@ public class Hardware {
 		rearLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
 		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		leftTowerMotor = hardwareMap.get(DcMotor.class,"leftTowerMotor");
+		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+		rightTowerMotor = hardwareMap.get(DcMotor.class,"rightTowerMotor");
+		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 	}
 
 
