@@ -10,7 +10,6 @@ public class TeleBot {
 		this.hardware = hardware;
 	}
 
-<<<<<<< HEAD
 	public void colorSensorsYellow(){
 		while(hardware.leftColorSensor.red() <= 235 && hardware.leftColorSensor.red() >= 213 && hardware.rightColorSensor.red() <= 235 && hardware.rightColorSensor.red() >= 213){
 			while(hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235 && hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235){
@@ -35,9 +34,7 @@ public class TeleBot {
 
 
 
-=======
->>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
-	public void DriveForward(double speed){
+public void DriveForward(double speed){
 		this.Move(speed,0.0);
 	}
 
@@ -86,8 +83,6 @@ public class TeleBot {
 	private double AdjustInputs(double x){
 		return x*x*x;
 	}
-<<<<<<< HEAD
-=======
 
 	public void MoveLR(double forwardSpeedLeft, double rightSpeedLeft,double forwardSpeedRight, double rightSpeedRight){
 
@@ -117,5 +112,4 @@ public class TeleBot {
 	public void RaiseElevator(){}
 	public void LowerElevator(){}
 
->>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
 }

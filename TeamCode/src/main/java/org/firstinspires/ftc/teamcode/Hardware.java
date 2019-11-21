@@ -22,6 +22,8 @@ public class Hardware {
 	public DcMotor rearRightDrive;
 	public DcMotor leftTowerMotor;
 	public DcMotor rightTowerMotor;
+	public ColorSensor leftColorSensor;
+	public ColorSensor rightColorSensor;
 //	public Servo marker_servo;
 //	public Servo lifter_lock;
 
@@ -33,7 +35,6 @@ public class Hardware {
 		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
 		rearLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
-<<<<<<< HEAD
 		rearRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 		leftTowerMotor = hardwareMap.get(DcMotor.class, "leftTowerMotor");
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -52,13 +53,13 @@ public class Hardware {
 		rightColorSensor.alpha();
 		rightColorSensor.argb();
 
-=======
+
 		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		leftTowerMotor = hardwareMap.get(DcMotor.class,"leftTowerMotor");
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		rightTowerMotor = hardwareMap.get(DcMotor.class,"rightTowerMotor");
 		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
->>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
+//>>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
 	}
 
 
