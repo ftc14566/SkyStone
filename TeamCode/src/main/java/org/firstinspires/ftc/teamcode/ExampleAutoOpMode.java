@@ -20,9 +20,9 @@ public class ExampleAutoOpMode extends LinearOpMode {
 		telemetry.update();
 
 		// Run Code
-		//bot.DriveForward(10);
-		//.SpinRight(90);
-		//bot.DriveForward(-200);
+		bot.DriveForward(10, 0.5);
+		bot.SpinRight(90, 0.5);
+		bot.DriveForward(-200, 0.5);
 
 	}
 

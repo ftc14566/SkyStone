@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="TelemetyTestOpMode", group="Iterative Opmode")
+@TeleOp(name="Z teleOp", group="Iterative Opmode")
 public class TelemetryTestOpMode extends OpMode {
     private TeleBot bot;
 
@@ -36,17 +36,18 @@ public class TelemetryTestOpMode extends OpMode {
     @Override
     public void loop() {
 
-        // move
-        //bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 
-        telemetry.addData("Stick X",gamepad1.left_stick_x);
-        telemetry.addData("Stick Y",gamepad1.left_stick_y);
+        bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
+        //bot.SpinRight(gamepad1.right_stick_x);
+        telemetry.addData("Stick L X",gamepad1.left_stick_x);
+        telemetry.addData("Stick L Y",gamepad1.left_stick_y);
+        telemetry.addData("Stick R X",gamepad1.right_stick_x);
+        telemetry.addData("Stick R Y",gamepad1.right_stick_y);
+       // telemetry.addData("Spin",gamepad1.right_stick_x);
         telemetry.update();
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
+
     @Override
     public void stop() {
     }

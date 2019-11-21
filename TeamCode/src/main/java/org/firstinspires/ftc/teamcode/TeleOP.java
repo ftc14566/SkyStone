@@ -16,9 +16,6 @@ public class TeleOP extends OpMode {
 		hardware = new Hardware();
 		hardware.init( hardwareMap );
 		bot = new TeleBot(hardware);
-
-
-
 	}
 
 	/*
@@ -45,6 +42,7 @@ public class TeleOP extends OpMode {
 	public void loop() {
 
 
+<<<<<<< HEAD
 		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 		bot.SpinRight(gamepad1.right_stick_x);
 		bot.raiseElevators(gamepad2.left_stick_y, .25);
@@ -61,6 +59,28 @@ public class TeleOP extends OpMode {
 		telemetry.addData("		Green",hardware.rightColorSensor.green());
 		telemetry.addData("		Blue",hardware.rightColorSensor.blue());
 		telemetry.addData("		Alpha (Light)", hardware.rightColorSensor.alpha());
+=======
+		bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
+		bot.Lift(gamepad1.dpad_up,gamepad1.dpad_down);
+		//bot.SpinRight(gamepad1.right_stick_x);
+		telemetry.addData("lStick X",gamepad1.left_stick_x);
+		telemetry.addData("lStick Y",gamepad1.left_stick_y);
+		telemetry.addData("rStick X",gamepad1.right_stick_x);
+		telemetry.addData("rStick Y",gamepad1.right_stick_x);
+
+		//telemetry.addData("Spin",gamepad1.right_stick_x);
+		telemetry.addData("up",gamepad1.dpad_up);
+		//telemetry.addLine("Left Color Sensor:");
+		//telemetry.addData("		Red",hardware.leftColorSensor.red());
+		//telemetry.addData("		Green",hardware.leftColorSensor.green());
+		//telemetry.addData("		Blue",hardware.leftColorSensor.blue());
+		//telemetry.addData("		Alpha (Light)", hardware.leftColorSensor.alpha());
+		//telemetry.addLine("Right Color Sensor:");
+		//telemetry.addData("		Red",hardware.rightColorSensor.red());
+		//telemetry.addData("		Green",hardware.rightColorSensor.green());
+		//telemetry.addData("		Blue",hardware.rightColorSensor.blue());
+		//telemetry.addData("		Alpha (Light)", hardware.rightColorSensor.alpha());
+>>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
 		telemetry.update();
 	}
 

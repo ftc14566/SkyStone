@@ -46,7 +46,7 @@ public class AutoBot {
 
 	}
 
-	public void DriveForward(double inches, double speed){
+	public void DriveForward(double inches, double speed ){
 
 		while(opMode.opModeIsActive()){
 			resetEncoder();

@@ -37,8 +37,8 @@ public class ExampleTeleOpMode extends OpMode {
 	@Override
 	public void loop() {
 
-		//move
-		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
+		// move
+		bot.Move(gamepad1.left_stick_y,gamepad1.left_stick_x);
 
 		// raise/lower elevator
 		//if(gamepad1.a)
