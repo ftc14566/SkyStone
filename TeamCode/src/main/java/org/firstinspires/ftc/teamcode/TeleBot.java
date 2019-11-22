@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class TeleBot {
@@ -17,6 +18,34 @@ public class TeleBot {
 					//TODO Block Collector Code
 					this.Move(0.0, 0.0); //STOP
 				}
+			}
+		}
+	}
+
+	public void towerEncoders(double towerPosition){
+		towerPosition = hardware.rightTowerMotor.getCurrentPosition();
+
+	}
+
+	public void towerDown(float towerDownBind){
+		double towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
+		double towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
+		if(towerDownBind > 0.25){
+			while(towerPositionRight > 0) {
+				hardware.leftTowerMotor.setTargetPosition(0);
+				hardware.rightTowerMotor.setTargetPosition(0);
+				hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+				hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+				hardware.leftTowerMotor.setPower(.10);
+				hardware.rightTowerMotor.setPower(.10);
+				while(hardware.leftTowerMotor.isBusy() || hardware.rightTowerMotor.isBusy()) {
+					hardware.leftColorSensor.enableLed(true);
+					hardware.rightColorSensor.enableLed(true);
+					hardware.leftColorSensor.enableLed(false);
+					hardware.rightColorSensor.enableLed(false);
+				}
+				hardware.leftTowerMotor.setPower(0);
+				hardware.rightTowerMotor.setPower(0);
 			}
 		}
 	}
@@ -71,9 +100,9 @@ public void DriveForward(double speed){
 
 	public void Lift(boolean up, boolean down){
 
-		double power=0.2;
-		if(up&&!down)power=.6;
-		if(down&&!up)power=-.1;
+		double power = 0.2;
+		if(up&&!down)power = .6;
+		if(down&&!up)power = -.1;
 
 		hardware.leftTowerMotor.setPower(power);
 		hardware.rightTowerMotor.setPower(power);

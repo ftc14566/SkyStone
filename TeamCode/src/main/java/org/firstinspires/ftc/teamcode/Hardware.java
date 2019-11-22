@@ -59,7 +59,6 @@ public class Hardware {
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		rightTowerMotor = hardwareMap.get(DcMotor.class,"rightTowerMotor");
 		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-//>>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
 	}
 
 
