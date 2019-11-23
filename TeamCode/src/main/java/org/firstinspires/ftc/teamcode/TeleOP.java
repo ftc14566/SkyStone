@@ -16,6 +16,11 @@ public class TeleOP extends OpMode {
 		hardware = new Hardware();
 		hardware.init( hardwareMap );
 		bot = new TeleBot(hardware);
+		telemetry.addLine("Why are you looking at me?");
+		telemetry.addLine("I mean nothing");
+		telemetry.addLine("LOOK AWAY!");
+		telemetry.addLine("and tell Nathan you found me");
+		telemetry.update();
 	}
 
 	/*
@@ -33,19 +38,21 @@ public class TeleOP extends OpMode {
 	 */
 	@Override
 	public void start() {
-	}
 
+
+	}
 	/*
 	 * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
 	 */
+
 	@Override
 	public void loop() {
 
 
-<<<<<<< HEAD
-		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
-		bot.SpinRight(gamepad1.right_stick_x);
-		bot.raiseElevators(gamepad2.left_stick_y, .25);
+
+		//bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
+//		bot.SpinRight(gamepad1.right_stick_x);
+		//bot.raiseElevators(gamepad2.left_stick_y, .25);
 		telemetry.addData("Stick X",gamepad1.left_stick_x);
 		telemetry.addData("Stick Y",gamepad1.left_stick_y);
 		telemetry.addData("Spin",gamepad1.right_stick_x);
@@ -59,9 +66,12 @@ public class TeleOP extends OpMode {
 		telemetry.addData("		Green",hardware.rightColorSensor.green());
 		telemetry.addData("		Blue",hardware.rightColorSensor.blue());
 		telemetry.addData("		Alpha (Light)", hardware.rightColorSensor.alpha());
-=======
-		bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
-		bot.Lift(gamepad1.dpad_up,gamepad1.dpad_down);
+
+		//bot.driveAndStraif(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+			// bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
+		//bot.Lift(gamepad2.dpad_up,gamepad2.dpad_down);
+		bot.Extend(gamepad2.y,gamepad2.a);
+		bot.grab(gamepad2.x,gamepad2.b);
 		//bot.SpinRight(gamepad1.right_stick_x);
 		telemetry.addData("lStick X",gamepad1.left_stick_x);
 		telemetry.addData("lStick Y",gamepad1.left_stick_y);
@@ -80,8 +90,8 @@ public class TeleOP extends OpMode {
 		//telemetry.addData("		Green",hardware.rightColorSensor.green());
 		//telemetry.addData("		Blue",hardware.rightColorSensor.blue());
 		//telemetry.addData("		Alpha (Light)", hardware.rightColorSensor.alpha());
->>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
 		telemetry.update();
+
 	}
 
 

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
-
 public class TeleBot {
 
 	private Hardware hardware;
@@ -21,7 +19,7 @@ public class TeleBot {
 		}
 	}
 
-	public void raiseElevators(double elevatorBind, double rate){
+/*	public void raiseElevators(double elevatorBind, double rate){
 		if(elevatorBind >= .25)
 			hardware.leftTowerMotor.setPower(rate);
 			hardware.rightTowerMotor.setPower(rate);
@@ -31,7 +29,7 @@ public class TeleBot {
 		}
 
 	}
-
+*/
 
 
 public void DriveForward(double speed){
@@ -79,6 +77,76 @@ public void DriveForward(double speed){
 		hardware.rightTowerMotor.setPower(power);
 	}
 
+	double leftGrabberPosition;
+	double rightGrabberPosition;
+
+	double straifRight = 0.0;
+	double foward = 0.0;
+	double turnRight = 0.0;
+
+	private double ramp (double current, double target, double stepUpSize){
+		if(current<target){
+			// going up
+			if(current<0) return 0;
+			return Math.min(target,current + stepUpSize);
+		} else{
+			// going down
+			if(current > 0) return 0;
+			return Math.max(target, current - stepUpSize);
+		}
+	}
+
+	public void driveAndStraif (double targetFoward, double targetTurnRight, double targetStraifRight){
+
+		foward = ramp(foward, targetFoward, 0.15);
+		turnRight = ramp(turnRight, targetTurnRight, 0.15);
+		straifRight = ramp(straifRight, targetStraifRight, 0.15);
+
+		// combine drive,turn,straif
+		double fl = -foward - straifRight - turnRight;
+		double fr = foward - straifRight - turnRight;
+		double rl = -foward + straifRight -turnRight;
+		double rr = foward + straifRight -turnRight;
+
+		// limit each drom to 1.0 max
+		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
+		maxPower = Math.max(maxPower,Math.abs(rl));
+		maxPower = Math.max(maxPower,Math.abs(rr));
+		if(maxPower>1.0){
+			fl/=maxPower;
+			fr/=maxPower;
+			rl/=maxPower;
+			rr/=maxPower;
+		}
+		hardware.frontLeftDrive.setPower(fl);
+		hardware.frontRightDrive.setPower(fr);
+		hardware.rearLeftDrive.setPower(rl);
+		hardware.rearRightDrive.setPower(rr);
+
+	}
+
+	public void grab(boolean open,boolean close){
+		hardware.graberRight.setPosition(0);
+		if(open) {
+			leftGrabberPosition = 0.5;
+			rightGrabberPosition = 0.5;
+		}
+		if(close){
+			leftGrabberPosition =0.01;
+			rightGrabberPosition = 0.1;
+		}
+
+		hardware.graberLeft.setPosition(leftGrabberPosition);
+		hardware.graberRight.setPosition(rightGrabberPosition);
+	}
+
+	public void Extend(boolean extend, boolean in){
+		double power=0;
+		if(extend&&!in)power=0.3;
+		if(in&&!extend)power=-0.3;
+
+		hardware.bridgeMotor.setPower(power);
+	}
 
 	private double AdjustInputs(double x){
 		return x*x*x;

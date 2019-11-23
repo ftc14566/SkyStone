@@ -22,10 +22,11 @@ public class Hardware {
 	public DcMotor rearRightDrive;
 	public DcMotor leftTowerMotor;
 	public DcMotor rightTowerMotor;
+	public DcMotor bridgeMotor;
 	public ColorSensor leftColorSensor;
 	public ColorSensor rightColorSensor;
-//	public Servo marker_servo;
-//	public Servo lifter_lock;
+	public Servo graberLeft;
+	public Servo graberRight;
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
@@ -40,6 +41,13 @@ public class Hardware {
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		rightTowerMotor = hardwareMap.get(DcMotor.class, "rightTowerMotor");
 		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+		bridgeMotor = hardwareMap.get(DcMotor.class, "bridge");
+		bridgeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+		graberLeft = hardwareMap.get(Servo.class, "graberLeft");
+		graberRight = hardwareMap.get(Servo.class, "graberRight");
+		graberRight.setDirection(Servo.Direction.REVERSE);
+
 		leftColorSensor = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
 		leftColorSensor.red();
 		leftColorSensor.green();
@@ -55,11 +63,7 @@ public class Hardware {
 
 
 		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftTowerMotor = hardwareMap.get(DcMotor.class,"leftTowerMotor");
-		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-		rightTowerMotor = hardwareMap.get(DcMotor.class,"rightTowerMotor");
-		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-//>>>>>>> 302851b4aa4990f265bf8a23d4015394d40e7320
+
 	}
 
 
