@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+
 public class TeleBot {
 
 	private Hardware hardware;
@@ -20,6 +25,37 @@ public class TeleBot {
 	}
 
 /*	public void raiseElevators(double elevatorBind, double rate){
+
+	public void towerEncoders(double towerPosition){
+		towerPosition = hardware.rightTowerMotor.getCurrentPosition();
+
+	}
+
+	public void towerDown(float towerDownBind){
+		double towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
+		double towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
+		if(towerDownBind > 0.25){
+			while(towerPositionRight > 0) {
+				hardware.leftTowerMotor.setTargetPosition(0);
+				hardware.rightTowerMotor.setTargetPosition(0);
+				hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+				hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+				hardware.leftTowerMotor.setPower(.10);
+				hardware.rightTowerMotor.setPower(.10);
+				while(hardware.leftTowerMotor.isBusy() || hardware.rightTowerMotor.isBusy()) {
+					hardware.leftColorSensor.enableLed(true);
+					hardware.rightColorSensor.enableLed(true);
+					hardware.leftColorSensor.enableLed(false);
+					hardware.rightColorSensor.enableLed(false);
+				}
+				hardware.leftTowerMotor.setPower(0);
+				hardware.rightTowerMotor.setPower(0);
+			}
+		}
+	}
+
+	public void raiseElevators(double elevatorBind, double rate){
+>>>>>>> 85c45fb77021d3248a58c487724831c3c45f7d09
 		if(elevatorBind >= .25)
 			hardware.leftTowerMotor.setPower(rate);
 			hardware.rightTowerMotor.setPower(rate);
@@ -32,7 +68,7 @@ public class TeleBot {
 */
 
 
-public void DriveForward(double speed){
+	public void DriveForward(double speed){
 		this.Move(speed,0.0);
 	}
 
@@ -69,9 +105,9 @@ public void DriveForward(double speed){
 
 	public void Lift(boolean up, boolean down){
 
-		double power=0.2;
-		if(up&&!down)power=.6;
-		if(down&&!up)power=-.1;
+		double power = 0.2;
+		if(up&&!down)power = .6;
+		if(down&&!up)power = -.1;
 
 		hardware.leftTowerMotor.setPower(power);
 		hardware.rightTowerMotor.setPower(power);
@@ -98,10 +134,12 @@ public void DriveForward(double speed){
 
 	public void driveAndStraif (double targetFoward, double targetTurnRight, double targetStraifRight){
 
-		foward = ramp(foward, targetFoward, 0.15);
-		turnRight = ramp(turnRight, targetTurnRight, 0.15);
-		straifRight = ramp(straifRight, targetStraifRight, 0.15);
-
+		//foward = ramp(foward, targetFoward, 0.15);
+		//turnRight = ramp(turnRight, targetTurnRight, 0.15);
+		//straifRight = ramp(straifRight, targetStraifRight, 0.15);
+		foward = targetFoward/2;
+		turnRight = targetTurnRight/2;
+		straifRight = targetStraifRight/2;
 		// combine drive,turn,straif
 		double fl = -foward - straifRight - turnRight;
 		double fr = foward - straifRight - turnRight;
@@ -126,14 +164,14 @@ public void DriveForward(double speed){
 	}
 
 	public void grab(boolean open,boolean close){
-		hardware.graberRight.setPosition(0);
+
 		if(open) {
 			leftGrabberPosition = 0.5;
 			rightGrabberPosition = 0.5;
 		}
 		if(close){
-			leftGrabberPosition =0.01;
-			rightGrabberPosition = 0.1;
+			leftGrabberPosition =0.9;
+			rightGrabberPosition = 0.9;
 		}
 
 		hardware.graberLeft.setPosition(leftGrabberPosition);
