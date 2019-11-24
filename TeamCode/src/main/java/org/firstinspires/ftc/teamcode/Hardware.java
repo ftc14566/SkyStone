@@ -52,13 +52,6 @@ public class Hardware {
 		rightColorSensor.blue();
 		rightColorSensor.alpha();
 		rightColorSensor.argb();
-
-
-		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftTowerMotor = hardwareMap.get(DcMotor.class,"leftTowerMotor");
-		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-		rightTowerMotor = hardwareMap.get(DcMotor.class,"rightTowerMotor");
-		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 	}
 
 

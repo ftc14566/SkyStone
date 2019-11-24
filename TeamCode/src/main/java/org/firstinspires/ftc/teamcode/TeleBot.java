@@ -99,7 +99,6 @@ public void DriveForward(double speed){
 	}
 
 	public void Lift(boolean up, boolean down){
-
 		double power = 0.2;
 		if(up&&!down)power = .6;
 		if(down&&!up)power = -.1;
