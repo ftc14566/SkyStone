@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,8 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="AutoBot", group="Linear Opmode")
-public class AutoBot {
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+@Autonomous(name="AutoDrive", group="Linear Opmode")
+public class AutoDrive {
 
 	private Hardware hardware;
 	private LinearOpMode opMode;
@@ -19,7 +22,7 @@ public class AutoBot {
 	public double defaultStrafeSpeed = 0.2;
 	static final double     COUNTS_PER_MOTOR_REV    = 288 ;
 	static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
-	static final double     WHEEL_DIAMETER_INCHES   = 6.75 ;// For figuring circumference
+	static final double     WHEEL_DIAMETER_INCHES   = 4 ;// For figuring circumference
 	static final double     WHEEL_SEPARATION = 15.25 ;
 	static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) /
 			(WHEEL_DIAMETER_INCHES * 3.1415);
@@ -39,8 +42,22 @@ public class AutoBot {
 		hardware.rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 	}
 
+	public void noEncoderRun(){
+		hardware.frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		hardware.frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		hardware.rearLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		hardware.rearRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	}
 
-	public AutoBot(Hardware hardware, LinearOpMode opMode){
+	public void stopDrive(){
+		hardware.frontLeftDrive.setPower(0);
+		hardware.frontRightDrive.setPower(0);
+		hardware.rearLeftDrive.setPower(0);
+		hardware.rearRightDrive.setPower(0);
+	}
+
+
+	public AutoDrive(Hardware hardware, LinearOpMode opMode){
 		this.hardware = hardware;
 		resetEncoder();
 
@@ -67,15 +84,20 @@ public class AutoBot {
 		}
 	}
 
+	public void moveForwardDistanceSensor(double inches, double speed, int timeout){
+		noEncoderRun();
+		hardware.frontLeftDrive.setPower(speed);
+		hardware.frontRightDrive.setPower(speed);
+		hardware.rearLeftDrive.setPower(speed);
+		hardware.rearRightDrive.setPower(speed);
 
-	//============================================
-	// TODO: put other high level autonomous operations here.
-	//============================================
-	//public void GrabBlock(){}
-	//public void ReleaseBlock(){}
-	//public void RaiseElevator(double inches){}
-	//public void ExtendArm(){}
-	//public void RetractArm(){}
-
+		int maxCount = timeout*20;
+		int counter = 0;
+		while((opMode.opModeIsActive() && counter < maxCount) && (inches == hardware.distanceSensor.getDistance(DistanceUnit.INCH))){
+			opMode.sleep(50);
+			counter =+1;
+		}
+		stopDrive();
+	}
 
 }
