@@ -15,7 +15,7 @@ public class foundationMoveRed extends LinearOpMode {
 		Hardware hardware = new Hardware();
 		hardware.init(hardwareMap);
 		AutoDrive drive = new AutoDrive(hardware,this);
-
+		AutoBot bot = new AutoBot();
 
 		waitForStart();
 
@@ -24,7 +24,8 @@ public class foundationMoveRed extends LinearOpMode {
 
 		// Run Code
 		drive.moveForwardDistanceSensor(0,0.3,3);
-
+		//add code for dragging foundation to building zone
+		bot.waitUntilRunTime(25);
 
 	}
 
