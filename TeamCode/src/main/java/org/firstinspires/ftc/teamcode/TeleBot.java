@@ -80,13 +80,13 @@ public class TeleBot {
 		this.Move(0,speed);
 	}
 
-	/*public void SpinRight(double speed){;
+	public void SpinRight(double speed){;
 		hardware.frontLeftDrive.setPower(-speed);
 		hardware.frontRightDrive.setPower(-speed);
 		hardware.rearLeftDrive.setPower(-speed);
 		hardware.rearRightDrive.setPower(-speed);
 	}
-*/
+
 
 	public void Move(double forward, double rightSpeed){
 
@@ -106,8 +106,9 @@ public class TeleBot {
 	public void Lift(boolean up, boolean down){
 
 		double power = 0.2;
-		if(up&&!down)power = .6;
-		if(down&&!up)power = -.1;
+		if(up)power = 1.0;
+		if(down)power = 0.02;
+
 
 		hardware.leftTowerMotor.setPower(power);
 		hardware.rightTowerMotor.setPower(power);
@@ -132,19 +133,33 @@ public class TeleBot {
 		}
 	}
 
-	public void driveAndStraif (double targetFoward, double targetTurnRight, double targetStraifRight){
+	public void driveAndStraif (float secondSpeed, double targetFoward, double targetTurnRight, double targetStraifRight){
+
+		double scale = .25;
+		double  scale2 = .5;
 
 		//foward = ramp(foward, targetFoward, 0.15);
 		//turnRight = ramp(turnRight, targetTurnRight, 0.15);
 		//straifRight = ramp(straifRight, targetStraifRight, 0.15);
-		foward = targetFoward/2;
-		turnRight = targetTurnRight/2;
-		straifRight = targetStraifRight/2;
+
+		if(secondSpeed > .25) {
+			foward = scale2;
+			turnRight = scale2;
+			straifRight = scale2;
+		}
+		else{
+			foward = scale;
+			turnRight = scale;
+			straifRight = scale;
+		}
+
+
+
 		// combine drive,turn,straif
-		double fl = -foward - straifRight - turnRight;
-		double fr = foward - straifRight - turnRight;
-		double rl = -foward + straifRight -turnRight;
-		double rr = foward + straifRight -turnRight;
+		double fl = foward - turnRight - straifRight;
+		double fr = foward - turnRight + straifRight;
+		double rl = foward + turnRight + straifRight;
+		double rr = foward + turnRight - straifRight;
 
 		// limit each drom to 1.0 max
 		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));

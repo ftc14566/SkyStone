@@ -52,8 +52,8 @@ public class TeleOP extends OpMode {
 	public void loop() {
 
 		// Drive
-		bot.driveAndStraif(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-		//bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
+		//bot.driveAndStraif(gamepad1.right_trigger, -gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 		//bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
 
 		// Lift
@@ -64,8 +64,8 @@ public class TeleOP extends OpMode {
 		bot.Extend(gamepad2.y,gamepad2.a);
 
 		bot.grab(gamepad2.x,gamepad2.b);
-
-
+		telemetry.clearAll();
+		telemetry.update();
 	}
 
 /*
