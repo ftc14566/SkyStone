@@ -22,10 +22,13 @@ public class Hardware {
 	public DcMotor rearRightDrive;
 	public DcMotor leftTowerMotor;
 	public DcMotor rightTowerMotor;
+	public DcMotor bridgeMotor;
 	public ColorSensor leftColorSensor;
 	public ColorSensor rightColorSensor;
-//	public Servo marker_servo;
-//	public Servo lifter_lock;
+	public Servo graberLeft;
+	public Servo graberRight;
+	public Servo leftFoundationServo;
+	public Servo rightFoundationServo;
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
@@ -36,10 +39,22 @@ public class Hardware {
 		rearLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
 		rearRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
 		leftTowerMotor = hardwareMap.get(DcMotor.class, "leftTowerMotor");
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 		rightTowerMotor = hardwareMap.get(DcMotor.class, "rightTowerMotor");
 		rightTowerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+		bridgeMotor = hardwareMap.get(DcMotor.class, "bridge");
+		bridgeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+		graberLeft = hardwareMap.get(Servo.class, "graberLeft");
+		graberRight = hardwareMap.get(Servo.class, "graberRight");
+		graberLeft.setDirection(Servo.Direction.REVERSE);
+
+		leftFoundationServo = hardwareMap.get(Servo.class, "leftFoundationServo");
+		rightFoundationServo = hardwareMap.get(Servo.class, "rightFoundationServo");
+
 		leftColorSensor = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
 		leftColorSensor.red();
 		leftColorSensor.green();
@@ -52,7 +67,8 @@ public class Hardware {
 		rightColorSensor.blue();
 		rightColorSensor.alpha();
 		rightColorSensor.argb();
-	}
 
+		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+	}
 
 }
