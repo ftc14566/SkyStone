@@ -12,6 +12,11 @@ public class ConfigBoolean implements ConfigParam {
 		_value = initialValue;
 	}
 
+	public ConfigBoolean(BooleanAnnotation ba){
+		_name=ba.label();
+		_value = ba.initial();
+	}
+
 	@Override
 	public void inc() {
 		_value = true;
@@ -40,5 +45,7 @@ public class ConfigBoolean implements ConfigParam {
 	public ConfigParam Clone() {
 		return new ConfigBoolean(_name,_value);
 	}
+
+	public static final ConfigBoolean Default = new ConfigBoolean("bool", false );
 
 }

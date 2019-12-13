@@ -2,29 +2,74 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.teamcode.AutoBot;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class MethodSignature {
 
-	public MethodSignature(String methodName, ConfigParam[] params){
-		MethodName = methodName;
+	public MethodSignature(Method method, ConfigParam[] params){
+		_method = method;
 		_params = params;
 	}
 
-	public void Execute(AutoBot bot){
+	public MethodSignature(Method method){
+		_method = method;
+		initParameters();
+	}
+
+	void initParameters(){
+		// init Parameters from Annotations on method
+		Class<?>[] parameterTypes = _method.getParameterTypes();
+		Annotation[][] annotations = _method.getParameterAnnotations();
+		if(annotations.length != parameterTypes.length) throw new IllegalStateException("annotation length does not match params length");
+
+		_params = new ConfigParam[parameterTypes.length];
+		for(int i=0;i<_params.length;++i){
+			Annotation annotation = FindFirstParamConfigAnnotation(annotations[i]);
+			_params[i] = ConstructParamConfig(parameterTypes[i],annotation);
+		}
+	}
+
+	Annotation FindFirstParamConfigAnnotation(Annotation[] annotations){
+		for(int i=0;i<annotations.length;++i){
+			Annotation a = annotations[i];
+			Class<?> aType = a.annotationType();
+			if(aType == DoubleAnnotation.class
+					|| aType == BooleanAnnotation.class)
+				return a;
+		}
+		return null;
+	}
+
+	ConfigParam ConstructParamConfig(Class<?> paramClass,Annotation annotation){
+		if(annotation == null){
+			// This will help the program to not crash but won't be very effective in programming
+			if(paramClass==double.class) return ConfigDouble.Default;
+			if(paramClass==int.class) return ConfigInt.Default;
+			if(paramClass==boolean.class) return ConfigBoolean.Default;
+			throw new IllegalStateException("Cannot auto-configure parameter of type:"+paramClass.getName());
+		}
+
+		Class<? extends Annotation> annotationType = annotation.annotationType();
+		if(annotationType==DoubleAnnotation.class) return new ConfigDouble((DoubleAnnotation)annotation);
+		if(annotationType==BooleanAnnotation.class) return new ConfigBoolean((BooleanAnnotation)annotation );
+		if(annotationType==IntAnnotation.class) return new ConfigInt((IntAnnotation)annotation );
+
+		throw new IllegalStateException("Unexpected annotation type.");
+	}
+
+
+	public void Execute(Object host){
 		try{
-			Method method = GetMethod(AutoBot.class);
 
 			Object[] values = new Object[_params.length+1];
 
-			values[0]=bot;
+			values[0]=host;
 			for(int i=0;i<_params.length;++i)
 				values[i + 1] = _params[i].getValue();
 
-			method.invoke(values);
-
-		} catch(NoSuchMethodException ex){
+			_method.invoke(values);
 
 		} catch(IllegalAccessException ex){
 
@@ -34,28 +79,15 @@ public class MethodSignature {
 
 	}
 
-
-	Method GetMethod(Class<?> hostClass) throws NoSuchMethodException{
-
-		// 	public void Test(int i, double d, String s,boolean b){
-		Class<?>[] paramTypes = new Class<?>[4];
-
-		for(int i=0;i<_params.length;++i) {
-			paramTypes[i] = _params[i].getValueClass();
-		}
-
-		return AutoBot.class.getMethod(MethodName, paramTypes);
-	}
-
-
 	public MethodSignature Clone(){
+		// !!! clean up
 		ConfigParam[] params = new ConfigParam[_params.length];
 		for(int i=0;i<_params.length;++i)
 			params[i] = _params[i].Clone();
-		return new MethodSignature(MethodName,params);
+		return new MethodSignature(_method,params);
 	}
 
-	public String MethodName;
 	ConfigParam[] _params;
+	Method _method;
 
 }

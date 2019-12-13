@@ -27,4 +27,9 @@ public class ConfigString implements ConfigParam {
 	public void show(Telemetry telemetry) {
 
 	}
+
+	@Override
+	public ConfigParam Clone() {
+		return null;
+	}
 }

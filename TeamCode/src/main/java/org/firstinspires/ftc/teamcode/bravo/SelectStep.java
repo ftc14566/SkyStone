@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class SelectStep extends InteractiveList {
 
 	public SelectStep(StepSequenceListener listener){
-		_listener = listener;s
+		_listener = listener;
 	}
 
 	public interface StepSequenceListener {

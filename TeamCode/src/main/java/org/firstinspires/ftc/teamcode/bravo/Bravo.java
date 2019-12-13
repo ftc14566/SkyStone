@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.bravo;
 import org.firstinspires.ftc.teamcode.*;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 @TeleOp(name="Bravo", group="Testing")
 public class Bravo  extends
 		LinearOpMode implements
@@ -11,47 +14,39 @@ public class Bravo  extends
 		SelectParamValue.EventListener
 {
 
-	SelectStep _selectStep;
-	SelectMethod _selectMethod;
-	SelectParamValue _selectParam;
-	InteractiveList _mode;
-
-	AutoBot _bot;
-
 	@Override
 	public void runOpMode() throws InterruptedException {
 
-		// Init Bot
-		Hardware hardware = new Hardware();
-		hardware.init(hardwareMap);
-		_bot = new AutoBot(hardware,this);
+        initBravoMode();
 
-		// init modes
-		_selectStep = new SelectStep(this);
-		_selectMethod = new SelectMethod(this);
-		_selectParam = new SelectParamValue(this);
-		_mode = _selectStep;
-
-
-		// provide steps
-		_selectMethod._items.add(new MethodSignature("examineServo", new ConfigParam[]{
-			new ConfigDouble("position",0.5,0,1,.5)
-		}));
-
-		_selectMethod._items.add(new MethodSignature("driveForward", new ConfigParam[]{
-				new ConfigDouble("distance",0.5,0,1,.5) // units!
-		}));
-
-
-		// start
 		waitForStart();
 
-		// loop
 		while(this.opModeIsActive()){
 			_mode.TrackGamePad(gamepad1);
 		}
 
 	}
+
+	void initBravoMode(){
+        // Init Bot
+        TestHardware hardware = new TestHardware(hardwareMap);
+        _bot = new TestBot(hardware,this);
+
+        // init modes
+        _selectStep = new SelectStep(this);
+        _selectMethod = new SelectMethod(this);
+        _selectParam = new SelectParamValue(this);
+        _mode = _selectStep;
+
+        // provide steps
+        final Class c = _bot.getClass();
+        final Method[] methods = c.getMethods();
+        for(int i=0;i<methods.length;++i){
+            MethodSignature sig = new MethodSignature((methods[i]));
+            _selectMethod._items.add( sig );
+        }
+
+    }
 
 	@Override
 	public void stepSelected() {// step-index ->down-> select method
@@ -90,5 +85,13 @@ public class Bravo  extends
 		_selectStep.setCurrentSignature( _selectParam._methodData.Clone() );
 		_mode = _selectStep;
 	}
+
+    SelectStep _selectStep;
+    SelectMethod _selectMethod;
+    SelectParamValue _selectParam;
+    InteractiveList _mode;
+
+    TestBot _bot;
+
 
 }

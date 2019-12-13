@@ -12,6 +12,14 @@ public class ConfigDouble implements ConfigParam {
 		_step = step;
 	}
 
+	public ConfigDouble(DoubleAnnotation da){
+		_name = da.label();
+		_value = da.initial();
+		_min = da.min();
+		_max = da.max();
+		_step = da.step();
+	}
+
 	public String _name;
 	public double _min;
 	public double _max;
@@ -47,5 +55,8 @@ public class ConfigDouble implements ConfigParam {
 	public ConfigParam Clone() {
 		return new ConfigDouble(_name,_value,_min,_max,_step);
 	}
+
+	final static ConfigDouble Default = new ConfigDouble("double", 0.0, 0.0, 1.0, 0.1);
+
 
 }
