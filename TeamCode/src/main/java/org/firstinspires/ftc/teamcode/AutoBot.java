@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -67,6 +67,9 @@ public class AutoBot {
 		}
 	}
 
+	public void Test(int i, double d, String s,boolean b){
+
+	}
 
 	//============================================
 	// TODO: put other high level autonomous operations here.
