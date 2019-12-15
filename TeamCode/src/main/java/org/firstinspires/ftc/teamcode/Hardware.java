@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.*;
 
+
 // This class contains items that apply to the robot regardless of the opmode or operation.
 public class Hardware {
 
@@ -68,7 +69,8 @@ public class Hardware {
 		rightColorSensor.alpha();
 		rightColorSensor.argb();
 
-		distanceSensor = hardwareMap.get(DistanceSensor.class, "distance_sensor");
+		distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
 		Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)distanceSensor;
 
 		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
