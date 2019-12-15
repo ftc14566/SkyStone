@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class ParamInt implements Param {
+public class ParamInt extends Param {
 
 	// region constructors
 
@@ -47,11 +47,6 @@ public class ParamInt implements Param {
 	}
 
 	@Override
-	public String getLabel() {
-		return _label;
-	}
-
-	@Override
 	public Object getValue() {
 		return _value;
 	}
@@ -74,7 +69,6 @@ public class ParamInt implements Param {
 
 	// region private fields
 
-	String _label;
 	int _value;
 	int _min;
 	int _max;

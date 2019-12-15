@@ -1,14 +1,24 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-public interface Param {
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-	void inc();
-	void dec();
+/* Base class for different types of parameters */
+public abstract class Param {
 
-	String getLabel();
-	Object getValue();
-	String getValueString();
-	String getRangeString();
+	abstract void inc();
+	abstract void dec();
 
-	Param Clone();
+	abstract Object getValue();
+	abstract String getValueString();
+	abstract String getRangeString();
+	abstract Param Clone();
+
+	public void addParamToTelemetry(Telemetry telemetry, boolean selected){
+		telemetry.addData(_label,selected ? getValueString() : getValueString());
+	}
+
+	String getValueAndRange(){ return "["+getValueString() + "] (" + getRangeString() + ")"; }
+
+	protected String _label;
+
 }

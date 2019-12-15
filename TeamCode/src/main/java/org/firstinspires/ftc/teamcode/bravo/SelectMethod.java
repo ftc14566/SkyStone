@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class SelectMethod extends InteractiveList {
 
-	public SelectMethod(MethodListListener listener){
+	public SelectMethod(CallbackListener listener){
 		_listener = listener;
 	}
 
@@ -59,9 +59,9 @@ public class SelectMethod extends InteractiveList {
 			_listener.cancelMethodSelection();
 	}
 
-	MethodListListener _listener;
+	CallbackListener _listener;
 
-	public interface MethodListListener {
+	public interface CallbackListener {
 		public void selectMethod();
 		public void cancelMethodSelection();
 	}

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class ParamBoolean implements Param {
+public class ParamBoolean extends Param {
 
 	// region constructor
 
@@ -37,7 +37,6 @@ public class ParamBoolean implements Param {
 		_value = false;
 	}
 
-	public String getLabel(){ return _label; }
 	public String getRangeString(){
 		return _falseString+" / "+_trueString;
 	}
@@ -57,7 +56,6 @@ public class ParamBoolean implements Param {
 	public Param Clone() { return new ParamBoolean(this); }
 
 	// region private fields
-	String _label;
 	boolean _value;
 	String _trueString;
 	String _falseString;

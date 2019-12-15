@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import static java.lang.System.currentTimeMillis;
 
 public class SelectParamValue extends InteractiveList {
 
 	// region consturctor
 
-	public SelectParamValue(EventListener listener){
+	public SelectParamValue(CallbackListener listener){
 		_listener = listener;
 	}
 
@@ -18,16 +22,8 @@ public class SelectParamValue extends InteractiveList {
 
 		int end = Math.min(_topOfPageIndex+LinesPerPage, _signature._params.length); // exclude end-index
 		for(int i = _topOfPageIndex; i<end; ++i)
-			AddParamToTelemetry(telemetry,_signature._params[i],i==_curIndex);
+			_signature._params[i].addParamToTelemetry(telemetry,i==_curIndex);
 		telemetry.update();
-	}
-
-	void AddParamToTelemetry(Telemetry telemetry, Param p,boolean selected){
-		// !! this could be moved into Parameter.
-		String valueText = selected
-				? "["+p.getValueString() + "] (" + p.getRangeString() + ")"
-				: p.getValueString();
-		telemetry.addData(p.getLabel(),valueText);
 	}
 
 	public void SetMethod(MethodSignature methodData){
@@ -35,7 +31,7 @@ public class SelectParamValue extends InteractiveList {
 		_signature = methodData;
 	}
 
-	//region button presses
+	// region button presses
 
 	@Override
 	public void DpadUp_Pressed(){
@@ -49,13 +45,13 @@ public class SelectParamValue extends InteractiveList {
 		if(_topOfPageIndex>_curIndex) _topOfPageIndex=_curIndex;
 	}
 
-	@Override
-	public void DpadLeft_Pressed(){ _signature._params[_curIndex].dec(); }
+	Param getCurParam(){ return _signature._params[_curIndex]; }
 
 	@Override
-	public void DpadRight_Pressed(){
-		_signature._params[_curIndex].inc();
-	}
+	public void DpadLeft_Pressed(){ getCurParam().dec(); trackPressedTime(); }
+
+	@Override
+	public void DpadRight_Pressed(){ getCurParam().inc(); trackPressedTime(); }
 
 	@Override
 	public void B_Pressed() { _listener.cancelMethodConfig(); }
@@ -66,11 +62,31 @@ public class SelectParamValue extends InteractiveList {
 	@Override
 	public void LeftBumper_Pressed() { _listener.saveMethodConfig(); }
 
+	final double PreRepeatWaitTime = 1000; // wait 1 second before speeding up
+	final double AutoPressTime = 100; // ms or 10 times per second
+	void trackPressedTime(){ _startRepeatingAtThisTime = currentTimeMillis() + PreRepeatWaitTime + AutoPressTime; }
+
+	@Override
+	public void doOtherWork(Gamepad gamepad){
+		// When left or righ dpad held down, auto-inc/dec 10 times a second.s
+		if(!gamepad.dpad_left && !gamepad.dpad_right) return;
+		boolean doInc = gamepad.dpad_right;
+		double now = currentTimeMillis();
+		Param cur = getCurParam();
+		while( _startRepeatingAtThisTime < now){
+			_startRepeatingAtThisTime += AutoPressTime;
+			if(doInc) cur.inc(); else cur.dec();
+		}
+	}
+	double _startRepeatingAtThisTime;
+	boolean _incPressed;
+	boolean _decPressed;
+
 	//endregion
 
 	//region interface
 
-	public interface EventListener{
+	public interface CallbackListener {
 		void executeMethod();
 		void saveMethodConfig();
 		void cancelMethodConfig();
@@ -85,7 +101,7 @@ public class SelectParamValue extends InteractiveList {
 	static final int LinesPerPage = 4;
 	MethodSignature _signature;
 
-	EventListener _listener;
+	CallbackListener _listener;
 
 	//endregion
 

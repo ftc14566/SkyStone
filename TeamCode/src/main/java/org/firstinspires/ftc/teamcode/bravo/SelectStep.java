@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 public class SelectStep extends InteractiveList {
 
-	public SelectStep(StepSequenceListener listener){
+	public SelectStep(CallbackListener listener){
 		_listener = listener;
 	}
 
-	public interface StepSequenceListener {
+	public interface CallbackListener {
 		void stepSelected();
 	}
 
@@ -106,6 +106,6 @@ public class SelectStep extends InteractiveList {
 	int _topOfPageStep = 0;
 	int _curStep = 0;
 	boolean _dragItem;
-	StepSequenceListener _listener;
+	CallbackListener _listener;
 
 }

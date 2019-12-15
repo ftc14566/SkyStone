@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import java.lang.reflect.Method;
 
 @Autonomous(name="BravoMode", group="Testing")
 public class BravoMode extends LinearOpMode {

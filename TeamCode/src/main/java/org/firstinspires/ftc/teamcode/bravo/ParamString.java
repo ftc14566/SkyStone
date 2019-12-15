@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class ParamString implements Param {
+public class ParamString extends Param {
 	@Override
 	public void inc() {
 
@@ -11,11 +11,6 @@ public class ParamString implements Param {
 	@Override
 	public void dec() {
 
-	}
-
-	@Override
-	public String getLabel() {
-		return null;
 	}
 
 	@Override

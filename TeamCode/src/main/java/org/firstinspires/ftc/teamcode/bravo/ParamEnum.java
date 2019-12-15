@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-public class ParamEnum implements Param {
+public class ParamEnum extends Param {
 
 	@Override
 	public void inc() {
@@ -10,11 +10,6 @@ public class ParamEnum implements Param {
 	@Override
 	public void dec() {
 
-	}
-
-	@Override
-	public String getLabel() {
-		return null;
 	}
 
 	@Override
