@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class ConfigString implements ConfigParam {
+public class ParamString implements Param {
 	@Override
 	public void inc() {
 
@@ -14,22 +14,27 @@ public class ConfigString implements ConfigParam {
 	}
 
 	@Override
+	public String getLabel() {
+		return null;
+	}
+
+	@Override
 	public Object getValue() {
 		return null;
 	}
 
 	@Override
-	public Class<?> getValueClass() {
+	public String getValueString() {
 		return null;
 	}
 
 	@Override
-	public void show(Telemetry telemetry) {
-
+	public String getRangeString() {
+		return null;
 	}
 
 	@Override
-	public ConfigParam Clone() {
+	public Param Clone() {
 		return null;
 	}
 }

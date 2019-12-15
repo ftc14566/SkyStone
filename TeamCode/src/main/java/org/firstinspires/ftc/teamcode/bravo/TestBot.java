@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Hardware;
 
 public class TestBot {
 
@@ -16,8 +15,8 @@ public class TestBot {
     }
 
     public void moveServo(
-            @BooleanAnnotation(label="dir=forward", initial=true) boolean directionForward,
-            @DoubleAnnotation(label="position", min=-1.0,max=1.0,step=.05) double position
+            @Config(label="dir", isTrue=true, trueString = "forward", falseString = "backward") boolean directionForward,
+            @Config(label="position", min=0.0,max=1.0,step=.05,displayScale = 100, units = "%") double position
     ){
         Servo s = _hardware.servo0;
 
@@ -28,8 +27,8 @@ public class TestBot {
     }
 
     public void trackColorSensor(
-            @BooleanAnnotation(label="enable LED") boolean enableLed,
-            @IntAnnotation(label="timeout", initial = 30, min=5, max=120, step=5) int timeout
+            @Config(label="enable LED") boolean enableLed,
+            @Config(label="timeout", initial = 30, min=5, max=120, step=5) int timeout
     ){
         ColorSensor sensor = _hardware.colorSensor;
         sensor.enableLed(enableLed);
@@ -48,7 +47,7 @@ public class TestBot {
     }
 
     public void trackDistanceSensor(
-            @IntAnnotation(label="timeout", initial = 30, min=5, max=120, step=5) int timeout
+            @Config(label="timeout", initial = 30, min=5, max=120, step=5) int timeout
     ){
         DistanceSensor sensor = _hardware.distanceSensor;
 
