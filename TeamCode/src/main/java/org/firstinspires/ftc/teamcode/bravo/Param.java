@@ -14,7 +14,7 @@ public abstract class Param {
 	abstract Param Clone();
 
 	public void addParamToTelemetry(Telemetry telemetry, boolean selected){
-		telemetry.addData(_label,selected ? getValueString() : getValueString());
+		telemetry.addData(_label,selected ? getValueAndRange() : getValueString());
 	}
 
 	String getValueAndRange(){ return "["+getValueString() + "] (" + getRangeString() + ")"; }

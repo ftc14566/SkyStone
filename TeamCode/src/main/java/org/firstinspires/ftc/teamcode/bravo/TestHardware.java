@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.*;
 
 public class TestHardware {
 
+    public static final double     COUNTS_PER_MOTOR_REV    = 288 ;
+
     public DcMotor motor3;
     public Servo servo0;
     public ColorSensor colorSensor;

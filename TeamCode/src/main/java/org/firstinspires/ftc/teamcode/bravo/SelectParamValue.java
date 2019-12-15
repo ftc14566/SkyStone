@@ -26,9 +26,17 @@ public class SelectParamValue extends InteractiveList {
 		telemetry.update();
 	}
 
-	public void SetMethod(MethodSignature methodData){
+	public void setMethodSignature(MethodSignature methodData){
 		_curIndex = 0;
 		_signature = methodData;
+	}
+
+	public MethodSignature getMethodSignature(){
+		return _signature;
+	}
+
+	public void execute(Object o){
+		_signature.execute(o);
 	}
 
 	// region button presses
@@ -63,7 +71,7 @@ public class SelectParamValue extends InteractiveList {
 	public void LeftBumper_Pressed() { _listener.saveMethodConfig(); }
 
 	final double PreRepeatWaitTime = 1000; // wait 1 second before speeding up
-	final double AutoPressTime = 100; // ms or 10 times per second
+	final double AutoPressTime = 70; // once every 70ms
 	void trackPressedTime(){ _startRepeatingAtThisTime = currentTimeMillis() + PreRepeatWaitTime + AutoPressTime; }
 
 	@Override
@@ -78,9 +86,7 @@ public class SelectParamValue extends InteractiveList {
 			if(doInc) cur.inc(); else cur.dec();
 		}
 	}
-	double _startRepeatingAtThisTime;
-	boolean _incPressed;
-	boolean _decPressed;
+	private double _startRepeatingAtThisTime;
 
 	//endregion
 
@@ -96,10 +102,10 @@ public class SelectParamValue extends InteractiveList {
 
 	//region private fields
 
-	int _topOfPageIndex = 0;
-	int _curIndex = 0;
-	static final int LinesPerPage = 4;
-	MethodSignature _signature;
+	private int _topOfPageIndex = 0;
+	private int _curIndex = 0;
+	private static final int LinesPerPage = 4;
+	private MethodSignature _signature;
 
 	CallbackListener _listener;
 

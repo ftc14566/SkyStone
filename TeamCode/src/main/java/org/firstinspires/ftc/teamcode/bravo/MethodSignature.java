@@ -57,7 +57,7 @@ public class MethodSignature {
 	}
 
 
-	public void Execute(Object host){
+	public void execute(Object host){
 		try{
 
 			Object[] values = new Object[_params.length];

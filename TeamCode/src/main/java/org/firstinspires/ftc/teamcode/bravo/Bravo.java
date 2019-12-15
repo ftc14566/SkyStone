@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class Bravo implements
 		SelectStep.CallbackListener,
@@ -25,8 +26,11 @@ public class Bravo implements
 		final Class c = _bot.getClass();
 		final Method[] methods = c.getDeclaredMethods();
 		for(int i=0;i<methods.length;++i){
-			MethodSignature sig = new MethodSignature(methods[i]);
-			_selectMethod._items.add( sig );
+			Method method = methods[i];
+			if(Modifier.isPublic(method.getModifiers())){
+				MethodSignature sig = new MethodSignature(method);
+				_selectMethod._items.add( sig );
+			}
 		}
 	}
 
@@ -40,7 +44,7 @@ public class Bravo implements
 	public void stepSelected() {// step-index ->down-> select method
 		MethodSignature sig = _selectStep.getCurrentSignature();
 		if(sig != null) {
-			_selectParam.SetMethod(sig.Clone());
+			_selectParam.setMethodSignature(sig.Clone());
 			_mode = _selectParam;
 		} else {
 			_mode = _selectMethod;
@@ -54,7 +58,7 @@ public class Bravo implements
 
 	@Override
 	public void selectMethod() { // select method ->down-> config-params
-		_selectParam._signature = _selectMethod.getCurrent();
+		_selectParam.setMethodSignature(_selectMethod.getCurrent());
 		_mode = _selectParam;
 	}
 
@@ -70,12 +74,12 @@ public class Bravo implements
 
 	@Override
 	public void executeMethod() {
-		_selectParam._signature.Execute(this._bot);
+		_selectParam.execute(this._bot);
 	}
 
 	@Override
 	public void saveMethodConfig() {
-		_selectStep.setCurrentSignature( _selectParam._signature.Clone() );
+		_selectStep.setCurrentSignature( _selectParam.getMethodSignature().Clone() );
 		_mode = _selectStep;
 	}
 
@@ -97,7 +101,7 @@ public class Bravo implements
 		if(Changed(10,gamepad.guide)) if(_cur) _mode.Guide_Pressed();
 		if(Changed(11,gamepad.left_bumper)) if(_cur) _mode.LeftBumper_Pressed();
 		if(Changed(12,gamepad.right_bumper)) if(_cur) _mode.RightBumper_Pressed();
-		_mode.doOtherWork();
+		_mode.doOtherWork(gamepad);
 	}
 
 	private boolean Changed(int index,boolean newState){
