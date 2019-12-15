@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 public class TeleBot {
 
@@ -117,10 +119,6 @@ public class TeleBot {
 	double leftGrabberPosition;
 	double rightGrabberPosition;
 
-	double straifRight = 0.0;
-	double foward = 0.0;
-	double turnRight = 0.0;
-
 	private double ramp (double current, double target, double stepUpSize){
 		if(current<target){
 			// going up
@@ -133,33 +131,35 @@ public class TeleBot {
 		}
 	}
 
-	public void driveAndStraif (float secondSpeed, double targetFoward, double targetTurnRight, double targetStraifRight){
+	public void driveAndStraif (double forward, double turnRight, double straifRight){
 
-		double scale = .25;
-		double  scale2 = .5;
+		double scale = 1;
+
+		forward *= scale;
+		turnRight *= scale;
+		straifRight *= scale;
 
 		//foward = ramp(foward, targetFoward, 0.15);
 		//turnRight = ramp(turnRight, targetTurnRight, 0.15);
 		//straifRight = ramp(straifRight, targetStraifRight, 0.15);
 
-		if(secondSpeed > .25) {
-			foward = scale2;
-			turnRight = scale2;
-			straifRight = scale2;
-		}
-		else{
-			foward = scale;
-			turnRight = scale;
-			straifRight = scale;
-		}
+//		if(forward > .25) {
+//			forward = scale2;
+//			turnRight = scale2;
+//			straifRight = scale2;
+//		} else{
+//			forward = scale;
+//			turnRight = scale;
+//			straifRight = scale;
+//		}
 
 
 
 		// combine drive,turn,straif
-		double fl = foward - turnRight - straifRight;
-		double fr = foward - turnRight + straifRight;
-		double rl = foward + turnRight + straifRight;
-		double rr = foward + turnRight - straifRight;
+		double fl = -forward - turnRight - straifRight;
+		double fr = forward - turnRight  - straifRight;
+		double rl = -forward - turnRight + straifRight;
+		double rr = forward - turnRight  + straifRight;
 
 		// limit each drom to 1.0 max
 		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
@@ -184,13 +184,18 @@ public class TeleBot {
 			leftGrabberPosition = 0.5;
 			rightGrabberPosition = 0.5;
 		}
-		if(close){
+		else if(close){
 			leftGrabberPosition =0.9;
 			rightGrabberPosition = 0.9;
 		}
 
 		hardware.graberLeft.setPosition(leftGrabberPosition);
 		hardware.graberRight.setPosition(rightGrabberPosition);
+	}
+
+	public boolean isBlockInFront(){
+
+		return hardware.distanceSensor.getDistance(DistanceUnit.CM)<3.5;
 	}
 
 	public void Extend(boolean extend, boolean in){
@@ -230,6 +235,7 @@ public class TeleBot {
 		hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
 	}
+
 	public void RaiseElevator(){}
 	public void LowerElevator(){}
 

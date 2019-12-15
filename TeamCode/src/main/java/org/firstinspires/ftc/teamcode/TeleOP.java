@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @TeleOp(name="TeleOP", group="Iterative Opmode")
 public class TeleOP extends OpMode {
 	private TeleBot bot;
@@ -53,7 +55,7 @@ public class TeleOP extends OpMode {
 
 		// Drive
 		//bot.driveAndStraif(gamepad1.right_trigger, -gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-		bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
+		bot.driveAndStraif(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
 		//bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
 
 		// Lift
@@ -63,7 +65,7 @@ public class TeleOP extends OpMode {
 
 		bot.Extend(gamepad2.y,gamepad2.a);
 
-		bot.grab(gamepad2.x,gamepad2.b);
+		bot.grab(gamepad2.x,bot.isBlockInFront());
 		telemetry.clearAll();
 		telemetry.update();
 	}

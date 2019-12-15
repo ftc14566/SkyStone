@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.*;
 
+
 // This class contains items that apply to the robot regardless of the opmode or operation.
 public class Hardware {
 
@@ -27,6 +28,7 @@ public class Hardware {
 	public ColorSensor rightColorSensor;
 	public Servo graberLeft;
 	public Servo graberRight;
+	public DistanceSensor distanceSensor;
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
@@ -63,6 +65,7 @@ public class Hardware {
 		rightColorSensor.alpha();
 		rightColorSensor.argb();
 
+		distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
 		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 	}
