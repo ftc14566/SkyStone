@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="AutoOpModeExample", group="Linear Opmode")
-public class ExampleAutoOpMode extends LinearOpMode {
+@Autonomous(name="1R: Foundation Move", group="Linear Opmode")
+public class foundationMoveRed extends LinearOpMode {
+
+	public boolean allianceRed = true;
 
 	@Override
 	public void runOpMode() {
@@ -12,7 +14,8 @@ public class ExampleAutoOpMode extends LinearOpMode {
 		// Init
 		Hardware hardware = new Hardware();
 		hardware.init(hardwareMap);
-		AutoBot bot = new AutoBot(hardware,this);
+		AutoDrive drive = new AutoDrive(hardware,this);
+		AutoBot bot = new AutoBot();
 
 		waitForStart();
 
@@ -20,9 +23,9 @@ public class ExampleAutoOpMode extends LinearOpMode {
 		telemetry.update();
 
 		// Run Code
-		bot.DriveForward(10, 0.5);
-		bot.SpinRight(90, 0.5);
-		bot.DriveForward(-200, 0.5);
+		drive.moveForwardDistanceSensor(0,0.3,3);
+		//add code for dragging foundation to building zone
+		bot.waitUntilRunTime(25);
 
 	}
 
