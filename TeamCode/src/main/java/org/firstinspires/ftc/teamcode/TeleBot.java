@@ -4,10 +4,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 public class TeleBot {
 
-	private Hardware hardware;
+	protected Hardware hardware;
 
 	public TeleBot( Hardware hardware ){
 		this.hardware = hardware;
@@ -80,13 +82,13 @@ public class TeleBot {
 		this.Move(0,speed);
 	}
 
-	/*public void SpinRight(double speed){;
+	public void SpinRight(double speed){;
 		hardware.frontLeftDrive.setPower(-speed);
 		hardware.frontRightDrive.setPower(-speed);
 		hardware.rearLeftDrive.setPower(-speed);
 		hardware.rearRightDrive.setPower(-speed);
 	}
-*/
+
 
 	public void Move(double forward, double rightSpeed){
 
@@ -106,19 +108,14 @@ public class TeleBot {
 	public void Lift(boolean up, boolean down){
 
 		double power = 0.2;
-		if(up&&!down)power = .6;
-		if(down&&!up)power = -.1;
+		if(up)power = 1.0;
+		if(down)power = 0.02;
+
 
 		hardware.leftTowerMotor.setPower(power);
 		hardware.rightTowerMotor.setPower(power);
 	}
 
-	double leftGrabberPosition;
-	double rightGrabberPosition;
-
-	double straifRight = 0.0;
-	double foward = 0.0;
-	double turnRight = 0.0;
 
 	private double ramp (double current, double target, double stepUpSize){
 		if(current<target){
@@ -132,19 +129,35 @@ public class TeleBot {
 		}
 	}
 
-	public void driveAndStraif (double targetFoward, double targetTurnRight, double targetStraifRight){
+	public void driveAndStraif (double forward, double turnRight, double straifRight){
+
+		double scale = 1;
+
+		forward *= scale;
+		turnRight *= scale;
+		straifRight *= scale;
 
 		//foward = ramp(foward, targetFoward, 0.15);
 		//turnRight = ramp(turnRight, targetTurnRight, 0.15);
 		//straifRight = ramp(straifRight, targetStraifRight, 0.15);
-		foward = targetFoward/2;
-		turnRight = targetTurnRight/2;
-		straifRight = targetStraifRight/2;
+
+//		if(forward > .25) {
+//			forward = scale2;
+//			turnRight = scale2;
+//			straifRight = scale2;
+//		} else{
+//			forward = scale;
+//			turnRight = scale;
+//			straifRight = scale;
+//		}
+
+
+
 		// combine drive,turn,straif
-		double fl = -foward - straifRight - turnRight;
-		double fr = foward - straifRight - turnRight;
-		double rl = -foward + straifRight -turnRight;
-		double rr = foward + straifRight -turnRight;
+		double fl = -forward - turnRight - straifRight;
+		double fr = forward - turnRight  - straifRight;
+		double rl = -forward - turnRight + straifRight;
+		double rr = forward - turnRight  + straifRight;
 
 		// limit each drom to 1.0 max
 		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
@@ -165,27 +178,36 @@ public class TeleBot {
 
 	public void grab(boolean open,boolean close){
 
-		if(open) {
-			leftGrabberPosition = 0.5;
-			rightGrabberPosition = 0.5;
-		}
-		if(close){
-			leftGrabberPosition =0.9;
-			rightGrabberPosition = 0.9;
-		}
 
-		hardware.graberLeft.setPosition(leftGrabberPosition);
-		hardware.graberRight.setPosition(rightGrabberPosition);
+        if(open)
+			setGrabberPos(0.5);
+
+		else if(close)
+            setGrabberPos(0.9);
+
+
 	}
 
-	public void Extend(boolean extend, boolean in){
-		double power=0;
-		if(extend&&!in)power=0.3;
-		if(in&&!extend)power=-0.3;
+	private void setGrabberPos(double pos){
+        hardware.graberLeft.setPosition(pos);
+        hardware.graberRight.setPosition(pos);
+
+    }
+
+	public boolean isBlockInFront(){
+
+		return hardware.distanceSensor.getDistance(DistanceUnit.CM)<3.5;
+	}
+
+	public void extend (boolean out, boolean in){
+		double power = 0;
+		if (out) power = 0.3;
+		if (in) power = -0.3;
 
 		hardware.bridgeMotor.setPower(power);
-	}
+		hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+	}
 	private double AdjustInputs(double x){
 		return x*x*x;
 	}
@@ -215,6 +237,7 @@ public class TeleBot {
 		hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
 	}
+
 	public void RaiseElevator(){}
 	public void LowerElevator(){}
 

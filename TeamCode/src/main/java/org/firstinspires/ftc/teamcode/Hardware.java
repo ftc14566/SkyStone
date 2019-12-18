@@ -3,8 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.*;
 
+
 // This class contains items that apply to the robot regardless of the opmode or operation.
 public class Hardware {
+
+	public Hardware(){}
+	public Hardware(HardwareMap hardwareMap){ init(hardwareMap); }
 
 	//==============================
 	// Add Hardware Constants here:
@@ -53,6 +57,7 @@ public class Hardware {
 		bridgeMotor = hardwareMap.get(DcMotor.class, "bridge");
 		bridgeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
 		graberLeft = hardwareMap.get(Servo.class, "graberLeft");
 		graberRight = hardwareMap.get(Servo.class, "graberRight");
 		graberLeft.setDirection(Servo.Direction.REVERSE);
@@ -73,6 +78,9 @@ public class Hardware {
 		rightColorSensor.argb();
 
 		distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
+
+
 		Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)distanceSensor;
 
 	}

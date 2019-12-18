@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,9 +14,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class AutoDrive {
 
+	//public AutoDrive( Hardware hardware, LinearOpMode mode ){
+	//	this.hardware = hardware;
+	//	this.opMode = mode;
+	//}
 
 	private Hardware hardware;
-	LinearOpMode opMode = null;
+	private LinearOpMode opMode;
+
 
 	public double defaultDriveSpeed = 0.2;
 	public double defaultSpinSpeed = 0.2;
@@ -90,8 +96,11 @@ public class AutoDrive {
 		hardware.rearLeftDrive.setPower(speed);
 		hardware.rearRightDrive.setPower(speed);
 
-		double startTime = opMode.getRuntime();
-		while((((opMode.getRuntime() - startTime) < timeout) && opMode.opModeIsActive()) && (inches <= hardware.distanceSensor.getDistance(DistanceUnit.INCH))){
+		//double startTime = opMode.getRuntime();
+		while((inches <= hardware.distanceSensor.getDistance(DistanceUnit.INCH))){
+			opMode.telemetry.addData("distance inch", hardware.distanceSensor.getDistance(DistanceUnit.INCH));
+			opMode.telemetry.update();
+
 			opMode.sleep(50);
 		}
 		stopDrive();
