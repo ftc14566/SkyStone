@@ -15,7 +15,7 @@ public class foundationMoveRed extends LinearOpMode {
 		Hardware hardware = new Hardware();
 		hardware.init(hardwareMap);
 		AutoDrive drive = new AutoDrive(hardware,this);
-		AutoBot bot = new AutoBot();
+		AutoBot bot = new AutoBot(hardware,this);
 
 		waitForStart();
 

@@ -1,66 +1,62 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class ParamInt extends Param {
 
 	// region constructors
 
 	public ParamInt(Config cfg){
+		super(cfg);
+		initIntFields();
 
-		//public static final ParamInt Default = new ParamInt("int", 0, 0, 255, 1 );
-		if(cfg!=null) {
-			_label = cfg.label();
-			_value = (int) Math.round(cfg.initial());
-			_min = (int) Math.round(cfg.min());
-			_max = (int) Math.round(cfg.max());
-			_step = (int) Math.round(cfg.step());
-			_units = cfg.units();
-		}
 		// fix from defaults
-		if(_label==null || _label.isEmpty()) _label ="int";
-		if(_step == 0 ) _step = 1; else if(_step<0) _step = -_step;
-		if(_max < _min){ int temp = _max; _max = _min; _min = temp; }
-		if(_min == _max) _max = _min + _step * 100;
-		if(_value < _min) _value = _min;
-		if(_value > _max) _value = _max;
+		if(label==null || label.isEmpty()) label ="int";
+		if(intStep == 0 ) intStep = 1; else if(intStep <0) intStep = -intStep;
+		if(intMax < intMin){ int temp = intMax; intMax = intMin; intMin = temp; }
+		if(intMin == intMax) intMax = intMin + intStep * 100;
+		if(intValue < intMin) setIntValue(intMin);
+		if(intValue > intMax) setIntValue(intMax);
 	}
 
 	ParamInt(ParamInt src){
-		_label = src._label;
-		_value = src._value;
-		_min = src._min;
-		_max = src._max;
-		_step = src._step;
+		super(src);
+		initIntFields();
+	}
+
+	void initIntFields(){
+		intValue = (int)Math.round(value);
+		intMin = (int)Math.round(min);
+		intMax = (int)Math.round(max);
+		intStep = (int)Math.round(step);
 	}
 
 	// endregion
 
-	@Override
-	public void inc() {
-		_value = Math.min(_max,_value+_step);
+	// keeps the double value in sync
+	private void setIntValue(int newValue){
+		intValue = newValue;
+		value = intValue;
 	}
 
 	@Override
-	public void dec() {
-		_value = Math.max(_min,_value-_step);
-	}
+	public void inc() { setIntValue( Math.min(intMax, intValue + intStep) ); }
+
+	@Override
+	public void dec() { setIntValue( Math.max(intMin, intValue - intStep) ); }
 
 	@Override
 	public Object getValue() {
-		return _value;
+		return intValue;
 	}
 
 	@Override
 	public String getValueString() {
-		return _value+_units;
+		return intValue +units;
 	}
 
 	@Override
 	public String getRangeString() {
-		return _min + " to " + _max;
+		return intMin + " to " + intMax;
 	}
-
 
 	@Override
 	public Param Clone() {
@@ -69,11 +65,10 @@ public class ParamInt extends Param {
 
 	// region private fields
 
-	int _value;
-	int _min;
-	int _max;
-	int _step;
-	String _units;
+	int intValue;
+	int intMin;
+	int intMax;
+	int intStep;
 
 	// endregion
 

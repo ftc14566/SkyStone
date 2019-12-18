@@ -6,11 +6,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static java.lang.System.currentTimeMillis;
 
-public class SelectParamValue extends InteractiveList {
+public class InteractiveParameterList extends InteractiveList {
 
 	// region consturctor
 
-	public SelectParamValue(CallbackListener listener){
+	public InteractiveParameterList(CallbackListener listener){
 		_listener = listener;
 	}
 
@@ -18,11 +18,11 @@ public class SelectParamValue extends InteractiveList {
 
 	@Override
 	public void DisplayStatus(Telemetry telemetry){
-		telemetry.addData("Mode","Enter Param Values for:"+ _signature._method.getName());
+		telemetry.addData("Mode","Enter Param Values for:"+ _signature.getName());
 
-		int end = Math.min(_topOfPageIndex+LinesPerPage, _signature._params.length); // exclude end-index
+		int end = Math.min(_topOfPageIndex+LinesPerPage, _signature.params.length); // exclude end-index
 		for(int i = _topOfPageIndex; i<end; ++i)
-			_signature._params[i].addParamToTelemetry(telemetry,i==_curIndex);
+			_signature.params[i].addParamToTelemetry(telemetry,i==_curIndex);
 		telemetry.update();
 	}
 
@@ -49,11 +49,11 @@ public class SelectParamValue extends InteractiveList {
 
 	@Override
 	public void DpadDown_Pressed(){
-		if(_curIndex< _signature._params.length-1) _curIndex++;
+		if(_curIndex< _signature.params.length-1) _curIndex++;
 		if(_topOfPageIndex>_curIndex) _topOfPageIndex=_curIndex;
 	}
 
-	Param getCurParam(){ return _signature._params[_curIndex]; }
+	Param getCurParam(){ return _signature.params[_curIndex]; }
 
 	@Override
 	public void DpadLeft_Pressed(){ getCurParam().dec(); trackPressedTime(); }

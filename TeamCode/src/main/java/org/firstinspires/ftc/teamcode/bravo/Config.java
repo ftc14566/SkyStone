@@ -11,7 +11,7 @@ public @interface Config {
     String units() default "";
     // endregion
     // region used by numerics
-    double initial() default 0.0;
+    double value() default 0.0;
     double min() default 0.0;
     double max() default 0.0;
     double step() default 0.0;

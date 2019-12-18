@@ -1,100 +1,76 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class ParamDouble extends Param {
 
 	// region constructors
 
-	public ParamDouble(Config da){
-		if(da!=null){
-			_label = da.label();
-			_min = da.min();
-			_max = da.max();
-			_step = da.step();
-			_value = da.initial();
-			_units = da.units();
-			_displayScale = da.displayScale();
-		}
-		// fix / assign default
-		if(_label==null || _label.isEmpty()) _label = "double";
-		if(_units==null) _units="";
-		if(_step == 0.0) _step = 0.1; else if(_step<0.0) _step = -_step;
-		if(_max<_min){ double temp = _max; _max=_min;_min=temp; }
-		if(_min==_max) _max = _min + _step * 100;
-		if(_value < _min) _value = _min;
-		if(_value > _max) _value = _max;
-		if(_displayScale == 0) _displayScale=1.0;
+	public ParamDouble(Config cfg){
+		super(cfg);
 
-		_format = "%."+determineDecimalPlacesToDisplay()+"f";
+		// fix / assign default
+		if(label==null || label.isEmpty()) label = "double";
+		if(units==null) units="";
+		if(step == 0.0) step = 0.1; else if(step<0.0) step = -step;
+		if(max<min){ double temp = max; max=min;min=temp; }
+		if(min==max) max = min + step * 100;
+		if(value < min) value = min;
+		if(value > max) value = max;
+		if(displayScale == 0) displayScale=1.0;
+
+		_format = determineFormat();
 	}
 
-	int determineDecimalPlacesToDisplay(){
-		if(_step<=0.0) throw new IllegalStateException("step should be positive");
+	ParamDouble(ParamDouble src) {
+		super(src);
+		_format = src._format;
+	}
+
+	String determineFormat(){
+		if(step<=0.0) throw new IllegalStateException("step should be positive");
 		int places = 0;
-		double step = _step*_displayScale;
+		double step = this.step*displayScale;
 		while(step<1.0){
 			step *= 10;
 			places++;
 		}
-		return places;
-	}
-
-	ParamDouble(ParamDouble src) {
-		_label = src._label;
-		_min = src._min;
-		_max = src._max;
-		_step = src._step;
-		_value = src._value;
-		_format = src._format;
-		_units = src._units;
-		_displayScale = src._displayScale;
+		return  "%."+places+"f";
 	}
 
 	// endregion
 
 	@Override
 	public Object getValue() {
-		return _value;
+		return value;
 	}
 
 	@Override
 	public String getValueString() {
-		return String.format(_format, _value * _displayScale) + _units;
+		return String.format(_format, value * displayScale) + units;
 	}
 
 	@Override
 	public String getRangeString(){
-		String low = String.format(_format, _min*_displayScale);
-		String high = String.format(_format, _max*_displayScale);
+		String low = String.format(_format, min*displayScale);
+		String high = String.format(_format, max*displayScale);
 		return low+" to "+high;
 	}
 
 	@Override
 	public void inc() {
-		_value = Math.min(_value +_step,_max);
+		value = Math.min(value +step,max);
 	}
 
 	@Override
 	public void dec() {
-		_value = Math.max(_value -_step,_min);
+		value = Math.max(value -step,min);
 	}
 
 	@Override
 	public Param Clone() { return new ParamDouble(this); }
 
 	// region private fields
-
-	double _min;
-	double _max;
-	double _step;
-	double _value;
-	double _displayScale;
 	String _format;
-	String _units;
-
 	// endregion
-
 
 
 }

@@ -11,6 +11,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class AutoBot {
 
+	public AutoBot( Hardware hardware, LinearOpMode mode ) {
+		this.hardware = hardware;
+		this.opMode = mode;
+	}
+
 	private Hardware hardware;
 	private LinearOpMode opMode;
 

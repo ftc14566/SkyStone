@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
-public class SelectMethod extends InteractiveList {
+public class InteractiveMethodList extends InteractiveList {
 
-	public SelectMethod(CallbackListener listener){
+	public InteractiveMethodList(CallbackListener listener){
 		_listener = listener;
 	}
 
@@ -22,8 +24,21 @@ public class SelectMethod extends InteractiveList {
 		telemetry.update();
 	}
 
+	public void accessClass(Class c){
+		_items.clear();
+		final Method[] methods = c.getDeclaredMethods();
+		for(int i=0;i<methods.length;++i){
+			Method method = methods[i];
+			if(Modifier.isPublic(method.getModifiers())){
+				MethodSignature sig = new MethodSignature(method);
+				_items.add( sig );
+			}
+		}
+	}
+
+
 	String getMethodDisplayText(int index){
-		return _items.get(index)._method.getName();
+		return _items.get(index).getName();
 	}
 
 

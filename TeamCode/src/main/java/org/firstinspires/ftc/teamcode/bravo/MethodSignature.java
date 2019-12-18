@@ -9,64 +9,75 @@ public class MethodSignature {
 
 	// region constructors
 
-	public MethodSignature(Method method, Param[] params){
-		_method = method;
-		_params = params;
+	public MethodSignature(MethodSignature src){
+		name = src.name;
+		params = new Param[src.params.length];
+		for(int i = 0; i< params.length; ++i)
+			params[i] = params[i].Clone();
 	}
 
 	public MethodSignature(Method method){
-		_method = method;
-		initParameters();
-	}
-
-	void initParameters(){
-
-		// init Parameters from Annotations on method
-		Class<?>[] parameterTypes = _method.getParameterTypes();
-		Annotation[][] annotations = _method.getParameterAnnotations();
-
-		if (annotations.length != parameterTypes.length)
-			throw new IllegalStateException("annotation length does not match params length");
-
-		_params = new Param[parameterTypes.length];
-		for (int i = 0; i < _params.length; ++i) {
-
-			Annotation annotation = FindFirstParamConfigAnnotation(annotations[i]);
-			_params[i] = ConstructParamConfig(parameterTypes[i], (Config)annotation,i);
-		}
+		name = method.getName();
+		initParameters(method);
 	}
 
 	// endregion
 
-	Annotation FindFirstParamConfigAnnotation(Annotation[] annotations){
+	// region building parameters
+
+	void initParameters(Method method){
+
+		// init Parameters from Annotations on method
+		Class<?>[] parameterTypes = method.getParameterTypes();
+		Annotation[][] annotations = method.getParameterAnnotations();
+
+		if (annotations.length != parameterTypes.length)
+			throw new IllegalStateException("annotation length does not match params length");
+
+		params = new Param[parameterTypes.length];
+		for (int i = 0; i < params.length; ++i)
+			params[i] = ConstructParamConfig(parameterTypes[i], annotations[i], i);
+	}
+
+	Config FindConfigAnnotation(Annotation[] annotations){
 		for(int i=0;i<annotations.length;++i){
 			Annotation a = annotations[i];
 			Class<?> aType = a.annotationType();
 			if(aType == Config.class)
-				return a;
+				return (Config)a;
 		}
 		return null;
 	}
 
-	Param ConstructParamConfig(Class<?> paramClass, Config cfg, int index){
-		String label = "const:"+paramClass.getName();
+	Param ConstructParamConfig(Class<?> paramClass, Annotation[] annotations, int index){
+		Config cfg = FindConfigAnnotation(annotations);
 		if(paramClass==double.class) return new ParamDouble(cfg);
 		if(paramClass==boolean.class) return new ParamBoolean(cfg);
 		if(paramClass==int.class) return new ParamInt(cfg);
-		throw new IllegalStateException("Cannot auto-configure parameter of type:"+paramClass.getName()+" "+_method.getName()+" "+index);
+		throw new IllegalStateException("Cannot auto-configure parameter of type:"+paramClass.getName()+" "+getName()+" "+index);
 	}
 
+	// endregion
+
+	public String getName(){
+		return name;
+	}
 
 	public void execute(Object host){
 		try{
 
-			Object[] values = new Object[_params.length];
+			Object[] values = new Object[params.length];
+			Class[] paramTypes = new Class[params.length];
 
-			for(int i=0;i<_params.length;++i)
-				values[i] = _params[i].getValue();
+			for(int i = 0; i< params.length; ++i){
+				values[i] = params[i].getValue();
+				paramTypes[i] = values[i].getClass();
+			}
 
-			_method.invoke(host,values);
+			Method method = host.getClass().getMethod(getName(), paramTypes);
+			method.invoke(host,values);
 
+		} catch(NoSuchMethodException ex){
 		} catch(IllegalAccessException ex){
 
 		} catch(InvocationTargetException ex){
@@ -76,24 +87,19 @@ public class MethodSignature {
 	}
 
 	public String getVerbose(){
-		String s = _method.getName()+"(";
-		String separator="";
-		for(int i=0;i<_params.length;++i){
-			s += separator + _params[i].getValueString();
-			separator=",";
+		String s = getName()+"(";
+		for(int i = 0; i< params.length; ++i){
+			if(i!=0) s+=",";
+			s += params[i].getValueString();
 		}
 		return s+")";
 	}
 
 	public MethodSignature Clone(){
-		// !!! clean up
-		Param[] params = new Param[_params.length];
-		for(int i=0;i<_params.length;++i)
-			params[i] = _params[i].Clone();
-		return new MethodSignature(_method,params);
+		return new MethodSignature(this);
 	}
 
-	Param[] _params;
-	Method _method;
+	Param[] params; // accessed by interactive parameter list
+	private String name;
 
 }

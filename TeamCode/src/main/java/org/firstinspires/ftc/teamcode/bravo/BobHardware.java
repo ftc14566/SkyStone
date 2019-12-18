@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import com.qualcomm.robotcore.hardware.*;
 
-public class TestHardware {
+public class BobHardware {
 
     public static final double     COUNTS_PER_MOTOR_REV    = 288 ;
 
@@ -11,7 +11,7 @@ public class TestHardware {
     public ColorSensor colorSensor;
     public DistanceSensor distanceSensor;
 
-    public TestHardware(HardwareMap hardwareMap){
+    public BobHardware(HardwareMap hardwareMap){
 
         motor3 = hardwareMap.get(DcMotor.class, "motor3");
         servo0 = hardwareMap.get(Servo.class, "servo0");

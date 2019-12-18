@@ -6,61 +6,43 @@ public class ParamBoolean extends Param {
 
 	// region constructor
 
-	public ParamBoolean(Config a){
-		if(a!=null){
-			_label = a.label();
-			_value = a.isTrue();
-			_trueString = a.trueString();
-			_falseString = a.falseString();
-		}
+	public ParamBoolean(Config cfg){
+		super(cfg);
+
 		// fix
-		if(_label ==null|| _label.isEmpty()) _label = "boolean";
+		if(label==null|| label.isEmpty()) label = "boolean";
 	}
 
-	ParamBoolean(ParamBoolean a){
-		_label = a._label;
-		_value = a._value;
-		_trueString = a._trueString;
-		_falseString = a._falseString;
-
-	}
+	ParamBoolean(ParamBoolean a){ super(a); }
 
 	// endregion
 
 	@Override
 	public void inc() {
-		_value = true;
+		isTrue = true;
 	}
 
 	@Override
 	public void dec() {
-		_value = false;
+		isTrue = false;
 	}
 
 	public String getRangeString(){
-		return _falseString+" / "+_trueString;
+		return falseString+" / "+trueString;
 	}
 
 	@Override
 	public Object getValue() {
-		return _value;
+		return isTrue;
 	}
 
 	@Override
 	public String getValueString(){
-		return _value ? _trueString : _falseString;
+		return isTrue ? trueString : falseString;
 	}
-
 
 	@Override
 	public Param Clone() { return new ParamBoolean(this); }
-
-	// region private fields
-	boolean _value;
-	String _trueString;
-	String _falseString;
-	// endregion
-
 
 
 }

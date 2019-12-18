@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.*;
 // This class contains items that apply to the robot regardless of the opmode or operation.
 public class Hardware {
 
+	public Hardware(){}
+	public Hardware(HardwareMap hardwareMap){ init(hardwareMap); }
+
 	//==============================
 	// Add Hardware Constants here:
 	//==============================
