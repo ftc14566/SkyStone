@@ -8,11 +8,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-//@Autonomous(name="AutoBot", group="Linear Opmode")
 public class AutoBot {
 
-    private Hardware hardware;
+    protected Hardware hardware;
+
+	public AutoBot( Hardware hardware, LinearOpMode mode ) {
+		this.hardware = hardware;
+		this.opMode = mode;
+//		resetEncoder();
+	}
+
 	private LinearOpMode opMode;
 
 	public double defaultDriveSpeed = 0.2;
@@ -41,12 +48,6 @@ public class AutoBot {
 	}
 
 
-	public AutoBot(Hardware hardware, LinearOpMode opMode){
-		this.hardware = hardware;
-		resetEncoder();
-
-	}
-
 	public void DriveForward(double inches, double speed ){
 
 		while(opMode.opModeIsActive()){
@@ -57,7 +58,7 @@ public class AutoBot {
 	public void SpinRight(double degrees, double speed){
 
 		while(opMode.opModeIsActive()){
-			resetEncoder();
+//			resetEncoder();
 		}
 	}
 
@@ -68,6 +69,10 @@ public class AutoBot {
 		}
 	}
 
+
+	public void Test(int i, double d, String s,boolean b){
+
+	}
 
 	//============================================
 	// TODO: put other high level autonomous operations here.

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TeleBot {
 
-	private Hardware hardware;
+	protected Hardware hardware;
 
 	public double towerPositionRight;//'' = hardware.rightTowerMotor.getCurrentPosition();
 	public double towerPositionLeft;// = hardware.leftTowerMotor.getCurrentPosition();
@@ -107,13 +107,13 @@ public class TeleBot {
 		this.Move(0,speed);
 	}
 
-	/*public void SpinRight(double speed){;
+	public void SpinRight(double speed){;
 		hardware.frontLeftDrive.setPower(-speed);
 		hardware.frontRightDrive.setPower(-speed);
 		hardware.rearLeftDrive.setPower(-speed);
 		hardware.rearRightDrive.setPower(-speed);
 	}
-*/
+
 
 	public void Move(double forward, double rightSpeed){
 
@@ -168,12 +168,6 @@ public class TeleBot {
 		double rl = -forward - turn + strafe;
 		double rr = forward - turn + strafe;
 
-		/*
-		front left -> forward-rotation-sideways
-		front right -> forward-rotation+sideways
-		back left -> forward+rotation+sideways
-		back right -> forward+rotation-sideways
-		 */
 		// limit each drom to 1.0 max
 		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
 		maxPower = Math.max(maxPower,Math.abs(rl));
@@ -193,27 +187,33 @@ public class TeleBot {
 
 	public void grab(boolean open,boolean close){
 
-		if(open) {
-			leftGrabberPosition = 0.5;
-			rightGrabberPosition = 0.5;
-		}
-		if(close){
-			leftGrabberPosition =0.9;
-			rightGrabberPosition = 0.9;
-		}
+        if(open)
+			setGrabberPos(0.5);
 
-		hardware.grabberLeft.setPosition(leftGrabberPosition);
-		hardware.grabberRight.setPosition(rightGrabberPosition);
+		else if(close)
+            setGrabberPos(0.9);
 	}
 
-	public void Extend(boolean extend, boolean in){
-		double power=0;
-		if(extend&&!in)power=0.3;
-		if(in&&!extend)power=-0.3;
+	private void setGrabberPos(double pos){
+        hardware.grabberLeft.setPosition(pos);
+        hardware.grabberRight.setPosition(pos);
+
+    }
+
+	public boolean isBlockInFront(){
+
+		return hardware.distanceSensor.getDistance(DistanceUnit.CM)<3.5;
+	}
+
+	public void extend (boolean out, boolean in){
+		double power = 0;
+		if (out) power = 0.3;
+		if (in) power = -0.3;
 
 		hardware.bridgeMotor.setPower(power);
-	}
+		hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+	}
 	private double AdjustInputs(double x){
 		return x*x*x;
 	}
@@ -243,6 +243,7 @@ public class TeleBot {
 		hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
 	}
+
 	public void RaiseElevator(){}
 	public void LowerElevator(){}
 
