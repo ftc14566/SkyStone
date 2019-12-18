@@ -29,6 +29,8 @@ public class Hardware {
 	public DistanceSensor distanceSensor;
 	public Servo graberLeft;
 	public Servo graberRight;
+	public Servo foundationServoLeft;
+	public Servo foundationServoRight;
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
@@ -55,6 +57,8 @@ public class Hardware {
 		graberRight = hardwareMap.get(Servo.class, "graberRight");
 		graberLeft.setDirection(Servo.Direction.REVERSE);
 
+
+
 		leftColorSensor = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
 		leftColorSensor.red();
 		leftColorSensor.green();
@@ -68,10 +72,9 @@ public class Hardware {
 		rightColorSensor.alpha();
 		rightColorSensor.argb();
 
-		distanceSensor = hardwareMap.get(DistanceSensor.class, "distance_sensor");
+		distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 		Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)distanceSensor;
 
-		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 	}
 
 }

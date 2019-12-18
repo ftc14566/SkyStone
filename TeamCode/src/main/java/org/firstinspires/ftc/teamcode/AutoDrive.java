@@ -11,12 +11,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="AutoDrive", group="Linear Opmode")
-@Disabled
 public class AutoDrive {
 
+
 	private Hardware hardware;
-	private LinearOpMode opMode;
+	LinearOpMode opMode = null;
 
 	public double defaultDriveSpeed = 0.2;
 	public double defaultSpinSpeed = 0.2;
@@ -65,7 +64,6 @@ public class AutoDrive {
 	}
 
 	public void DriveForward(double inches, double speed ){
-
 		while(opMode.opModeIsActive()){
 			resetEncoder();
 		}
@@ -92,11 +90,9 @@ public class AutoDrive {
 		hardware.rearLeftDrive.setPower(speed);
 		hardware.rearRightDrive.setPower(speed);
 
-		int maxCount = timeout*20;
-		int counter = 0;
-		while((opMode.opModeIsActive() && counter < maxCount) && (inches == hardware.distanceSensor.getDistance(DistanceUnit.INCH))){
+		double startTime = opMode.getRuntime();
+		while((((opMode.getRuntime() - startTime) < timeout) && opMode.opModeIsActive()) && (inches <= hardware.distanceSensor.getDistance(DistanceUnit.INCH))){
 			opMode.sleep(50);
-			counter =+1;
 		}
 		stopDrive();
 	}

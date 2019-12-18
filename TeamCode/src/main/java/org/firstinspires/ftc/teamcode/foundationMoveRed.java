@@ -23,10 +23,12 @@ public class foundationMoveRed extends LinearOpMode {
 		telemetry.update();
 
 		// Run Code
-		drive.moveForwardDistanceSensor(0,0.3,3);
-		//add code for dragging foundation to building zone
-		bot.waitUntilRunTime(25);
-
+		drive.moveForwardDistanceSensor(0,0.3,999);
+		//bot.grabFoundation();
+		//move to building zone
+		//bot.releaseFoundation();
+		//bot.waitUntilRunTime(25);
+		//move to line
 	}
 
 }
