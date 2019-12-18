@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Ben;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,9 +6,12 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.TeleBot;
+
 @TeleOp(name="BenOp", group="Iterative Opmode")
 public class BenOp extends OpMode {
-	private TeleBot bot;
+	private BenBot bot;
 	private Hardware hardware;
 
 	@Override
@@ -16,7 +19,7 @@ public class BenOp extends OpMode {
 
 		hardware = new Hardware();
 		hardware.init( hardwareMap );
-		bot = new TeleBot(hardware);
+		bot = new BenBot(hardware);
 
 		telemetry.addLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		telemetry.addLine("(*_*)");
