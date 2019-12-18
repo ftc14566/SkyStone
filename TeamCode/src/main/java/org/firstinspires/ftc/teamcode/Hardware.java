@@ -13,10 +13,10 @@ public class Hardware {
 	//==============================
 	// Add Hardware Constants here:
 	//==============================
-	// static final double     WHEEL_SEPARATION = 15.25 ;
-	// static final double     WHEEL_DIAMETER_INCHES   = 6.75 ;// For figuring circumference
-	// static final double     COUNTS_PER_MOTOR_REV    = 288 ;
-	// static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * 3.1415);
+
+	 public static final double     WHEEL_DIAMETER_INCHES   = 1.25 ;// For figuring circumference
+	 public static final double     COUNTS_PER_MOTOR_REV    = 288 ;
+	 public static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
 	//==============================
 	// Add Hardware Properties here:
@@ -31,10 +31,10 @@ public class Hardware {
 	public ColorSensor leftColorSensor;
 	public ColorSensor rightColorSensor;
 	public DistanceSensor distanceSensor;
-	public Servo graberLeft;
-	public Servo graberRight;
-	public Servo foundationServoLeft;
-	public Servo foundationServoRight;
+	public Servo grabberLeft;
+	public Servo grabberRight;
+	public Servo leftFoundationServo;
+	public Servo rightFoundationServo;
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
@@ -58,10 +58,12 @@ public class Hardware {
 		bridgeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-		graberLeft = hardwareMap.get(Servo.class, "graberLeft");
-		graberRight = hardwareMap.get(Servo.class, "graberRight");
-		graberLeft.setDirection(Servo.Direction.REVERSE);
+		grabberLeft = hardwareMap.get(Servo.class, "graberLeft");
+		grabberRight = hardwareMap.get(Servo.class, "graberRight");
+		grabberLeft.setDirection(Servo.Direction.REVERSE);
 
+		leftFoundationServo = hardwareMap.get(Servo.class,"leftFoundationServo");
+		rightFoundationServo = hardwareMap.get(Servo.class, "rightFoundationServo");
 
 
 		leftColorSensor = hardwareMap.get(ColorSensor.class, "colorSensorLeft");

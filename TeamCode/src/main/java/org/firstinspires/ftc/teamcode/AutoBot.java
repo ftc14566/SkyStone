@@ -28,43 +28,14 @@ public class AutoBot {
 	}
 
 	public void grabFoundation(){
-		hardware.foundationServoLeft.setPosition(1);
-		hardware.foundationServoRight.setPosition(1);
+		//hardware.foundationServoLeft.setPosition(1);
+		//hardware.foundationServoRight.setPosition(1);
 	}
 
 
 	public  void releaseFoundation(){
-		hardware.foundationServoLeft.setPosition(0);
-		hardware.foundationServoRight.setPosition(0);
+		//hardware.foundationServoLeft.setPosition(0);
+		//hardware.foundationServoRight.setPosition(0);
 	}
-
-	public void SpinRight(double degrees, double speed){
-
-		while(opMode.opModeIsActive()){
-//			resetEncoder();
-		}
-	}
-
-	public void StrafeRight(double inches,double speed){
-
-		while(opMode.opModeIsActive()) {
-			//resetEncoder();
-		}
-	}
-
-	public void Test(int i, double d, String s,boolean b){
-
-	}
-
-	//============================================
-	// TODO: put other high level autonomous operations here.
-	//============================================
-	//public void GrabBlock(){}
-	//public void ReleaseBlock(){}
-	//public void RaiseElevator(double inches){}
-	//public void ExtendArm(){}
-	//public void RetractArm(){}
-
-
 
 }

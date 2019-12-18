@@ -2,38 +2,29 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+//import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class AutoDrive {
 
-	//public AutoDrive( Hardware hardware, LinearOpMode mode ){
-	//	this.hardware = hardware;
-	//	this.opMode = mode;
-	//}
+	public AutoDrive( Hardware hardware, LinearOpMode mode ){
+		this.hardware = hardware;
+		this.opMode = mode;
+	}
 
 	private Hardware hardware;
 	private LinearOpMode opMode;
 
 
-	public double defaultDriveSpeed = 0.2;
-	public double defaultSpinSpeed = 0.2;
-	public double defaultStrafeSpeed = 0.2;
-	static final double     COUNTS_PER_MOTOR_REV    = 288 ;
-	static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
-	static final double     WHEEL_DIAMETER_INCHES   = 4 ;// For figuring circumference
-	static final double     WHEEL_SEPARATION = 15.25 ;
-	static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) /
-			(WHEEL_DIAMETER_INCHES * 3.1415);
-	static final double     TURN_SPEED              = 0.3;
-	static final double     TIME_PER_INCH           = 0.5;
+
 
 	public void resetEncoder(){
 		hardware.frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,11 +54,7 @@ public class AutoDrive {
 	}
 
 
-	public AutoDrive(Hardware hardware, LinearOpMode opMode){
-		this.hardware = hardware;
-		resetEncoder();
 
-	}
 
 	public void DriveForward(double inches, double speed ){
 		while(opMode.opModeIsActive()){
