@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-@TeleOp(name="TeleOP", group="Iterative Opmode")
-public class TeleOP extends OpMode {
+@TeleOp(name="BenOp", group="Iterative Opmode")
+public class BenOp extends OpMode {
 	private TeleBot bot;
 	private Hardware hardware;
 
@@ -17,6 +17,7 @@ public class TeleOP extends OpMode {
 		hardware = new Hardware();
 		hardware.init( hardwareMap );
 		bot = new TeleBot(hardware);
+
 		telemetry.addLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		telemetry.addLine("(*_*)");
 		telemetry.addLine("How did you find me?");
@@ -59,8 +60,8 @@ public class TeleOP extends OpMode {
 		// Lift
 		bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
 		bot.towerDown(gamepad2.right_trigger);
-		//bot.raiseElevators(gamepad2.left_stick_y, .25);
-		//bot.towerDown(gamepad1.right_trigger);
+
+		bot.encodersWithGrabber(gamepad2.left_trigger, false);
 
 		bot.Extend(gamepad2.y,gamepad2.a);
 
@@ -68,6 +69,8 @@ public class TeleOP extends OpMode {
 
 		bot.moveFoundation(gamepad1.right_trigger);
 
+		telemetry.addData("Right Foundation Position", hardware.rightFoundationServo.getPosition());
+		telemetry.addData("Left Foundation Position", hardware.leftFoundationServo.getPosition());
 	}
 
 /*

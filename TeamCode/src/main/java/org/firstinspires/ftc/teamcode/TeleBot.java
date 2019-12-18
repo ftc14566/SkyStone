@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class TeleBot {
 
 	private Hardware hardware;
@@ -34,24 +36,35 @@ public class TeleBot {
 		//towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
 		//towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
 		if (towerDownBind > 0.25) {
-			hardware.leftTowerMotor.setPower(0.02);
-			hardware.rightTowerMotor.setPower(0.02);
-			hardware.leftTowerMotor.setTargetPosition(0);
-			hardware.rightTowerMotor.setTargetPosition(0);
-			hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			/*
-			while (hardware.leftTowerMotor.isBusy() || hardware.rightTowerMotor.isBusy()) {
-				hardware.leftColorSensor.enableLed(true);
-				hardware.rightColorSensor.enableLed(true);
-				hardware.leftColorSensor.enableLed(false);
-				hardware.rightColorSensor.enableLed(false);
-				break;
-			}
+            hardware.leftTowerMotor.setPower(0.9);
+            hardware.rightTowerMotor.setPower(0.9);
+            hardware.leftTowerMotor.setTargetPosition(0);
+            hardware.rightTowerMotor.setTargetPosition(0);
+            hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+		else{
+			hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Stop and Reset
+			hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		}
+	}
 
-			 */
-			hardware.leftTowerMotor.setPower(0);
-			hardware.rightTowerMotor.setPower(0);
+	public void encodersWithGrabber(float autoGrabBind, boolean bridgePosition){ //TRUE = OUT :: FALSE = IN
+		double power=0;
+		if(bridgePosition = false)power=0.3;
+		if(bridgePosition = true)power=-0.3;
+		if(autoGrabBind > .25){
+			hardware.bridgeMotor.setPower(power);
+			double toBlock = hardware.distanceSensor.getDistance(DistanceUnit.INCH);
+			int perInch = (int)hardware.COUNTS_PER_INCH;
+			while(toBlock > .01){
+				hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			}
+			hardware.bridgeMotor.setTargetPosition(perInch);
+			hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		}
+		else{
+			hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		}
 	}
 
@@ -189,8 +202,8 @@ public class TeleBot {
 			rightGrabberPosition = 0.9;
 		}
 
-		hardware.graberLeft.setPosition(leftGrabberPosition);
-		hardware.graberRight.setPosition(rightGrabberPosition);
+		hardware.grabberLeft.setPosition(leftGrabberPosition);
+		hardware.grabberRight.setPosition(rightGrabberPosition);
 	}
 
 	public void Extend(boolean extend, boolean in){
