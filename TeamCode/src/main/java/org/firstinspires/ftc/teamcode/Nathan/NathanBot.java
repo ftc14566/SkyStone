@@ -178,8 +178,8 @@ public NathanBot(Hardware hardware){
     }
 
     private void setGrabberPos(double pos){
-        hardware.graberLeft.setPosition(pos);
-        hardware.graberRight.setPosition(pos);
+        hardware.grabberLeft.setPosition(pos);
+        hardware.grabberRight.setPosition(pos);
 
     }
 
