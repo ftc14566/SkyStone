@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="AutoDrive", group="Linear Opmode")
+
 @Disabled
 public class AutoDrive {
 

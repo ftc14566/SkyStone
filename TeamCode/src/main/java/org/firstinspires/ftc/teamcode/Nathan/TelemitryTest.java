@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Nathan;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.TeleBot;
 
 @TeleOp(name="TelemitryTest", group="Iterative Opmode")
 public class TelemitryTest extends OpMode {
@@ -37,10 +38,6 @@ public class TelemitryTest extends OpMode {
 
 	@Override
 	public void init_loop() {
-		bridgeMotor.setTargetPosition(5000);
-		bridgeMotor.setPower(0.25);
-
-
 	}
 
 	/*
@@ -61,7 +58,7 @@ public class TelemitryTest extends OpMode {
 	public void loop() {
 		telemetry.addData("Bridge", bridgeMotor.getCurrentPosition());
 
-		switch(motorState){
+		/*switch(motorState){
 			case "forward":
 				if (bridgeMotor.isBusy()==false){
 					bridgeMotor.setTargetPosition(-100);
@@ -76,15 +73,13 @@ public class TelemitryTest extends OpMode {
 					motorState="forward";
 				}
 				break;
-		}
+		}*/
 
 		if (bridgeMotor.isBusy()==false){
 			bridgeMotor.setPower(0);
 			bridgeMotor.setTargetPosition(0);
 			bridgeMotor.setPower(-0.25);
 		}
-
-
 		telemetry.update();
 		}
 

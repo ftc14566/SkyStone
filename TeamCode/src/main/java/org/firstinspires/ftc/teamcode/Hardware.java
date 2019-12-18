@@ -52,6 +52,7 @@ public class Hardware {
 		bridgeMotor = hardwareMap.get(DcMotor.class, "bridge");
 		bridgeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
 		graberLeft = hardwareMap.get(Servo.class, "graberLeft");
 		graberRight = hardwareMap.get(Servo.class, "graberRight");
 		graberLeft.setDirection(Servo.Direction.REVERSE);

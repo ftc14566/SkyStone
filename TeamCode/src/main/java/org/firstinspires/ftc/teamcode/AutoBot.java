@@ -30,7 +30,7 @@ public class AutoBot {
 	public void StrafeRight(double inches,double speed){
 
 		while(opMode.opModeIsActive()) {
-//			resetEncoder();
+			//resetEncoder();
 		}
 	}
 

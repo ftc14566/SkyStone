@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TeleBot {
 
-	private Hardware hardware;
+	protected Hardware hardware;
 
 	public TeleBot( Hardware hardware ){
 		this.hardware = hardware;
@@ -116,8 +116,6 @@ public class TeleBot {
 		hardware.rightTowerMotor.setPower(power);
 	}
 
-	double leftGrabberPosition;
-	double rightGrabberPosition;
 
 	private double ramp (double current, double target, double stepUpSize){
 		if(current<target){
@@ -180,32 +178,36 @@ public class TeleBot {
 
 	public void grab(boolean open,boolean close){
 
-		if(open) {
-			leftGrabberPosition = 0.5;
-			rightGrabberPosition = 0.5;
-		}
-		else if(close){
-			leftGrabberPosition =0.9;
-			rightGrabberPosition = 0.9;
-		}
 
-		hardware.graberLeft.setPosition(leftGrabberPosition);
-		hardware.graberRight.setPosition(rightGrabberPosition);
+        if(open)
+			setGrabberPos(0.5);
+
+		else if(close)
+            setGrabberPos(0.9);
+
+
 	}
+
+	private void setGrabberPos(double pos){
+        hardware.graberLeft.setPosition(pos);
+        hardware.graberRight.setPosition(pos);
+
+    }
 
 	public boolean isBlockInFront(){
 
 		return hardware.distanceSensor.getDistance(DistanceUnit.CM)<3.5;
 	}
 
-	public void Extend(boolean extend, boolean in){
-		double power=0;
-		if(extend&&!in)power=0.3;
-		if(in&&!extend)power=-0.3;
+	public void extend (boolean out, boolean in){
+		double power = 0;
+		if (out) power = 0.3;
+		if (in) power = -0.3;
 
 		hardware.bridgeMotor.setPower(power);
-	}
+		hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+	}
 	private double AdjustInputs(double x){
 		return x*x*x;
 	}
