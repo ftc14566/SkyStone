@@ -5,25 +5,25 @@ public class ParamDouble extends Param {
 	// region constructors
 
 	public ParamDouble(Config cfg){
-		super(cfg);
+		super(cfg,double.class);
 
-		// fix / assign default
-		if(label==null || label.isEmpty()) label = "double";
-		if(units==null) units="";
+		// step
+		step = cfg.step();
 		if(step == 0.0) step = 0.1; else if(step<0.0) step = -step;
+
+		// min,max
+		min = cfg.min();
+		max = cfg.max();
 		if(max<min){ double temp = max; max=min;min=temp; }
 		if(min==max) max = min + step * 100;
+
+		// display scale and format
+		displayScale = cfg.displayScale();
 		if(displayScale == 0) displayScale=1.0;
 		_format = determineFormat();
 
-		if((double)value < min) value = min;
-		if((double)value > max) value = max;
+		initialValue = clip(cfg.value());
 
-	}
-
-	ParamDouble(ParamDouble src) {
-		super(src);
-		_format = src._format;
 	}
 
 	String determineFormat(){
@@ -40,40 +40,40 @@ public class ParamDouble extends Param {
 	// endregion
 
 	@Override
-	public Object getValue() {
-		return value;
+	public Object getInitialValue() {
+		return initialValue;
 	}
 
 	@Override
-	public String getValueString(Object value) {
-		return String.format(_format, ((double)value) * displayScale) + units;
-	}
+	String getValueString(Object value){ return format((double)value); }
 
 	@Override
-	public String getRangeString(){
-		String low = String.format(_format, min*displayScale);
-		String high = String.format(_format, max*displayScale);
-		return low+" to "+high;
-	}
+	protected String getRangeString(){ return format(min)+" to "+format(max); }
 
-	@Override
-	public Class getParamType(){ return double.class; };
-
+	private String format(double value){ return String.format(_format, value*displayScale); }
 
 	@Override
 	public Object adjust(Object src, int steps){
 		if(steps==0) return src;
-		double d = (double)src + steps*this.step;
-		if(d<min) d = min; else if(d>max)d=max;
-		return d;
+		return clip( (double)src + steps*this.step );
 	}
 
+	double clip(double value){
+		if(value<min) return min;
+		if(value>max) return max;
+		return value;
+	}
 
-	@Override
-	public Param Clone() { return new ParamDouble(this); }
+	// region used by numerics
+	private double min;
+	private double max;
+	private double step;
+	private double displayScale;
+	private double initialValue;
+	// endregion
 
 	// region private fields
-	String _format;
+	private String _format;
 	// endregion
 
 

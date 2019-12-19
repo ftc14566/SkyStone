@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+// Methods for testing on FTC-Bob controller.
 public class BobBot {
 
     public BobBot(LinearOpMode opMode){

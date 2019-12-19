@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Dictionary;
 
@@ -46,14 +45,18 @@ public class MethodExplorer implements
 
 	@Override
 	public void stepSelected() {// step-index ->down-> select method
-		MethodSignature sig = stepList.getCurrentSignature();
-		if(sig != null) {
-			paramList.setMethodSignature(sig.Clone());
+		SavedMethodCall saved = stepList.getCurrentSignature();
+
+		if(saved != null) {
+			Method method = methodList.find(saved.methodKey);
+			paramList.setMethodSignature( method, saved.paramValues );
 			currentMode = paramList;
 		} else {
 			currentMode = methodList;
 		}
 	}
+	String methodKeyForParams; // temporary, until we can find way to make step list reconstitue Methods on its own.
+
 	@Override
 	public void cancelMethodSelection() {  // select method ->up-> step-index
 
@@ -63,18 +66,18 @@ public class MethodExplorer implements
 
 	@Override
 	public void selectMethod() { // select method ->down-> config-params
-		paramList.setMethodSignature(methodList.getCurrent());
+		methodKeyForParams = methodList.getSelectedKey();
+		paramList.setMethodSignature( methodList.find(methodKeyForParams) );
 		currentMode = paramList;
 	}
 
 	@Override
 	public void cancelMethodConfig() { // config-params ->up-> select method
-		MethodSignature sig = stepList.getCurrentSignature();
-		if(sig==null){
+		SavedMethodCall saved = stepList.getCurrentSignature();
+		if(saved==null)
 			currentMode = methodList;
-		} else {
+		else
 			currentMode = stepList;
-		}
 	}
 
 	@Override
@@ -84,7 +87,12 @@ public class MethodExplorer implements
 
 	@Override
 	public void saveMethodConfig() {
-		stepList.setCurrentSignature( paramList.getMethodSignature().Clone() );
+		MethodSignature sig = paramList.getMethodSignature();
+		SavedMethodCall saved = new SavedMethodCall();
+		saved.display = sig.getParamValueSummary(paramList.paramValues);
+		saved.methodKey = methodKeyForParams;
+		saved.paramValues = paramList.paramValues;
+		stepList.setCurrentSignature( saved );
 		currentMode = stepList;
 //		saveSteps();
 	}
@@ -95,7 +103,7 @@ public class MethodExplorer implements
 
 	void saveSteps(){
 		JsonBuilder builder = new JsonBuilder();
-		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
+		// !!! builder.append( stepList.steps.toArray(new MethodSignature[0]) );
 		try {
 			OutputStream o = context.openFileOutput("steps.json", Context.MODE_PRIVATE);
 			o.write(builder.toString().getBytes());
@@ -105,7 +113,7 @@ public class MethodExplorer implements
 
 	void loadSteps(){
 		JsonBuilder builder = new JsonBuilder();
-		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
+// !!!		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
 		try {
 			InputStream ii = context.openFileInput("steps.json");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(ii));

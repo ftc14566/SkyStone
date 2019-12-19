@@ -5,56 +5,47 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 public class InteractiveMethodList extends InteractiveList {
 
 	public InteractiveMethodList(CallbackListener listener){
-		_listener = listener;
+		this.listener = listener;
 	}
 
 	public void DisplayStatus(Telemetry telemetry){
 		telemetry.addData("Mode","Select Method  A:select B:cancel ");
 
 		int end = Math.min(_topOfPageIndex+LinesPerPage, _items.size()); // exclude this
-		for(int i = _topOfPageIndex; i<end; ++i){
-			String text = getMethodDisplayText(i);
-			if(i==_curIndex) text = "["+text+"]";
-			telemetry.addData(""+i, text);
+		for(int index = _topOfPageIndex; index<end; ++index){
+			String text = _items.get(index);
+			if(index==_curIndex) text = "["+text+"]";
+			telemetry.addData(""+index, text);
 		}
 		telemetry.update();
 	}
 
 	public void accessClass(Class c){
-		methodLookup = new Hashtable<String,MethodSignature>();
+		methodLookup = new Hashtable<String,Method>();
 		_items.clear();
 		final Method[] methods = c.getDeclaredMethods();
 		for(int i=0;i<methods.length;++i){
 			Method method = methods[i];
 			if(Modifier.isPublic(method.getModifiers())){
-				MethodSignature sig = new MethodSignature(method);
-				_items.add( sig );
-				methodLookup.put(sig.getKey(),sig);
+				String key = MethodSignature.formatMethodSignature(method);
+				_items.add( key );
+				methodLookup.put(key,method);
 			}
 		}
 	}
 
-	public Hashtable<String,MethodSignature> methodLookup;
+	public String getSelectedKey(){ return _items.get(_curIndex); }
 
+	public Method getCurrent(){ return find( getSelectedKey() ); }
 
-	String getMethodDisplayText(int index){
-		return _items.get(index).getName();
-	}
+	public Method find(String key){ return methodLookup.get( key ); }
 
-
-	public ArrayList<MethodSignature> _items = new ArrayList<MethodSignature>();
-	int _curIndex = 0;
-	int _topOfPageIndex = 0;
-	final static int LinesPerPage = 4;
-
-	public MethodSignature getCurrent(){ return _items.get(_curIndex);}
+	// region button presses
 
 	@Override
 	public void DpadUp_Pressed(){
@@ -71,21 +62,33 @@ public class InteractiveMethodList extends InteractiveList {
 	@Override
 	public void A_Pressed(){
 		if(_curIndex < _items.size() )
-			if(_listener!=null)
-				_listener.selectMethod();
+			if(listener !=null)
+				listener.selectMethod();
 	}
 
 	@Override
 	public void B_Pressed(){
-		if(_listener!=null)
-			_listener.cancelMethodSelection();
+		if(listener !=null)
+			listener.cancelMethodSelection();
 	}
 
-	CallbackListener _listener;
+	// endregion
+
+	CallbackListener listener;
 
 	public interface CallbackListener {
 		public void selectMethod();
 		public void cancelMethodSelection();
 	}
+
+	// region fields
+
+	Hashtable<String,Method> methodLookup;
+	public ArrayList<String> _items = new ArrayList<String>();
+	int _curIndex = 0;
+	int _topOfPageIndex = 0;
+	final static int LinesPerPage = 4;
+
+	// endregion
 
 }

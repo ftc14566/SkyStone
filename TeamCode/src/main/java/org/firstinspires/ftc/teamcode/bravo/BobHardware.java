@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import com.qualcomm.robotcore.hardware.*;
 
+// Hardware for Testing on FTC-Bob
 public class BobHardware {
 
     public static final double     COUNTS_PER_MOTOR_REV    = 288 ;

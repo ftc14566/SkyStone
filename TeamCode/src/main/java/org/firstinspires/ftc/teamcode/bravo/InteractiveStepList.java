@@ -8,7 +8,7 @@ public class InteractiveStepList extends InteractiveList {
 
 	public InteractiveStepList(CallbackListener listener){
 		this.listener = listener;
-		steps = new ArrayList<MethodSignature>();
+		steps = new ArrayList<SavedMethodCall>();
 		steps.add(0,null); // start with 1 empty slot
 	}
 
@@ -34,20 +34,21 @@ public class InteractiveStepList extends InteractiveList {
 	}
 
 	String getStepDescription(int index){
-		if(index>= steps.size()) return "end";
-		MethodSignature sig = steps.get(index);
+		if(index>= steps.size()) return "- end -";
+		SavedMethodCall sig = steps.get(index);
 		if(sig==null) return "-empty-";
-		return sig.getVerbose();
+		return sig.display;
 
 	}
 
-	public MethodSignature getCurrentSignature(){
+	public SavedMethodCall getCurrentSignature(){
 		if(curStep >= steps.size() )
 			return null; // this should never happen, nothing should ask for current step when we are on the end.
 		return steps.get(curStep);
 	}
 
-	public void setCurrentSignature(MethodSignature sig){
+
+	public void setCurrentSignature(SavedMethodCall sig){
 		steps.set(curStep,sig);
 	}
 
@@ -109,12 +110,13 @@ public class InteractiveStepList extends InteractiveList {
 
 	// Steps, current step
 	final int DisplayCount = 4;
-	ArrayList<MethodSignature> steps;
+	ArrayList<SavedMethodCall> steps;
 	int topOfPageStep = 0;
 	int curStep = 0;
 	boolean dragItem;
 	CallbackListener listener;
 
 	// endregion
+
 
 }

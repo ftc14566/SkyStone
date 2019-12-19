@@ -158,7 +158,7 @@ public class JsonParser {
         switch( SafePeekChar() ) {
             case 't': ReadString( "true" ); return true;
             case 'f': ReadString( "false" ); return false;
-            default: throw new IllegalStateException( "invalid boolean value" );
+            default: throw new IllegalStateException( "invalid boolean initialValue" );
         }
     }
 

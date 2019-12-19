@@ -5,77 +5,58 @@ public class ParamInt extends Param {
 	// region constructors
 
 	public ParamInt(Config cfg){
-		super(cfg);
-		initIntFields();
+		super(cfg,int.class);
 
-		// fix from defaults
-		if(label==null || label.isEmpty()) label ="int";
-		if(intStep == 0 ) intStep = 1; else if(intStep <0) intStep = -intStep;
-		if(intMax < intMin){ int temp = intMax; intMax = intMin; intMin = temp; }
-		if(intMin == intMax) intMax = intMin + intStep * 100;
-		if(intValue < intMin) setIntValue(intMin);
-		if(intValue > intMax) setIntValue(intMax);
+		step = (int)Math.round(cfg.step());
+		if(step == 0 ) step = 1; else if(step<0) step = -step;
+
+		min = (int)Math.round(cfg.min());
+		max = (int)Math.round(cfg.max());
+		if(max < min){ int temp = max; max = min; min = temp; }
+		if(min == max) max = min + step * 100;
+
+		displayScale = (int)Math.round(cfg.displayScale());
+
+		initialValue = clip( (int)Math.round(cfg.value() ));
+
 	}
-
-	ParamInt(ParamInt src){
-		super(src);
-		initIntFields();
-	}
-
-	void initIntFields(){
-		intValue = (int)Math.round((double)value);
-		intMin = (int)Math.round(min);
-		intMax = (int)Math.round(max);
-		intStep = (int)Math.round(step);
-	}
-
-	@Override
-	public Class getParamType(){ return int.class; };
 
 	// endregion
-
-	// keeps the double value in sync
-	private void setIntValue(int newValue){
-		intValue = newValue;
-		value = intValue;
-	}
 
 	@Override
 	public Object adjust(Object src, int steps){
 		if(steps==0) return src;
-		int i = (int)src * steps*this.intStep;
-		if(i<intMin) i = intMin; else if(i>intMax) i = intMax;
-		return i;
+		return clip( (int)src * steps*this.step );
 	}
 
-
-	@Override
-	public Object getValue() {
-		return intValue;
-	}
-
-	@Override
-	public String getValueString(Object value) {
-		return ((int)value)+units;
+	int clip(int value){
+		if(value<min) return min;
+		if(value>max) return max;
+		return value;
 	}
 
 	@Override
-	public String getRangeString() {
-		return intMin + " to " + intMax;
+	String getValueString(Object value){ return format((int)value ); }
+
+	String format(int i){ return (i* displayScale)+""; }
+
+	@Override
+	public Object getInitialValue() {
+		return initialValue;
 	}
 
 	@Override
-	public Param Clone() {
-		return new ParamInt(this);
+	protected String getRangeString() {
+		return format(min) + " to " + format(max);
 	}
 
 	// region private fields
 
-	int intValue;
-	int intMin;
-	int intMax;
-	int intStep;
-
+	int initialValue;
+	int min;
+	int max;
+	int step;
+	int displayScale;
 	// endregion
 
 

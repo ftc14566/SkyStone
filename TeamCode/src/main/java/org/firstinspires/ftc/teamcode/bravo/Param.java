@@ -2,81 +2,81 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-// Base class for different types of parameters
-// Matches Config annotation directly.
-// Pulling all derived requirements into the base class simplifies serialization/deserialization significantly
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 public abstract class Param {
 
+	// region factory
+
+	static public Param[] scanMethodParameters(Method method){
+
+		// init Parameters from Annotations on method
+		Class<?>[] parameterTypes = method.getParameterTypes();
+		Annotation[][] annotations = method.getParameterAnnotations();
+
+		if (annotations.length != parameterTypes.length)
+			throw new IllegalStateException("annotation length does not match params length");
+
+		Param[] params = new Param[parameterTypes.length];
+		for (int i = 0; i < params.length; ++i)
+			params[i] = Param.ConstructParamConfig(parameterTypes[i], annotations[i]);
+		return params;
+	}
+
+	static private Param ConstructParamConfig(Class<?> paramClass, Annotation[] annotations){
+		Config cfg = FindConfigAnnotation(annotations);
+		if(paramClass==double.class) return new ParamDouble(cfg);
+		if(paramClass==boolean.class) return new ParamBoolean(cfg);
+		if(paramClass==int.class) return new ParamInt(cfg);
+		throw new IllegalStateException("Cannot auto-configure parameter of type:"+paramClass.getName());
+	}
+
+	static private Config FindConfigAnnotation(Annotation[] annotations){
+		for(int i=0;i<annotations.length;++i){
+			Annotation a = annotations[i];
+			Class<?> aType = a.annotationType();
+			if(aType == Config.class)
+				return (Config)a;
+		}
+		return null;
+	}
+
+	// endregion
+
 	// region constructors
 
-	// from annotation
-	public Param(Config cfg){
-		if(cfg==null)return;
-		label = cfg.label();
-		units = cfg.units();
-		value = cfg.value();
-		min = cfg.min();
-		max = cfg.max();
-		step = cfg.step();
-		displayScale = cfg.displayScale();
-		isTrue = cfg.isTrue();
-		trueString = cfg.trueString();
-		falseString = cfg.falseString();
-	}
+	public Param(Config cfg,Class parameterType){
+		this.parameterType = parameterType;
+		if(cfg!=null){
+			label = cfg.label();
+			units = cfg.units();
+		}
+		if(units==null) units="";
+		if(label==null||label.isEmpty()) label = this.parameterType.getName();
 
-	// copy constructor
-	public Param(Param p){
-		label = p.label;
-		units = p.units;
-		value = p.value;
-		min = p.min;
-		max = p.max;
-		step = p.step;
-		displayScale = p.displayScale;
-		isTrue = p.isTrue;
-		trueString = p.trueString;
-		falseString = p.falseString;
 	}
 
 	// endregion
 
-	abstract Object getValue(); // switch to initial value
+	public String getValueWithUnits(Object value){ return getValueString(value)+units; }
 	abstract String getValueString(Object value);
-	abstract String getRangeString();
-	abstract Class getParamType();
-	abstract Param Clone(); // won't need soon
+	abstract public Object adjust(Object value, int steps);
 
-	abstract public Object adjust(Object src, int steps);
+	abstract Object getInitialValue();
+	abstract protected String getRangeString();
+	Class getParamType(){ return parameterType; }
 
-
-	public void addParamToTelemetry(Telemetry telemetry, Object value, boolean selected){
-		telemetry.addData(label,selected ? getValueAndRange(value) : getValueString(value));
+	void addParamToTelemetry(Telemetry telemetry, Object value, boolean selected){
+		String s = getValueWithUnits(value);
+		if(selected) s = "["+s+"] (" + getRangeString() + ")";
+		telemetry.addData(label,s);
 	}
 
-	String getValueAndRange(Object value){ return "["+getValueString(value) + "] (" + getRangeString() + ")"; }
-
-	// region fields
-
-	// region used by all
-	protected String label;
-	protected String units;
+	// region private fields
+	private String units;
+	private String label;
+	private Class parameterType;
 	// endregion
-
-	// region used by numerics
-	protected double min;
-	protected double max;
-	protected double step;
-	protected double displayScale;
-	// endregion
-
-	// region used by boolean
-	protected boolean isTrue;
-	protected String trueString;
-	protected String falseString;
-
-	// endregion
-
-	public Object value;
 
 }

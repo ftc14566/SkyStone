@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Bob Mode", group="Testing")
+@Autonomous(name="FTC-Bob Testing", group="dean")
 public class BobMode extends LinearOpMode {
 
 	@Override

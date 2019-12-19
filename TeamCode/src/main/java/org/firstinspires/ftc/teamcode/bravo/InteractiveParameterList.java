@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.lang.reflect.Method;
+
 import static java.lang.System.currentTimeMillis;
 
 public class InteractiveParameterList extends InteractiveList {
@@ -18,19 +20,26 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DisplayStatus(Telemetry telemetry){
-		telemetry.addData("Mode","Enter Param Values for:"+ _signature.getName());
+		telemetry.addData("Mode","Enter Param Values for:"+ methodDescription);
 
 		int end = Math.min(_topOfPageIndex+LinesPerPage, _signature.params.length); // exclude end-index
-		for(int i = _topOfPageIndex; i<end; ++i){
-			Param p = _signature.params[i];
-			p.addParamToTelemetry(telemetry,p.value, i==_curIndex);
-		}
+		for(int i = _topOfPageIndex; i<end; ++i)
+			_signature.params[i].addParamToTelemetry(telemetry,paramValues[i], i==_curIndex);
 		telemetry.update();
 	}
 
-	public void setMethodSignature(MethodSignature methodData){
+	public void setMethodSignature(Method method){
 		_curIndex = 0;
-		_signature = methodData;
+		_signature = new MethodSignature(method);
+		this.paramValues = _signature.getInitialParamValues();
+		methodDescription=MethodSignature.formatMethodSignature(method);
+	}
+
+	public void setMethodSignature(Method method, Object[] paramValues){
+		_curIndex = 0;
+		_signature = new MethodSignature(method);
+		this.paramValues = paramValues;
+		methodDescription=MethodSignature.formatMethodSignature(method);
 	}
 
 	public MethodSignature getMethodSignature(){
@@ -38,7 +47,7 @@ public class InteractiveParameterList extends InteractiveList {
 	}
 
 	public void execute(Object o){
-		_signature.execute(o);
+		_signature.execute(o,paramValues);
 	}
 
 	// region button presses
@@ -59,15 +68,15 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DpadLeft_Pressed(){
-		Param p = getCurParam();
-		p.value = p.adjust(p.value,-1);
+		paramValues[_curIndex] = _signature.params[_curIndex]
+				.adjust(paramValues[_curIndex],-1);
 		trackPressedTime();
 	}
 
 	@Override
 	public void DpadRight_Pressed(){
-		Param p = getCurParam();
-		p.value = p.adjust(p.value,1);
+		paramValues[_curIndex] = _signature.params[_curIndex]
+				.adjust(paramValues[_curIndex],1);
 		trackPressedTime();
 	}
 
@@ -93,7 +102,7 @@ public class InteractiveParameterList extends InteractiveList {
 		Param cur = getCurParam();
 		while( _startRepeatingAtThisTime < now){
 			_startRepeatingAtThisTime += AutoPressTime;
-			cur.value = cur.adjust(cur.value,stepCount);
+			paramValues[_curIndex] = cur.adjust( paramValues[_curIndex], stepCount );
 		}
 	}
 	private double _startRepeatingAtThisTime;
@@ -103,19 +112,24 @@ public class InteractiveParameterList extends InteractiveList {
 	//region interface
 
 	public interface CallbackListener {
-		void executeMethod();
+		void executeMethod(); //
 		void saveMethodConfig();
 		void cancelMethodConfig();
 	}
 
 	//endregion
 
+
+
 	//region private fields
 
 	private int _topOfPageIndex = 0;
 	private int _curIndex = 0;
 	private static final int LinesPerPage = 4;
+	private String methodDescription; // used internally
+
 	private MethodSignature _signature;
+	public Object[] paramValues;
 
 	CallbackListener _listener;
 

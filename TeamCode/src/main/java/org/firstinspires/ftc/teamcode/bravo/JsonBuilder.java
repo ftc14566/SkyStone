@@ -17,49 +17,6 @@ public class JsonBuilder {
         this.buf = builder;
     }
 
-    public void append( MethodSignature[] steps ){
-        buf.append('[');
-        for(int i=0;i<steps.length;++i){
-            if(i!=0) buf.append("\r\n\t,");
-            append(steps[i]);
-        }
-    }
-
-    public void append( MethodSignature sig ){
-        if(sig==null){ appendNull(); return; }
-
-        buf.append('{');
-        appendProperyPrefix("method");
-        appendString(sig.getName());
-        comma();
-        append(sig.params);
-        buf.append('}');
-    }
-
-    public void append( Param[] param ) {
-        buf.append('[');
-        for(int i=0;i<param.length;++i){
-            if(i!=0) comma();
-            append(param[i]);
-        }
-        buf.append(']');
-    }
-
-    public void append( Param param ){
-        buf.append('{');
-        appendProperty("value", (double)param.value); comma();
-        appendProperty("isTrue", param.isTrue); comma();
-//        appendProperty("label",param.label);
-//        appendProperty("units", param.units); comma();
-//        appendProperty("min", param.min); comma();
-//      appendProperty("max", param.max); comma();
-//        appendProperty("step", param.step); comma();
-//        appendProperty("displayScale", param.displayScale); comma();
-//        appendProperty("trueString", param.trueString); comma();
-//        appendProperty("falseString",param.falseString);
-        buf.append('}');
-    }
-
     // region appendProperty
 
     public void appendProperyPrefix(String name){
