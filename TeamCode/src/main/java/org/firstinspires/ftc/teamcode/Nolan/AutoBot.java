@@ -1,19 +1,15 @@
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Nolan;
 
-import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Hardware;
 
 public class AutoBot {
 
-	public AutoBot( Hardware hardware, LinearOpMode mode ) {
+	public AutoBot(Hardware hardware, LinearOpMode mode) {
 		this.hardware = hardware;
 		this.opMode = mode;
 	}
@@ -21,21 +17,20 @@ public class AutoBot {
 	private Hardware hardware;
 	private LinearOpMode opMode;
 
-	public void waitUntilRunTime(int time){
-			while(opMode.opModeIsActive() && time < opMode.getRuntime()){
+	public void waitUntilRunTime(int time) {
+		while (opMode.opModeIsActive() && time < opMode.getRuntime()) {
 			opMode.sleep(50);
-			}
+		}
 	}
 
-	public void grabFoundation(){
+	public void grabFoundation() {
 		//hardware.foundationServoLeft.setPosition(1);
 		//hardware.foundationServoRight.setPosition(1);
 	}
 
 
-	public  void releaseFoundation(){
+	public void releaseFoundation() {
 		//hardware.foundationServoLeft.setPosition(0);
 		//hardware.foundationServoRight.setPosition(0);
 	}
-
 }
