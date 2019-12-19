@@ -23,7 +23,7 @@ public class ParamInt extends Param {
 	}
 
 	void initIntFields(){
-		intValue = (int)Math.round(value);
+		intValue = (int)Math.round((double)value);
 		intMin = (int)Math.round(min);
 		intMax = (int)Math.round(max);
 		intStep = (int)Math.round(step);
@@ -38,10 +38,13 @@ public class ParamInt extends Param {
 	}
 
 	@Override
-	public void inc() { setIntValue( Math.min(intMax, intValue + intStep) ); }
+	public Object adjust(Object src, int steps){
+		if(steps==0) return src;
+		int i = (int)src * steps*this.intStep;
+		if(i<intMin) i = intMin; else if(i>intMax) i = intMax;
+		return i;
+	}
 
-	@Override
-	public void dec() { setIntValue( Math.max(intMin, intValue - intStep) ); }
 
 	@Override
 	public Object getValue() {

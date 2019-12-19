@@ -37,12 +37,13 @@ public abstract class Param {
 		falseString = p.falseString;
 	}
 
-	abstract void inc();
-	abstract void dec();
 	abstract Object getValue();
 	abstract String getValueString();
 	abstract String getRangeString();
 	abstract Param Clone();
+
+	abstract public Object adjust(Object src, int steps);
+
 
 	public void addParamToTelemetry(Telemetry telemetry, boolean selected){
 		telemetry.addData(label,selected ? getValueAndRange() : getValueString());
@@ -60,7 +61,6 @@ public abstract class Param {
 	// endregion
 
 	// region used by numerics
-	protected double value;
 	protected double min;
 	protected double max;
 	protected double step;
@@ -72,5 +72,6 @@ public abstract class Param {
 	protected String trueString;
 	protected String falseString;
 
+	public Object value;
 
 }

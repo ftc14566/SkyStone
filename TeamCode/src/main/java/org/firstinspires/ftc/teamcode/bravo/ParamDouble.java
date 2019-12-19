@@ -13,11 +13,12 @@ public class ParamDouble extends Param {
 		if(step == 0.0) step = 0.1; else if(step<0.0) step = -step;
 		if(max<min){ double temp = max; max=min;min=temp; }
 		if(min==max) max = min + step * 100;
-		if(value < min) value = min;
-		if(value > max) value = max;
 		if(displayScale == 0) displayScale=1.0;
-
 		_format = determineFormat();
+
+		if((double)value < min) value = min;
+		if((double)value > max) value = max;
+
 	}
 
 	ParamDouble(ParamDouble src) {
@@ -45,7 +46,7 @@ public class ParamDouble extends Param {
 
 	@Override
 	public String getValueString() {
-		return String.format(_format, value * displayScale) + units;
+		return String.format(_format, ((double)value) * displayScale) + units;
 	}
 
 	@Override
@@ -56,14 +57,13 @@ public class ParamDouble extends Param {
 	}
 
 	@Override
-	public void inc() {
-		value = Math.min(value +step,max);
+	public Object adjust(Object src, int steps){
+		if(steps==0) return src;
+		double d = (double)src + steps*this.step;
+		if(d<min) d = min; else if(d>max)d=max;
+		return d;
 	}
 
-	@Override
-	public void dec() {
-		value = Math.max(value -step,min);
-	}
 
 	@Override
 	public Param Clone() { return new ParamDouble(this); }

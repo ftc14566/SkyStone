@@ -77,7 +77,9 @@ public class AutoDrive {
         hardware.rearRightDrive.setPower(speed);
 
         //double startTime = opMode.getRuntime();
-        while((inches <= hardware.distanceSensor.getDistance(DistanceUnit.INCH))){
+        while(
+                (inches <= hardware.distanceSensor.getDistance(DistanceUnit.INCH))
+        ){
             opMode.telemetry.addData("distance inch", hardware.distanceSensor.getDistance(DistanceUnit.INCH));
             opMode.telemetry.update();
 

@@ -56,10 +56,18 @@ public class InteractiveParameterList extends InteractiveList {
 	Param getCurParam(){ return _signature.params[_curIndex]; }
 
 	@Override
-	public void DpadLeft_Pressed(){ getCurParam().dec(); trackPressedTime(); }
+	public void DpadLeft_Pressed(){
+		Param p = getCurParam();
+		p.value = p.adjust(p.value,-1);
+		trackPressedTime();
+	}
 
 	@Override
-	public void DpadRight_Pressed(){ getCurParam().inc(); trackPressedTime(); }
+	public void DpadRight_Pressed(){
+		Param p = getCurParam();
+		p.value = p.adjust(p.value,1);
+		trackPressedTime();
+	}
 
 	@Override
 	public void B_Pressed() { _listener.cancelMethodConfig(); }
@@ -78,12 +86,12 @@ public class InteractiveParameterList extends InteractiveList {
 	public void doOtherWork(Gamepad gamepad){
 		// When left or righ dpad held down, auto-inc/dec 10 times a second.s
 		if(!gamepad.dpad_left && !gamepad.dpad_right) return;
-		boolean doInc = gamepad.dpad_right;
+		int stepCount = gamepad.dpad_right ? 1 : 1;
 		double now = currentTimeMillis();
 		Param cur = getCurParam();
 		while( _startRepeatingAtThisTime < now){
 			_startRepeatingAtThisTime += AutoPressTime;
-			if(doInc) cur.inc(); else cur.dec();
+			cur.value = cur.adjust(cur.value,stepCount);
 		}
 	}
 	private double _startRepeatingAtThisTime;

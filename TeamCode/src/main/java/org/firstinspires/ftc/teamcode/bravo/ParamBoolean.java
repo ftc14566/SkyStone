@@ -17,14 +17,9 @@ public class ParamBoolean extends Param {
 
 	// endregion
 
-	@Override
-	public void inc() {
-		isTrue = true;
-	}
-
-	@Override
-	public void dec() {
-		isTrue = false;
+	public Object adjust(Object src, int steps){
+		if(steps==0) return src;
+		return (steps<0) ? false : true;
 	}
 
 	public String getRangeString(){

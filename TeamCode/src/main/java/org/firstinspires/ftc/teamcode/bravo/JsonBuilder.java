@@ -47,7 +47,7 @@ public class JsonBuilder {
 
     public void append( Param param ){
         buf.append('{');
-        appendProperty("value", param.value); comma();
+        appendProperty("value", (double)param.value); comma();
         appendProperty("isTrue", param.isTrue); comma();
 //        appendProperty("label",param.label);
 //        appendProperty("units", param.units); comma();
