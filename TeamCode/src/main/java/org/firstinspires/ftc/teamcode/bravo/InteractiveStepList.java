@@ -13,7 +13,7 @@ public class InteractiveStepList extends InteractiveList {
 	}
 
 	public interface CallbackListener {
-		void stepSelected();
+		void stepSelected(MethodBinding binding);
 	}
 
 	@Override
@@ -41,15 +41,20 @@ public class InteractiveStepList extends InteractiveList {
 
 	}
 
-	public SavedMethodCall getCurrentSignature(){
-		if(curStep >= steps.size() )
-			return null; // this should never happen, nothing should ask for current step when we are on the end.
-		return steps.get(curStep);
+	public boolean bindingSelected(){
+		return curStep < steps.size()
+				&& steps.get(curStep) != null;
 	}
 
+	public void setCurrentSignature(MethodBinding binding){
 
-	public void setCurrentSignature(SavedMethodCall sig){
-		steps.set(curStep,sig);
+		MethodSignature sig = methodManager.find(binding.method);
+		SavedMethodCall saved = new SavedMethodCall();
+		saved.methodKey   = sig.methodString;
+		saved.display     = sig.getParamValueSummary(binding.paramValues);
+		saved.paramValues = binding.paramValues;
+
+		steps.set(curStep,saved);
 	}
 
 	// region button handlers
@@ -88,7 +93,16 @@ public class InteractiveStepList extends InteractiveList {
 
 	@Override
 	public void A_Pressed() { // select
-		if(listener != null && curStep < steps.size()) listener.stepSelected();
+		if(listener != null && curStep < steps.size()){
+			SavedMethodCall step = steps.get(curStep);
+			MethodBinding binding = null;
+			if(step != null){
+				binding = new MethodBinding();
+				binding.method = methodManager.find(step.methodKey).method;
+				binding.paramValues = step.paramValues;
+			}
+			listener.stepSelected(binding);
+		}
 	}
 
 	@Override
@@ -106,6 +120,10 @@ public class InteractiveStepList extends InteractiveList {
 
 	// endregion
 
+	public void accessClass(MethodManager methodManager) {
+		this.methodManager = methodManager;
+	}
+
 	// region private fields
 
 	// Steps, current step
@@ -115,6 +133,7 @@ public class InteractiveStepList extends InteractiveList {
 	int curStep = 0;
 	boolean dragItem;
 	CallbackListener listener;
+	MethodManager methodManager;
 
 	// endregion
 

@@ -1,37 +1,20 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 
 
 public class MethodSignature {
 
-	// region constructors
-
 	public MethodSignature(Method method){
+		// part 1
 		this.method = method;
-		params = Param.scanMethodParameters(method);
-	}
-
-	// endregion
-
-	public void execute(Object host, Object[] paramValues){
-		try{
-			method.invoke(host,paramValues);
-		} catch(IllegalAccessException ex){
-
-		} catch(InvocationTargetException ex){
-
-		}
-	}
-
-	public String getParamValueSummary(Object[] paramValues){
-		String s = method.getName()+"(";
-		for(int i = 0; i< params.length; ++i){
-			if(i!=0) s+=",";
-			s += params[i].getValueWithUnits(paramValues[i]);
-		}
-		return s+")";
+		// part 2
+		this.name = method.getName();
+		this.params = Param.scanMethodParameters(method);
+		// part 3
+		methodString = formatMethodSignature(method);
 	}
 
 	public Object[] getInitialParamValues(){
@@ -41,7 +24,16 @@ public class MethodSignature {
 		return initialValues;
 	}
 
-	public static String formatMethodSignature(Method method){
+	public String getParamValueSummary(Object[] paramValues){
+		String s = name+"(";
+		for(int i = 0; i< params.length; ++i){
+			if(i!=0) s+=",";
+			s += params[i].getValueWithUnits(paramValues[i]);
+		}
+		return s+")";
+	}
+
+	private static String formatMethodSignature(Method method){
 		StringBuilder buf = new StringBuilder();
 		buf.append(method.getName());
 		buf.append('(');
@@ -54,7 +46,12 @@ public class MethodSignature {
 		return buf.toString();
 	}
 
-	Param[] params; // accessed by interactive parameter list
-	private Method method;
+	public final Method method;
+	public final String methodString;
+
+	private final String name;
+	public final Param[] params;
 
 }
+
+

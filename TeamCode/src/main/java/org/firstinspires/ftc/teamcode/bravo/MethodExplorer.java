@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Dictionary;
 
@@ -27,14 +26,17 @@ public class MethodExplorer implements
 		// modes
 		stepList = new InteractiveStepList(this);
 		methodList = new InteractiveMethodList(this);
-		paramList = new InteractiveParameterList(this); // does not depend on target
+		paramList = new InteractiveParameterList(this);
 		currentMode = stepList;
 
 	}
 
 	public void setTarget(Object target){
 		this.target = target;
-		methodList.accessClass(target.getClass());
+		MethodManager mgr = new MethodManager(target.getClass());
+		methodList.accessClass(mgr);
+		stepList.accessClass(mgr);
+		paramList.accessClass(mgr);
 	}
 
 	public void displayStatus(Telemetry telemetry){
@@ -44,55 +46,44 @@ public class MethodExplorer implements
 	// region callbacks
 
 	@Override
-	public void stepSelected() {// step-index ->down-> select method
-		SavedMethodCall saved = stepList.getCurrentSignature();
+	public void stepSelected(MethodBinding binding) {// step-index ->down-> select method
 
-		if(saved != null) {
-			Method method = methodList.find(saved.methodKey);
-			paramList.setMethodSignature( method, saved.paramValues );
+		if(binding != null) {
+			paramList.setBinding( binding );
 			currentMode = paramList;
 		} else {
 			currentMode = methodList;
 		}
 	}
-	String methodKeyForParams; // temporary, until we can find way to make step list reconstitue Methods on its own.
 
 	@Override
 	public void cancelMethodSelection() {  // select method ->up-> step-index
-
 		currentMode = stepList;
 	}
 
-
 	@Override
-	public void selectMethod() { // select method ->down-> config-params
-		methodKeyForParams = methodList.getSelectedKey();
-		paramList.setMethodSignature( methodList.find(methodKeyForParams) );
+	public void selectMethod( MethodBinding binding ) { // select method ->down-> config-params
+		paramList.setBinding( binding );
 		currentMode = paramList;
 	}
 
 	@Override
 	public void cancelMethodConfig() { // config-params ->up-> select method
-		SavedMethodCall saved = stepList.getCurrentSignature();
-		if(saved==null)
-			currentMode = methodList;
-		else
+		if( stepList.bindingSelected() )
 			currentMode = stepList;
+		else
+			currentMode = methodList;
 	}
 
 	@Override
-	public void executeMethod() {
-		paramList.execute(target);
+	public void executeMethod(MethodBinding binding) {
+		binding.executeOn(target);
 	}
 
 	@Override
-	public void saveMethodConfig() {
-		MethodSignature sig = paramList.getMethodSignature();
-		SavedMethodCall saved = new SavedMethodCall();
-		saved.display = sig.getParamValueSummary(paramList.paramValues);
-		saved.methodKey = methodKeyForParams;
-		saved.paramValues = paramList.paramValues;
-		stepList.setCurrentSignature( saved );
+	public void saveMethodConfig(MethodBinding binding) {
+
+		stepList.setCurrentSignature( binding );
 		currentMode = stepList;
 //		saveSteps();
 	}

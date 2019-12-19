@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import java.lang.reflect.Method;
-
 import static java.lang.System.currentTimeMillis;
 
 public class InteractiveParameterList extends InteractiveList {
@@ -13,81 +11,75 @@ public class InteractiveParameterList extends InteractiveList {
 	// region consturctor
 
 	public InteractiveParameterList(CallbackListener listener){
-		_listener = listener;
+		this.listener = listener;
 	}
 
 	// endregion
 
+	public void setBinding(MethodBinding binding){
+		curIndex = 0;
+		this.binding = binding;
+		MethodSignature sig = methodManager.find(binding.method);
+		title = sig.methodString;
+		params = sig.params;
+	}
+
+	public interface CallbackListener {
+		void executeMethod(MethodBinding binding); //
+		void saveMethodConfig(MethodBinding binding);
+		void cancelMethodConfig();
+	}
+
+	// region interface InteractiveList
+
 	@Override
 	public void DisplayStatus(Telemetry telemetry){
-		telemetry.addData("Mode","Enter Param Values for:"+ methodDescription);
+		telemetry.addData("Mode","Enter Param Values for:"+ title);
 
-		int end = Math.min(_topOfPageIndex+LinesPerPage, _signature.params.length); // exclude end-index
-		for(int i = _topOfPageIndex; i<end; ++i)
-			_signature.params[i].addParamToTelemetry(telemetry,paramValues[i], i==_curIndex);
+		int end = Math.min(topOfPageIndex +LinesPerPage, params.length); // exclude end-index
+		for(int i = topOfPageIndex; i<end; ++i)
+			params[i].addParamToTelemetry(telemetry,binding.paramValues[i], i== curIndex);
 		telemetry.update();
 	}
 
-	public void setMethodSignature(Method method){
-		_curIndex = 0;
-		_signature = new MethodSignature(method);
-		this.paramValues = _signature.getInitialParamValues();
-		methodDescription=MethodSignature.formatMethodSignature(method);
-	}
-
-	public void setMethodSignature(Method method, Object[] paramValues){
-		_curIndex = 0;
-		_signature = new MethodSignature(method);
-		this.paramValues = paramValues;
-		methodDescription=MethodSignature.formatMethodSignature(method);
-	}
-
-	public MethodSignature getMethodSignature(){
-		return _signature;
-	}
-
-	public void execute(Object o){
-		_signature.execute(o,paramValues);
-	}
-
-	// region button presses
-
 	@Override
 	public void DpadUp_Pressed(){
-		if(_curIndex>0) _curIndex--;
-		if(_topOfPageIndex<_curIndex+1-LinesPerPage) _topOfPageIndex=_curIndex+1-LinesPerPage;
+		if(curIndex >0) curIndex--;
+		if(topOfPageIndex < curIndex +1-LinesPerPage) topOfPageIndex = curIndex +1-LinesPerPage;
 	}
 
 	@Override
 	public void DpadDown_Pressed(){
-		if(_curIndex< _signature.params.length-1) _curIndex++;
-		if(_topOfPageIndex>_curIndex) _topOfPageIndex=_curIndex;
+		if(curIndex < params.length-1) curIndex++;
+		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
 	}
-
-	Param getCurParam(){ return _signature.params[_curIndex]; }
 
 	@Override
 	public void DpadLeft_Pressed(){
-		paramValues[_curIndex] = _signature.params[_curIndex]
-				.adjust(paramValues[_curIndex],-1);
+		binding.paramValues[curIndex] = params[curIndex]
+				.adjust(binding.paramValues[curIndex],-1);
 		trackPressedTime();
 	}
 
 	@Override
 	public void DpadRight_Pressed(){
-		paramValues[_curIndex] = _signature.params[_curIndex]
-				.adjust(paramValues[_curIndex],1);
+		binding.paramValues[curIndex] = params[curIndex]
+				.adjust(binding.paramValues[curIndex],1);
 		trackPressedTime();
 	}
 
 	@Override
-	public void B_Pressed() { _listener.cancelMethodConfig(); }
+	public void B_Pressed() { listener.cancelMethodConfig(); }
 
 	@Override
-	public void A_Pressed() { _listener.executeMethod(); }
+	public void A_Pressed() {
+		listener.executeMethod( binding );
+	}
 
 	@Override
-	public void LeftBumper_Pressed() { _listener.saveMethodConfig(); }
+	public void LeftBumper_Pressed() {
+		listener.saveMethodConfig( binding );
+	}
 
 	final double PreRepeatWaitTime = 1000; // wait 1 second before speeding up
 	final double AutoPressTime = 70; // once every 70ms
@@ -99,39 +91,33 @@ public class InteractiveParameterList extends InteractiveList {
 		if(!gamepad.dpad_left && !gamepad.dpad_right) return;
 		int stepCount = gamepad.dpad_right ? 1 : 1;
 		double now = currentTimeMillis();
-		Param cur = getCurParam();
+		Param cur =  params[curIndex];
 		while( _startRepeatingAtThisTime < now){
 			_startRepeatingAtThisTime += AutoPressTime;
-			paramValues[_curIndex] = cur.adjust( paramValues[_curIndex], stepCount );
+			binding.paramValues[curIndex] = cur.adjust( binding.paramValues[curIndex], stepCount );
 		}
 	}
 	private double _startRepeatingAtThisTime;
 
-	//endregion
-
-	//region interface
-
-	public interface CallbackListener {
-		void executeMethod(); //
-		void saveMethodConfig();
-		void cancelMethodConfig();
+	public void accessClass(MethodManager methodManager) {
+		this.methodManager = methodManager;
 	}
 
 	//endregion
 
-
-
 	//region private fields
 
-	private int _topOfPageIndex = 0;
-	private int _curIndex = 0;
+	private int topOfPageIndex = 0;
+	private int curIndex = 0;
 	private static final int LinesPerPage = 4;
-	private String methodDescription; // used internally
+	private String title; // used internally
 
-	private MethodSignature _signature;
-	public Object[] paramValues;
+	private Param[] params;
+	private MethodBinding binding;
 
-	CallbackListener _listener;
+	private MethodManager methodManager;
+
+	CallbackListener listener;
 
 	//endregion
 
