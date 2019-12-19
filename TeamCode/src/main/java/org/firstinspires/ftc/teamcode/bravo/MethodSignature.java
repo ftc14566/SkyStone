@@ -63,6 +63,18 @@ public class MethodSignature {
 		return name;
 	}
 
+	public String getKey(){
+		StringBuilder buf = new StringBuilder();
+		buf.append(name);
+		buf.append('(');
+		for(int i=0;i<params.length;++i){
+			if(i!=0) buf.append(',');
+			buf.append(params[i].getParamType().getName());
+		}
+		buf.append(')');
+		return buf.toString();
+	}
+
 	public void execute(Object host){
 		try{
 
@@ -90,7 +102,7 @@ public class MethodSignature {
 		String s = getName()+"(";
 		for(int i = 0; i< params.length; ++i){
 			if(i!=0) s+=",";
-			s += params[i].getValueString();
+			s += params[i].getValueString(params[i].value);
 		}
 		return s+")";
 	}

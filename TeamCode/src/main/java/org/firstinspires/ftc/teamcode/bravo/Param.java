@@ -8,6 +8,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public abstract class Param {
 
+	// region constructors
+
 	// from annotation
 	public Param(Config cfg){
 		if(cfg==null)return;
@@ -37,23 +39,24 @@ public abstract class Param {
 		falseString = p.falseString;
 	}
 
-	abstract Object getValue();
-	abstract String getValueString();
+	// endregion
+
+	abstract Object getValue(); // switch to initial value
+	abstract String getValueString(Object value);
 	abstract String getRangeString();
-	abstract Param Clone();
+	abstract Class getParamType();
+	abstract Param Clone(); // won't need soon
 
 	abstract public Object adjust(Object src, int steps);
 
 
-	public void addParamToTelemetry(Telemetry telemetry, boolean selected){
-		telemetry.addData(label,selected ? getValueAndRange() : getValueString());
+	public void addParamToTelemetry(Telemetry telemetry, Object value, boolean selected){
+		telemetry.addData(label,selected ? getValueAndRange(value) : getValueString(value));
 	}
 
-	String getValueAndRange(){ return "["+getValueString() + "] (" + getRangeString() + ")"; }
+	String getValueAndRange(Object value){ return "["+getValueString(value) + "] (" + getRangeString() + ")"; }
 
-	// ! pushing all derived class functionality down into base class to simplify:
-	//   initialization, serialization, deserialization
-	// Besides, there are a very limited number of parameter types.
+	// region fields
 
 	// region used by all
 	protected String label;
@@ -71,6 +74,8 @@ public abstract class Param {
 	protected boolean isTrue;
 	protected String trueString;
 	protected String falseString;
+
+	// endregion
 
 	public Object value;
 

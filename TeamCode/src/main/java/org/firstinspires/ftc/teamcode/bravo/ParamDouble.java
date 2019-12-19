@@ -45,7 +45,7 @@ public class ParamDouble extends Param {
 	}
 
 	@Override
-	public String getValueString() {
+	public String getValueString(Object value) {
 		return String.format(_format, ((double)value) * displayScale) + units;
 	}
 
@@ -55,6 +55,10 @@ public class ParamDouble extends Param {
 		String high = String.format(_format, max*displayScale);
 		return low+" to "+high;
 	}
+
+	@Override
+	public Class getParamType(){ return double.class; };
+
 
 	@Override
 	public Object adjust(Object src, int steps){

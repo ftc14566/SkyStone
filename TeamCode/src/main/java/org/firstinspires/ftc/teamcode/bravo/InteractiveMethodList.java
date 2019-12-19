@@ -5,6 +5,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 public class InteractiveMethodList extends InteractiveList {
 
@@ -25,6 +28,7 @@ public class InteractiveMethodList extends InteractiveList {
 	}
 
 	public void accessClass(Class c){
+		methodLookup = new Hashtable<String,MethodSignature>();
 		_items.clear();
 		final Method[] methods = c.getDeclaredMethods();
 		for(int i=0;i<methods.length;++i){
@@ -32,9 +36,12 @@ public class InteractiveMethodList extends InteractiveList {
 			if(Modifier.isPublic(method.getModifiers())){
 				MethodSignature sig = new MethodSignature(method);
 				_items.add( sig );
+				methodLookup.put(sig.getKey(),sig);
 			}
 		}
 	}
+
+	public Hashtable<String,MethodSignature> methodLookup;
 
 
 	String getMethodDisplayText(int index){

@@ -21,8 +21,10 @@ public class InteractiveParameterList extends InteractiveList {
 		telemetry.addData("Mode","Enter Param Values for:"+ _signature.getName());
 
 		int end = Math.min(_topOfPageIndex+LinesPerPage, _signature.params.length); // exclude end-index
-		for(int i = _topOfPageIndex; i<end; ++i)
-			_signature.params[i].addParamToTelemetry(telemetry,i==_curIndex);
+		for(int i = _topOfPageIndex; i<end; ++i){
+			Param p = _signature.params[i];
+			p.addParamToTelemetry(telemetry,p.value, i==_curIndex);
+		}
 		telemetry.update();
 	}
 

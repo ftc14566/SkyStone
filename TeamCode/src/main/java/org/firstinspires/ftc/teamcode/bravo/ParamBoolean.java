@@ -17,6 +17,10 @@ public class ParamBoolean extends Param {
 
 	// endregion
 
+	@Override
+	public Class getParamType(){ return boolean.class; };
+
+
 	public Object adjust(Object src, int steps){
 		if(steps==0) return src;
 		return (steps<0) ? false : true;
@@ -32,8 +36,8 @@ public class ParamBoolean extends Param {
 	}
 
 	@Override
-	public String getValueString(){
-		return isTrue ? trueString : falseString;
+	public String getValueString(Object value){
+		return ((boolean)value) ? trueString : falseString;
 	}
 
 	@Override

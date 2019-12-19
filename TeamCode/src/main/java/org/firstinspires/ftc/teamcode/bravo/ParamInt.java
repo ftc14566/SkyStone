@@ -29,6 +29,9 @@ public class ParamInt extends Param {
 		intStep = (int)Math.round(step);
 	}
 
+	@Override
+	public Class getParamType(){ return int.class; };
+
 	// endregion
 
 	// keeps the double value in sync
@@ -52,8 +55,8 @@ public class ParamInt extends Param {
 	}
 
 	@Override
-	public String getValueString() {
-		return intValue +units;
+	public String getValueString(Object value) {
+		return ((int)value)+units;
 	}
 
 	@Override
