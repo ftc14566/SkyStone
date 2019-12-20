@@ -38,16 +38,16 @@ public class Hardware {
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
-		frontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
+		rearLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightWheel");
 		frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
-		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
-		rearLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
-		rearRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
 		leftTowerMotor = hardwareMap.get(DcMotor.class, "leftTowerMotor");
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -56,7 +56,6 @@ public class Hardware {
 
 		bridgeMotor = hardwareMap.get(DcMotor.class, "bridge");
 		bridgeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
 
 		grabberLeft = hardwareMap.get(Servo.class, "grabberLeft");
 		grabberRight = hardwareMap.get(Servo.class, "grabberRight");
