@@ -108,9 +108,9 @@ public class TeleBot {
 	}
 
 	public void SpinRight(double speed){;
-		hardware.frontLeftDrive.setPower(-speed);
+		hardware.frontLeftDrive.setPower(speed);
 		hardware.frontRightDrive.setPower(-speed);
-		hardware.rearLeftDrive.setPower(-speed);
+		hardware.rearLeftDrive.setPower(speed);
 		hardware.rearRightDrive.setPower(-speed);
 	}
 
@@ -123,8 +123,8 @@ public class TeleBot {
 			rightSpeed/=sumLeft;
 		}
 
-		hardware.frontLeftDrive.setPower(-forward-rightSpeed);//
-		hardware.rearLeftDrive.setPower(-forward+rightSpeed);//
+		hardware.frontLeftDrive.setPower(forward+rightSpeed);//
+		hardware.rearLeftDrive.setPower(forward-rightSpeed);//
 		hardware.frontRightDrive.setPower(forward-rightSpeed);//
 		hardware.rearRightDrive.setPower(forward+rightSpeed);//
 
@@ -163,9 +163,9 @@ public class TeleBot {
 		turn = targetTurnRight/2;
 		strafe = targetStrafeRight/2;
 		// combine drive,turn,strafe
-		double fl = -forward - turn - strafe;
+		double fl = forward + turn + strafe;
 		double fr = forward - turn - strafe;
-		double rl = -forward - turn + strafe;
+		double rl = forward + turn - strafe;
 		double rr = forward - turn + strafe;
 
 		// limit each drom to 1.0 max
@@ -237,8 +237,8 @@ public class TeleBot {
 			rightSpeedRight/=sumRight;
 		}
 
-		hardware.frontLeftDrive.setPower(-forwardSpeedLeft-rightSpeedLeft);//
-		hardware.rearLeftDrive.setPower(-forwardSpeedLeft+rightSpeedLeft);//
+		hardware.frontLeftDrive.setPower(forwardSpeedLeft+rightSpeedLeft);//
+		hardware.rearLeftDrive.setPower(forwardSpeedLeft-rightSpeedLeft);//
 		hardware.frontRightDrive.setPower(forwardSpeedRight-rightSpeedRight);//
 		hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
