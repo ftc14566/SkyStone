@@ -11,17 +11,17 @@ public class InteractiveMethodList extends InteractiveList {
 	public void DisplayStatus(Telemetry telemetry){
 		telemetry.addData("Mode","Select Method  A:select B:cancel ");
 
-		int end = Math.min(topOfPageIndex +LinesPerPage, items.length); // exclude this
+		int end = Math.min(topOfPageIndex +LinesPerPage, signatures.length); // exclude this
 		for(int index = topOfPageIndex; index<end; ++index){
-			String text = items[index].methodString;
+			String text = signatures[index].methodString;
 			if(index== curIndex) text = "["+text+"]";
 			telemetry.addData(""+index, text);
 		}
 		telemetry.update();
 	}
 
-	public void accessClass(Class<?> c){
-		this.items = MethodManager.Singleton.getAllSignatures(c);
+	public void initMethods(MethodSignature[] methods){
+		this.signatures = methods;
 		curIndex = 0;
 	}
 
@@ -35,18 +35,15 @@ public class InteractiveMethodList extends InteractiveList {
 
 	@Override
 	public void DpadDown_Pressed(){
-		if(curIndex < items.length-1) curIndex++;
-	//	while(topOfPageIndex<=curIndex) ++topOfPageIndex;
+		if(curIndex < signatures.length-1) curIndex++;
+		while(topOfPageIndex<=curIndex) ++topOfPageIndex;
 	}
 
 	@Override
 	public void A_Pressed(){
-		if(curIndex < items.length && listener !=null){
-			MethodBinding binding = new MethodBinding();
-			MethodSignature sig = items[curIndex];
-			binding.method = sig.method;
-			binding.paramValues = sig.getInitialParamValues();
-			listener.selectMethod( binding );
+		if(curIndex < signatures.length && listener !=null){
+			MethodSignature sig = signatures[curIndex];
+			listener.selectMethod( sig.createInitialBinding() );
 		}
 	}
 
@@ -65,7 +62,7 @@ public class InteractiveMethodList extends InteractiveList {
 
 	// region fields
 
-	private MethodSignature[] items;
+	private MethodSignature[] signatures;
 	private int curIndex = 0;
 	private int topOfPageIndex = 0;
 	private CallbackListener listener;

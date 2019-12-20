@@ -18,10 +18,11 @@ public class InteractiveParameterList extends InteractiveList {
 
 	public void setBinding(MethodBinding binding){
 		curIndex = 0;
-		this.binding = binding;
-		MethodSignature sig = MethodManager.Singleton.find(binding.method);
-		title = sig.methodString;
-		params = sig.params;
+
+		signature = binding.getSignature();
+
+		// clone values
+		paramValues = binding.getParamValues();
 	}
 
 	public interface CallbackListener {
@@ -34,11 +35,11 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DisplayStatus(Telemetry telemetry){
-		telemetry.addData("Mode","Enter Param Values for:"+ title);
+		telemetry.addData("Mode","Enter Param Values for:"+ signature.methodString);
 
-		int end = Math.min(topOfPageIndex +LinesPerPage, params.length); // exclude end-index
+		int end = Math.min(topOfPageIndex +LinesPerPage, signature.params.length); // exclude end-index
 		for(int i = topOfPageIndex; i<end; ++i)
-			params[i].addParamToTelemetry(telemetry,binding.paramValues[i], i== curIndex);
+			signature.params[i].addParamToTelemetry(telemetry, paramValues[i], i== curIndex);
 		telemetry.update();
 	}
 
@@ -50,21 +51,21 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DpadDown_Pressed(){
-		if(curIndex < params.length-1) curIndex++;
+		if(curIndex < signature.params.length-1) curIndex++;
 		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
 	}
 
 	@Override
 	public void DpadLeft_Pressed(){
-		binding.paramValues[curIndex] = params[curIndex]
-				.adjust(binding.paramValues[curIndex],-1);
+		paramValues[curIndex] = signature.params[curIndex]
+				.adjust(paramValues[curIndex],-1);
 		trackPressedTime();
 	}
 
 	@Override
 	public void DpadRight_Pressed(){
-		binding.paramValues[curIndex] = params[curIndex]
-				.adjust(binding.paramValues[curIndex],1);
+		paramValues[curIndex] = signature.params[curIndex]
+				.adjust(paramValues[curIndex],1);
 		trackPressedTime();
 	}
 
@@ -73,13 +74,15 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void A_Pressed() {
-		listener.executeMethod( binding );
+		listener.executeMethod( makeNewBinding() );
 	}
 
 	@Override
 	public void LeftBumper_Pressed() {
-		listener.saveMethodConfig( binding );
+		listener.saveMethodConfig( makeNewBinding() );
 	}
+
+	MethodBinding makeNewBinding(){ return new MethodBinding(signature,paramValues); }
 
 	final double PreRepeatWaitTime = 1000; // wait 1 second before speeding up
 	final double AutoPressTime = 70; // once every 70ms
@@ -91,10 +94,10 @@ public class InteractiveParameterList extends InteractiveList {
 		if(!gamepad.dpad_left && !gamepad.dpad_right) return;
 		int stepCount = gamepad.dpad_right ? 1 : 1;
 		double now = currentTimeMillis();
-		Param cur =  params[curIndex];
+		Param cur =  signature.params[curIndex];
 		while( _startRepeatingAtThisTime < now){
 			_startRepeatingAtThisTime += AutoPressTime;
-			binding.paramValues[curIndex] = cur.adjust( binding.paramValues[curIndex], stepCount );
+			paramValues[curIndex] = cur.adjust( paramValues[curIndex], stepCount );
 		}
 	}
 	private double _startRepeatingAtThisTime;
@@ -106,10 +109,9 @@ public class InteractiveParameterList extends InteractiveList {
 	private int topOfPageIndex = 0;
 	private int curIndex = 0;
 	private static final int LinesPerPage = 4;
-	private String title; // used internally
 
-	private Param[] params;
-	private MethodBinding binding;
+	private Object[] paramValues;
+	private MethodSignature signature;
 
 	CallbackListener listener;
 

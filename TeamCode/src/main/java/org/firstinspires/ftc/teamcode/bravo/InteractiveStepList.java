@@ -6,10 +6,24 @@ import java.util.ArrayList;
 
 public class InteractiveStepList extends InteractiveList {
 
+	// region constructor
+
 	public InteractiveStepList(CallbackListener listener){
 		this.listener = listener;
-		steps = new ArrayList<SigAndBinding>();
-		steps.add(0,null); // start with 1 empty slot
+		steps = new ArrayList<MethodBinding>();
+	}
+
+	// endregion
+
+	public void setBindings(MethodBinding[] bindings){
+		steps.clear();
+		for(int index=0;index<bindings.length;++index)
+			steps.add(index,bindings[index]);
+		this.curStep = 0;
+	}
+
+	public MethodBinding[] getBindings(){
+		return steps.toArray(new MethodBinding[0]);
 	}
 
 	public interface CallbackListener {
@@ -20,25 +34,25 @@ public class InteractiveStepList extends InteractiveList {
 	public void DisplayStatus(Telemetry telemetry){
 		telemetry.addData("Mode","Select Step  A:sel X:del Y:ins L-BMP:clear R-BPM:toggle drag");
 		int end = Math.min(topOfPageStep +4, steps.size());
-		for(int i = topOfPageStep; i<=end; ++i){
-			String text = getStepDescription(i);
-			if(i== curStep){
-				if(dragItem)
-					text = "[[["+text+"]]]";
-				else
-					text = "["+text+"]";
-			}
-			telemetry.addData(""+i, text);
+		for(int index = topOfPageStep; index<=end; ++index){
+			String text = getStepDescription(index);
+			text = decorateStepDescription(text,index);
+			telemetry.addData(""+index, text);
 		}
 		telemetry.update();
 	}
 
+	String decorateStepDescription(String description, int index){
+		if(index!=curStep) return description;
+		if(dragItem) return "[[["+description+"]]]";
+		return "["+description+"]";
+	}
+
 	String getStepDescription(int index){
 		if(index>= steps.size()) return "- end -";
-		SigAndBinding item = steps.get(index);
+		MethodBinding item = steps.get(index);
 		if(item==null) return "-empty-";
-		return item.display;
-
+		return item.getDisplay();
 	}
 
 	public boolean bindingSelected(){
@@ -46,23 +60,8 @@ public class InteractiveStepList extends InteractiveList {
 				&& steps.get(curStep) != null;
 	}
 
-	// LOAD!!! / SAVE!!!
-
 	public void setCurrentSignature(MethodBinding binding){
-
-		MethodSignature sig = MethodManager.Singleton.find(binding.method);
-
-		SigAndBinding item = new SigAndBinding();
-		item.binding = binding;
-		item.signature = sig; // do we need to save this for anything?
-		item.display = sig.getParamValueSummary(binding.paramValues);
-		item.serializeString = sig.methodString;
-		for(int i=0;i<binding.paramValues.length;++i){
-			item.serializeString += "\t" + sig.params[i].getRawValueString(binding.paramValues[i]);
-		}
-
-
-		steps.set(curStep,item);
+		steps.set(curStep,binding);
 	}
 
 	// region button handlers
@@ -102,10 +101,7 @@ public class InteractiveStepList extends InteractiveList {
 	@Override
 	public void A_Pressed() { // select
 		if(listener != null && curStep < steps.size()){
-			SigAndBinding item = steps.get(curStep);
-			MethodBinding binding = null;
-			if(item != null)
-				binding = item.binding;
+			MethodBinding binding = steps.get(curStep);
 			listener.stepSelected(binding);
 		}
 	}
@@ -129,20 +125,12 @@ public class InteractiveStepList extends InteractiveList {
 
 	// Steps, current step
 	final int DisplayCount = 4;
-	ArrayList<SigAndBinding> steps;
+	ArrayList<MethodBinding> steps;
 	int topOfPageStep = 0;
 	int curStep = 0;
 	boolean dragItem;
 	CallbackListener listener;
 
 	// endregion
-
-	class SigAndBinding{
-		public MethodBinding binding;
-		public MethodSignature signature;
-		public String display;
-		public String serializeString;
-	}
-
 
 }

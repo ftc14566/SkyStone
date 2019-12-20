@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
 public class MethodSignature {
+
+	// region constructor
 
 	public MethodSignature(Method method){
 		// part 1
@@ -15,12 +18,7 @@ public class MethodSignature {
 		methodString = formatMethodSignature(method);
 	}
 
-	public Object[] getInitialParamValues(){
-		Object[] initialValues = new Object[params.length];
-		for(int i=0;i<params.length;++i)
-			initialValues[i] = params[i].getInitialValue();
-		return initialValues;
-	}
+	// endregion
 
 	public String getParamValueSummary(Object[] paramValues){
 		String s = name+"(";
@@ -29,6 +27,27 @@ public class MethodSignature {
 			s += params[i].getScaledValueWithUnits(paramValues[i]);
 		}
 		return s+")";
+	}
+
+	public MethodBinding createInitialBinding(){
+		return new MethodBinding(this, getInitialParamValues() );
+	}
+
+	public void invoke(Object host, Object[] paramValues){
+		try {
+			method.invoke(host, paramValues);
+		}catch(InvocationTargetException ex){
+		} catch(IllegalAccessException ex) {
+		}
+	}
+
+	// region private methods
+
+	private Object[] getInitialParamValues(){
+		Object[] initialValues = new Object[params.length];
+		for(int i=0;i<params.length;++i)
+			initialValues[i] = params[i].getInitialValue();
+		return initialValues;
 	}
 
 	private static String formatMethodSignature(Method method){
@@ -44,11 +63,13 @@ public class MethodSignature {
 		return buf.toString();
 	}
 
-	public final Method method;
+	// endregion
+
 	public final String methodString;
+	public final Param[] params;
 
 	private final String name;
-	public final Param[] params;
+	private final Method method;
 
 }
 

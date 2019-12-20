@@ -11,8 +11,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Dictionary;
 
 public class MethodExplorer implements
 		InteractiveStepList.CallbackListener,
@@ -29,12 +27,13 @@ public class MethodExplorer implements
 		paramList = new InteractiveParameterList(this);
 		currentMode = stepList;
 
+		stepList.setBindings(new MethodBinding[]{null}); // 1 empty slot
 	}
 
 	public void setTarget(Object target){
 		this.target = target;
-		Class<?> c = target.getClass();
-		methodList.accessClass(c); // init methods available
+		mgr = new MethodManager( target.getClass() );
+		methodList.initMethods(mgr.getAllSignatures());
 	}
 
 	public void displayStatus(Telemetry telemetry){
@@ -75,12 +74,11 @@ public class MethodExplorer implements
 
 	@Override
 	public void executeMethod(MethodBinding binding) {
-		binding.executeOn(target);
+		binding.invoke(target);
 	}
 
 	@Override
 	public void saveMethodConfig(MethodBinding binding) {
-
 		stepList.setCurrentSignature( binding );
 		currentMode = stepList;
 //		saveSteps();
@@ -91,7 +89,7 @@ public class MethodExplorer implements
 	// region load/save steps
 
 	void saveSteps(){
-		Repository repo = new Repository();
+		MethodSerializer repo = new MethodSerializer();
 		String s = repo.serialize(null); // !!!
 		// !!! builder.append( stepList.steps.toArray(new MethodSignature[0]) );
 		try {
@@ -102,7 +100,7 @@ public class MethodExplorer implements
 	}
 
 	void loadSteps(){
-		Repository repo = new Repository();
+		MethodSerializer repo = new MethodSerializer();
 		try {
 			InputStream ii = context.openFileInput("steps.json");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(ii));
@@ -111,7 +109,7 @@ public class MethodExplorer implements
 			while ((line = reader.readLine()) != null) out.append(line);
 			reader.close();
 
-			MethodBinding[] bindings = repo.deserialize(out.toString(),target.getClass());
+			MethodBinding[] bindings = repo.deserialize(out.toString(),mgr);
 
 
 		}catch(Exception ex){}
@@ -157,6 +155,7 @@ public class MethodExplorer implements
 	private InteractiveList currentMode;
 	private Context context;
 
+	private MethodManager mgr;
 	private Object target;
 
 	// endregion

@@ -3,52 +3,40 @@ package org.firstinspires.ftc.teamcode.bravo;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class MethodManager {
 
-	static final MethodManager Singleton = new MethodManager();
+	// region constructor
 
-	public void initForClass(Class<?> c){
-		currentClass = c;
+	public MethodManager(Class<?> c){
+		table = new Hashtable<>();
+
 		final Method[] methods = c.getDeclaredMethods();
 		ArrayList<MethodSignature> newItems = new ArrayList<MethodSignature>();
 		for(int i=0;i<methods.length;++i){
 			Method method = methods[i];
-			if(Modifier.isPublic(method.getModifiers()))
-				newItems.add(new MethodSignature(method));
+			if(Modifier.isPublic(method.getModifiers())){
+				MethodSignature sig = new MethodSignature(method);
+				newItems.add(sig);
+				table.put(sig.methodString,sig);
+			}
 		}
+
 		items = newItems.toArray(new MethodSignature[0]);
 	}
 
-	public MethodSignature find(String stringRepresentative, Class<?> c){
-		if(currentClass != c) initForClass(c);
+	// endregion
 
-		for(int i=0;i<items.length;++i){
-			MethodSignature sig = items[i];
-			if(sig.methodString ==stringRepresentative)
-				return sig;
-		}
-		throw new IllegalStateException("method for "+stringRepresentative+" not found.");
+	public MethodSignature find(String stringRepresentative){
+		return table.get(stringRepresentative);
 	}
 
-	public MethodSignature find(Method method){
-		Class<?> methodClass = method.getDeclaringClass();
-		if(methodClass != currentClass) initForClass(methodClass);
-
-		for(int i=0;i<items.length;++i){
-			MethodSignature sig = items[i];
-			if(sig.method==method)
-				return sig;
-		}
-		throw new IllegalStateException("unable to find string repo for method "+method.getName());
-	}
-
-	public MethodSignature[] getAllSignatures(Class<?> c){
-		if(currentClass != c) initForClass(c);
+	public MethodSignature[] getAllSignatures(){
 		return items;
 	}
 
 	private MethodSignature[] items;
-	private Class<?> currentClass;
+	private Hashtable<String,MethodSignature> table;
 
 }
