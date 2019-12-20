@@ -18,8 +18,7 @@ public class MethodExplorer implements
 		InteractiveParameterList.CallbackListener
 {
 
-	public MethodExplorer(HardwareMap hardwareMap){
-		context = hardwareMap.appContext;
+	public MethodExplorer(){
 
 		// modes
 		stepList = new InteractiveStepList(this);
@@ -27,7 +26,15 @@ public class MethodExplorer implements
 		paramList = new InteractiveParameterList(this);
 		currentMode = stepList;
 
-		stepList.setBindings(new MethodBinding[]{null}); // 1 empty slot
+		// init steps
+		stepList.setBindings(new MethodBinding[]{null});
+	}
+
+	public void bindToFile(ConfigFile file){
+		this.file = file;
+		MethodBinding[] steps = getBindingsFromFile();
+		if(steps.length > 0)
+			stepList.setBindings(steps);
 	}
 
 	public void setTarget(Object target){
@@ -81,7 +88,7 @@ public class MethodExplorer implements
 	public void saveMethodConfig(MethodBinding binding) {
 		stepList.setCurrentSignature( binding );
 		currentMode = stepList;
-//		saveSteps();
+		saveSteps();
 	}
 
 	// endregion
@@ -89,31 +96,14 @@ public class MethodExplorer implements
 	// region load/save steps
 
 	void saveSteps(){
-		MethodSerializer repo = new MethodSerializer();
-		String s = repo.serialize(null); // !!!
-		// !!! builder.append( stepList.steps.toArray(new MethodSignature[0]) );
-		try {
-			OutputStream o = context.openFileOutput("steps.json", Context.MODE_PRIVATE);
-			o.write(s.getBytes());
-			o.close();
-		}catch(Exception ex){}
+		if(file==null) return;
+		String s = new MethodSerializer().serialize( stepList.getBindings() );
+		file.write(s);
 	}
-
-	void loadSteps(){
-		MethodSerializer repo = new MethodSerializer();
-		try {
-			InputStream ii = context.openFileInput("steps.json");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(ii));
-			StringBuilder out = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) out.append(line);
-			reader.close();
-
-			MethodBinding[] bindings = repo.deserialize(out.toString(),mgr);
-
-
-		}catch(Exception ex){}
-
+	MethodBinding[] getBindingsFromFile() {
+		String s = file.read();
+		if(s==null || s=="") return new MethodBinding[0];
+		return new MethodSerializer().deserialize(s,mgr);
 	}
 	// endregion
 
@@ -153,10 +143,10 @@ public class MethodExplorer implements
 	private InteractiveMethodList methodList;
 	private InteractiveParameterList paramList;
 	private InteractiveList currentMode;
-	private Context context;
 
 	private MethodManager mgr;
 	private Object target;
+	private ConfigFile file;
 
 	// endregion
 
