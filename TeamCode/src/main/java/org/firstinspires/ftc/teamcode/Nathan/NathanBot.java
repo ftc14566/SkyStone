@@ -72,9 +72,9 @@ public NathanBot(Hardware hardware){
     }
 
     public void SpinRight(double speed){;
-        hardware.frontLeftDrive.setPower(-speed);
+        hardware.frontLeftDrive.setPower(speed);
         hardware.frontRightDrive.setPower(-speed);
-        hardware.rearLeftDrive.setPower(-speed);
+        hardware.rearLeftDrive.setPower(speed);
         hardware.rearRightDrive.setPower(-speed);
     }
 
@@ -87,8 +87,8 @@ public NathanBot(Hardware hardware){
             rightSpeed/=sumLeft;
         }
 
-        hardware.frontLeftDrive.setPower(-forward-rightSpeed);//
-        hardware.rearLeftDrive.setPower(-forward+rightSpeed);//
+        hardware.frontLeftDrive.setPower(forward+rightSpeed);//
+        hardware.rearLeftDrive.setPower(forward-rightSpeed);//
         hardware.frontRightDrive.setPower(forward-rightSpeed);//
         hardware.rearRightDrive.setPower(forward+rightSpeed);//
 
@@ -143,10 +143,10 @@ public NathanBot(Hardware hardware){
 
 
         // combine drive,turn,straif
-        double fl = -forward - turnRight - straifRight;
-        double fr = forward - turnRight  - straifRight;
-        double rl = -forward - turnRight + straifRight;
-        double rr = forward - turnRight  + straifRight;
+        double fl = forward + turnRight + straifRight;
+        double rl = forward + turnRight - straifRight;
+        double fr = forward - turnRight - straifRight;
+        double rr = forward - turnRight + straifRight;
 
         // limit each drom to 1.0 max
         double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
@@ -232,8 +232,8 @@ public NathanBot(Hardware hardware){
             rightSpeedRight/=sumRight;
         }
 
-        hardware.frontLeftDrive.setPower(-forwardSpeedLeft-rightSpeedLeft);//
-        hardware.rearLeftDrive.setPower(-forwardSpeedLeft+rightSpeedLeft);//
+        hardware.frontLeftDrive.setPower(forwardSpeedLeft+rightSpeedLeft);//
+        hardware.rearLeftDrive.setPower(forwardSpeedLeft-rightSpeedLeft);//
         hardware.frontRightDrive.setPower(forwardSpeedRight-rightSpeedRight);//
         hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
