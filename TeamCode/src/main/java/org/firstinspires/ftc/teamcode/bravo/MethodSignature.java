@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 
 
 public class MethodSignature {
@@ -28,7 +26,7 @@ public class MethodSignature {
 		String s = name+"(";
 		for(int i = 0; i< params.length; ++i){
 			if(i!=0) s+=",";
-			s += params[i].getValueWithUnits(paramValues[i]);
+			s += params[i].getScaledValueWithUnits(paramValues[i]);
 		}
 		return s+")";
 	}

@@ -8,7 +8,7 @@ public class InteractiveStepList extends InteractiveList {
 
 	public InteractiveStepList(CallbackListener listener){
 		this.listener = listener;
-		steps = new ArrayList<SavedMethodCall>();
+		steps = new ArrayList<SigAndBinding>();
 		steps.add(0,null); // start with 1 empty slot
 	}
 
@@ -35,9 +35,9 @@ public class InteractiveStepList extends InteractiveList {
 
 	String getStepDescription(int index){
 		if(index>= steps.size()) return "- end -";
-		SavedMethodCall sig = steps.get(index);
-		if(sig==null) return "-empty-";
-		return sig.display;
+		SigAndBinding item = steps.get(index);
+		if(item==null) return "-empty-";
+		return item.display;
 
 	}
 
@@ -46,15 +46,23 @@ public class InteractiveStepList extends InteractiveList {
 				&& steps.get(curStep) != null;
 	}
 
+	// LOAD!!! / SAVE!!!
+
 	public void setCurrentSignature(MethodBinding binding){
 
-		MethodSignature sig = methodManager.find(binding.method);
-		SavedMethodCall saved = new SavedMethodCall();
-		saved.methodKey   = sig.methodString;
-		saved.display     = sig.getParamValueSummary(binding.paramValues);
-		saved.paramValues = binding.paramValues;
+		MethodSignature sig = MethodManager.Singleton.find(binding.method);
 
-		steps.set(curStep,saved);
+		SigAndBinding item = new SigAndBinding();
+		item.binding = binding;
+		item.signature = sig; // do we need to save this for anything?
+		item.display = sig.getParamValueSummary(binding.paramValues);
+		item.serializeString = sig.methodString;
+		for(int i=0;i<binding.paramValues.length;++i){
+			item.serializeString += "\t" + sig.params[i].getRawValueString(binding.paramValues[i]);
+		}
+
+
+		steps.set(curStep,item);
 	}
 
 	// region button handlers
@@ -94,13 +102,10 @@ public class InteractiveStepList extends InteractiveList {
 	@Override
 	public void A_Pressed() { // select
 		if(listener != null && curStep < steps.size()){
-			SavedMethodCall step = steps.get(curStep);
+			SigAndBinding item = steps.get(curStep);
 			MethodBinding binding = null;
-			if(step != null){
-				binding = new MethodBinding();
-				binding.method = methodManager.find(step.methodKey).method;
-				binding.paramValues = step.paramValues;
-			}
+			if(item != null)
+				binding = item.binding;
 			listener.stepSelected(binding);
 		}
 	}
@@ -120,22 +125,24 @@ public class InteractiveStepList extends InteractiveList {
 
 	// endregion
 
-	public void accessClass(MethodManager methodManager) {
-		this.methodManager = methodManager;
-	}
-
 	// region private fields
 
 	// Steps, current step
 	final int DisplayCount = 4;
-	ArrayList<SavedMethodCall> steps;
+	ArrayList<SigAndBinding> steps;
 	int topOfPageStep = 0;
 	int curStep = 0;
 	boolean dragItem;
 	CallbackListener listener;
-	MethodManager methodManager;
 
 	// endregion
+
+	class SigAndBinding{
+		public MethodBinding binding;
+		public MethodSignature signature;
+		public String display;
+		public String serializeString;
+	}
 
 
 }

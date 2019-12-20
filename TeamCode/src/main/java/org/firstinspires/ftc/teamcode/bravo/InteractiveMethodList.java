@@ -13,16 +13,15 @@ public class InteractiveMethodList extends InteractiveList {
 
 		int end = Math.min(topOfPageIndex +LinesPerPage, items.length); // exclude this
 		for(int index = topOfPageIndex; index<end; ++index){
-			String text = items[index];
+			String text = items[index].methodString;
 			if(index== curIndex) text = "["+text+"]";
 			telemetry.addData(""+index, text);
 		}
 		telemetry.update();
 	}
 
-	public void accessClass(MethodManager methodManager){
-		this.methodManager = methodManager ;
-		this.items = methodManager.getAllMethodStringReps();
+	public void accessClass(Class<?> c){
+		this.items = MethodManager.Singleton.getAllSignatures(c);
 		curIndex = 0;
 	}
 
@@ -44,7 +43,7 @@ public class InteractiveMethodList extends InteractiveList {
 	public void A_Pressed(){
 		if(curIndex < items.length && listener !=null){
 			MethodBinding binding = new MethodBinding();
-			MethodSignature sig = methodManager.find(items[curIndex]);
+			MethodSignature sig = items[curIndex];
 			binding.method = sig.method;
 			binding.paramValues = sig.getInitialParamValues();
 			listener.selectMethod( binding );
@@ -66,11 +65,10 @@ public class InteractiveMethodList extends InteractiveList {
 
 	// region fields
 
-	private String[] items;
+	private MethodSignature[] items;
 	private int curIndex = 0;
 	private int topOfPageIndex = 0;
 	private CallbackListener listener;
-	private MethodManager methodManager;
 
 	final static int LinesPerPage = 4;
 

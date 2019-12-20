@@ -6,18 +6,25 @@ import java.util.ArrayList;
 
 public class MethodManager {
 
-	public MethodManager(Class c){
+	static final MethodManager Singleton = new MethodManager();
+
+	private void initForClass(Class<?> c){
+		currentClass = c;
 		final Method[] methods = c.getDeclaredMethods();
+		ArrayList<MethodSignature> newItems = new ArrayList<MethodSignature>();
 		for(int i=0;i<methods.length;++i){
 			Method method = methods[i];
 			if(Modifier.isPublic(method.getModifiers()))
-				items.add(new MethodSignature(method));
+				newItems.add(new MethodSignature(method));
 		}
+		items = newItems.toArray(new MethodSignature[0]);
 	}
 
-	public MethodSignature find(String stringRepresentative){
-		for(int i=0;i<items.size();++i){
-			MethodSignature sig = items.get(i);
+	public MethodSignature find(String stringRepresentative, Class<?> c){
+		if(currentClass != c) initForClass(c);
+
+		for(int i=0;i<items.length;++i){
+			MethodSignature sig = items[i];
 			if(sig.methodString ==stringRepresentative)
 				return sig;
 		}
@@ -25,22 +32,23 @@ public class MethodManager {
 	}
 
 	public MethodSignature find(Method method){
-		for(int i=0;i<items.size();++i){
-			MethodSignature sig = items.get(i);
+		Class<?> methodClass = method.getDeclaringClass();
+		if(methodClass != currentClass) initForClass(methodClass);
+
+		for(int i=0;i<items.length;++i){
+			MethodSignature sig = items[i];
 			if(sig.method==method)
 				return sig;
 		}
 		throw new IllegalStateException("unable to find string repo for method "+method.getName());
 	}
 
-	public String[] getAllMethodStringReps(){
-		String[] names = new String[items.size()];
-		for(int i=0;i<items.size();++i)
-			names[i] = items.get(i).methodString;
-		return names;
+	public MethodSignature[] getAllSignatures(Class<?> c){
+		if(currentClass != c) initForClass(c);
+		return items;
 	}
 
-	private ArrayList<MethodSignature> items = new ArrayList<MethodSignature>();
-
+	private MethodSignature[] items;
+	private Class<?> currentClass;
 
 }

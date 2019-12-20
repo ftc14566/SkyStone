@@ -19,7 +19,7 @@ public class ParamBoolean extends Param {
 	}
 
 	@Override
-	String getValueString(Object value){ return ((boolean)value) ? trueString : falseString; }
+	String getScaledValueString(Object value){ return ((boolean)value) ? trueString : falseString; }
 
 	protected String getRangeString(){
 		return falseString+" / "+trueString;
@@ -29,6 +29,16 @@ public class ParamBoolean extends Param {
 	public Object getInitialValue() {
 		return initialValue;
 	}
+
+	@Override
+	String getRawValueString(Object value){
+		return ((boolean)value) ? "true" : "false";
+	}
+	@Override
+	Object parseRawValueString(String s){
+		return s == "true";
+	}
+
 
 	// region used by boolean
 	private boolean initialValue;

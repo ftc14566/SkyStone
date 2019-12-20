@@ -36,9 +36,14 @@ public class ParamInt extends Param {
 	}
 
 	@Override
-	String getValueString(Object value){ return format((int)value ); }
+	String getScaledValueString(Object value){ return format((int)value ); }
 
 	String format(int i){ return (i* displayScale)+""; }
+
+	@Override
+	String getRawValueString(Object value){ return ((Integer)value).toString(); }
+	@Override
+	Object parseRawValueString(String s){ return Integer.parseInt(s);	}
 
 	@Override
 	public Object getInitialValue() {

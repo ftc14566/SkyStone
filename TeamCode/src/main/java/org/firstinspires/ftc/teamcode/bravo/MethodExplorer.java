@@ -33,10 +33,8 @@ public class MethodExplorer implements
 
 	public void setTarget(Object target){
 		this.target = target;
-		MethodManager mgr = new MethodManager(target.getClass());
-		methodList.accessClass(mgr);
-		stepList.accessClass(mgr);
-		paramList.accessClass(mgr);
+		Class<?> c = target.getClass();
+		methodList.accessClass(c); // init methods available
 	}
 
 	public void displayStatus(Telemetry telemetry){

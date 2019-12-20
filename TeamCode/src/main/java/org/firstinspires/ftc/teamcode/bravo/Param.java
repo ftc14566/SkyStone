@@ -59,16 +59,18 @@ public abstract class Param {
 
 	// endregion
 
-	public String getValueWithUnits(Object value){ return getValueString(value)+units; }
-	abstract String getValueString(Object value);
+	public String getScaledValueWithUnits(Object value){ return getScaledValueString(value)+units; }
+	abstract String getScaledValueString(Object value);
 	abstract public Object adjust(Object value, int steps);
 
 	abstract Object getInitialValue();
 	abstract protected String getRangeString();
 	Class getParamType(){ return parameterType; }
+	abstract String getRawValueString(Object value);
+	abstract Object parseRawValueString(String s);
 
 	void addParamToTelemetry(Telemetry telemetry, Object value, boolean selected){
-		String s = getValueWithUnits(value);
+		String s = getScaledValueWithUnits(value);
 		if(selected) s = "["+s+"] (" + getRangeString() + ")";
 		telemetry.addData(label,s);
 	}

@@ -19,7 +19,7 @@ public class InteractiveParameterList extends InteractiveList {
 	public void setBinding(MethodBinding binding){
 		curIndex = 0;
 		this.binding = binding;
-		MethodSignature sig = methodManager.find(binding.method);
+		MethodSignature sig = MethodManager.Singleton.find(binding.method);
 		title = sig.methodString;
 		params = sig.params;
 	}
@@ -99,10 +99,6 @@ public class InteractiveParameterList extends InteractiveList {
 	}
 	private double _startRepeatingAtThisTime;
 
-	public void accessClass(MethodManager methodManager) {
-		this.methodManager = methodManager;
-	}
-
 	//endregion
 
 	//region private fields
@@ -114,8 +110,6 @@ public class InteractiveParameterList extends InteractiveList {
 
 	private Param[] params;
 	private MethodBinding binding;
-
-	private MethodManager methodManager;
 
 	CallbackListener listener;
 
