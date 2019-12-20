@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.bravo;
+package org.firstinspires.ftc.teamcode.Dean;
 
 import android.graphics.Color;
 
@@ -6,10 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Dean.BobHardware;
+import org.firstinspires.ftc.teamcode.bravo.Config;
 
 // Methods for testing on FTC-Bob controller.
 public class BobBot {

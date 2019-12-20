@@ -8,7 +8,7 @@ public class MethodManager {
 
 	static final MethodManager Singleton = new MethodManager();
 
-	private void initForClass(Class<?> c){
+	public void initForClass(Class<?> c){
 		currentClass = c;
 		final Method[] methods = c.getDeclaredMethods();
 		ArrayList<MethodSignature> newItems = new ArrayList<MethodSignature>();

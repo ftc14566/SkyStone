@@ -91,18 +91,18 @@ public class MethodExplorer implements
 	// region load/save steps
 
 	void saveSteps(){
-		JsonBuilder builder = new JsonBuilder();
+		Repository repo = new Repository();
+		String s = repo.serialize(null); // !!!
 		// !!! builder.append( stepList.steps.toArray(new MethodSignature[0]) );
 		try {
 			OutputStream o = context.openFileOutput("steps.json", Context.MODE_PRIVATE);
-			o.write(builder.toString().getBytes());
+			o.write(s.getBytes());
 			o.close();
 		}catch(Exception ex){}
 	}
 
 	void loadSteps(){
-		JsonBuilder builder = new JsonBuilder();
-// !!!		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
+		Repository repo = new Repository();
 		try {
 			InputStream ii = context.openFileInput("steps.json");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(ii));
@@ -111,19 +111,7 @@ public class MethodExplorer implements
 			while ((line = reader.readLine()) != null) out.append(line);
 			reader.close();
 
-			String source = out.toString();
-			ArrayList<Object> stepsConfigs = new JsonParser(source).DeserializeArray();
-			MethodSignature[] sigs = new MethodSignature[stepsConfigs.size()];
-			for(int i=0;i<sigs.length;++i){
-				Dictionary<String,Object> config = (Dictionary<String,Object>)stepsConfigs.get(i);
-				String methodName = (String)config.get("name");
-				ArrayList<Object> paramConfigs = (ArrayList<Object>)config.get("params");
-				Param[] params = new Param[paramConfigs.size()];
-				for(int j=0;j<params.length;++j){
-					// !!! need to figureout which type of parameter it is.
-				}
-			}
-			// Parse: array, object, boolean, string, double
+			MethodBinding[] bindings = repo.deserialize(out.toString(),target.getClass());
 
 
 		}catch(Exception ex){}

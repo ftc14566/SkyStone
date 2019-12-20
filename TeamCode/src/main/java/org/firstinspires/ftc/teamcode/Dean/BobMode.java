@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.bravo;
+package org.firstinspires.ftc.teamcode.Dean;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.bravo.MethodExplorer;
 
 @Autonomous(name="FTC-Bob Testing", group="dean")
 public class BobMode extends LinearOpMode {
