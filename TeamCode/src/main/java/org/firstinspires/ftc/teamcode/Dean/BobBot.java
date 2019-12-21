@@ -65,15 +65,22 @@ public class BobBot {
     }
 
     public void moveServo(
+            @Config(label="position", min=0.0, max=1.0, step=.01, displayScale = 100, value = 0.5, units = "%") double position,
             @Config(label="direction", isTrue=true, trueString = "forward", falseString = "backward") boolean directionForward,
-            @Config(label="position", min=0.0, max=1.0, step=.01, displayScale = 100, value = 0.5, units = "%") double position
-    ){
+            @Config(label="range-min", min=0.0, max=1.0, step=.01, displayScale = 100, value = 0.0, units = "%") double rangeMin,
+            @Config(label="range-max", min=0.0, max=1.0, step=.01, displayScale = 100, value = 1.0, units = "%") double rangeMax
+            ){
         Servo s = _hardware.getServo0();
 
+        // configure
+        s.scaleRange(rangeMin,rangeMax);
         s.setDirection(directionForward ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
+
         s.setPosition(position);
 
-        _opMode.telemetry.addData("Servo Set To:", "%.0f", position*100);
+        _opMode.telemetry.addData("Servo Position:", "%.0f", position*100);
+        _opMode.telemetry.addData("Servo Dir:", directionForward?"forward":"reverse");
+        _opMode.telemetry.addData("Servo Range:", "%.0f to %.0f", rangeMin*100,rangeMax*100);
         _opMode.telemetry.addData("To return, press:", "gamepad1.b");
         _opMode.telemetry.update();
         double endTime = _opMode.time+2.0; // wait 2 seconds
