@@ -92,7 +92,7 @@ public class InteractiveParameterList extends InteractiveList {
 	public void doOtherWork(Gamepad gamepad){
 		// When left or righ dpad held down, auto-inc/dec 10 times a second.s
 		if(!gamepad.dpad_left && !gamepad.dpad_right) return;
-		int stepCount = gamepad.dpad_right ? 1 : 1;
+		int stepCount = gamepad.dpad_right ? 1 : -1;
 		double now = currentTimeMillis();
 		Param cur =  signature.params[curIndex];
 		while( _startRepeatingAtThisTime < now){
