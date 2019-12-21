@@ -20,6 +20,11 @@ public @interface Config {
     double displayScale() default 1.0;
     // endregion
 
+    // region used by string
+    String stringOptions() default "";
+    String stringValue() default "";
+    // endregion
+
     // region used by boolean
     boolean isTrue() default false;
     String trueString() default "true";

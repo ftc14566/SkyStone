@@ -29,6 +29,7 @@ public abstract class Param {
 		if(paramClass==double.class) return new ParamDouble(cfg);
 		if(paramClass==boolean.class) return new ParamBoolean(cfg);
 		if(paramClass==int.class) return new ParamInt(cfg);
+		if(paramClass==String.class) return new ParamString(cfg);
 		throw new IllegalStateException("Cannot auto-configure parameter of type:"+paramClass.getName());
 	}
 
