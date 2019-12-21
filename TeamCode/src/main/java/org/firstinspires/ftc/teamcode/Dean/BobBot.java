@@ -81,30 +81,13 @@ public class BobBot {
 
     }
 
-    public void movegrabber(
-            @Config(label="position", min=0, max=3.0, step=1.0) int position
+    public void moveGrabber(
+            @Config(label="position", stringValue = "even",stringOptions = "up,even,down,grab") String position
     ){
-        GrabberServo left = _hardware.getLeftGrabber();
-        GrabberServo right = _hardware.getRightGrabber();
 
-        switch(position){
-            case 0:
-                left.up();
-                right.up();
-                break;
-            case 1:
-                left.even();
-                right.even();
-                break;
-            case 2:
-                left.down();
-                right.down();
-                break;
-            case 3:
-                left.grab();
-                right.grab();
-                break;
-        }
+        GrabberServo grabber = _hardware.getBlockGrabber().leftGrabber;
+
+        grabber.move(position);
 
         _opMode.telemetry.addData("Servo Grabber To:", position );
         _opMode.telemetry.addData("To return, press:", "gamepad1.b");

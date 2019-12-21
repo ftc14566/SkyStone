@@ -25,34 +25,25 @@ public class BobHardware {
         return motor3;
     }
 
-    public GrabberServo getLeftGrabber(){
-        final double  GRABBER_UP     = 0.89;
-        final double  GRABBER_EVEN   = 0.53;
-        final double  GRABBER_GRAB   = 0.14;
-        final double  GRABBER_DOWN   = 0.17;
-        if(leftGrabberServo == null)
-            leftGrabberServo = new GrabberServo(getServo0(),GRABBER_GRAB,GRABBER_DOWN,GRABBER_EVEN,GRABBER_UP);
-        return leftGrabberServo;
+    public BlockGrabber getBlockGrabber(){
+        if(blockGrabber==null)
+            blockGrabber = new BlockGrabber(getServo0(),getServo1());// !!! push these init back into hardware.
+        return blockGrabber;
     }
-    GrabberServo leftGrabberServo;
-
-    public GrabberServo getRightGrabber(){
-        final double  GRABBER_UP = 0.14;
-        final double  GRABBER_EVEN = 0.5;
-        final double  GRABBER_GRAB = 0.89;
-        final double  GRABBER_DOWN = 0.85;
-        if(rightGrabberServo == null)
-            rightGrabberServo = new GrabberServo(getServo0(),GRABBER_GRAB,GRABBER_DOWN,GRABBER_EVEN,GRABBER_UP);
-        return rightGrabberServo;
-    }
-    GrabberServo rightGrabberServo;
-
+    BlockGrabber blockGrabber;
 
     public Servo getServo0(){
         if(servo0==null)
             servo0 = hardwareMap.get(Servo.class, "servo0");
         return servo0;
     }
+
+    public Servo getServo1(){
+        if(servo1==null)
+            servo1 = hardwareMap.get(Servo.class, "servo1");
+        return servo1;
+    }
+    private Servo servo1;
 
     public DistanceSensor getDistance2m(){
         if(distance2m==null)

@@ -22,6 +22,15 @@ public class GrabberServo {
 		this.up = up;
 	}
 
+	public void move(String position){
+		switch(position) {
+			case "up":    up(); break;
+			case "even":  even(); break;
+			case "down":  down(); break;
+			case "grab":  grab(); break;
+		}
+	}
+
 	public void grab(){ servo.setPosition(grab); }
 	public void down(){ servo.setPosition(down); }
 	public void even(){ servo.setPosition(even); }
