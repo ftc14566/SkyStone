@@ -54,7 +54,7 @@ public class ParamDouble extends Param {
 
 
 	@Override
-	protected String getRangeString(){ return format(min)+" to "+format(max); }
+	protected String getRangeString(){ return format(min)+" to "+format(max) + " ("+format(stepSize)+")"; }
 
 	private String format(double value){ return String.format(scaledFormat, value*displayScale); }
 

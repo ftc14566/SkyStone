@@ -50,7 +50,7 @@ public class MethodExplorer implements
 	// region callbacks
 
 	@Override
-	public void stepSelected(MethodBinding binding) {// step-index ->down-> select method
+	public void stepSelected(MethodBinding binding) {// stepSize-index ->down-> select method
 
 		if(binding != null) {
 			paramList.setBinding( binding );
@@ -61,7 +61,7 @@ public class MethodExplorer implements
 	}
 
 	@Override
-	public void cancelMethodSelection() {  // select method ->up-> step-index
+	public void cancelMethodSelection() {  // select method ->up-> stepSize-index
 		currentMode = stepList;
 	}
 

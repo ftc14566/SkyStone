@@ -3,33 +3,40 @@ package org.firstinspires.ftc.teamcode.bravo;
 public class MethodSerializer {
 
 	public MethodBinding[] deserialize(String src, MethodManager mgr){
-		String[] lines = src.split("\\r?\\n");
+		String[] lines = src.split("---");
+
+		System.out.println(lines.length);
+
 		MethodBinding[] items = new MethodBinding[lines.length];
 		for(int i=0;i<lines.length;++i)
 			items[i] = deserializeLine(lines[i],mgr);
 		return items;
 	}
 
+	public String serialize(MethodBinding[] bindings){
+		StringBuilder builder = new StringBuilder();
+		for(int i=0;i<bindings.length;++i){
+			if(i!=0) builder.append("---");
+			builder.append(serialize(bindings[i]));
+		}
+		return builder.toString();
+	}
+
+
 	private MethodBinding deserializeLine(String line, MethodManager mgr) {
 		if(line.length() == 0) return null;
 		String[] parts = line.split(":");
 		MethodSignature sig = mgr.find(parts[0]);
 		// !!! if sig == null, do something clever
-		if(parts.length != sig.params.length+1) throw new IllegalStateException("wrong number of params");
+		if(parts.length-1 != sig.params.length) {
+			return null;
+			//throw new IllegalStateException("[" + line + "] had " + (parts.length - 1) + " params instead of " + sig.params.length);
+		}
 		Object[] paramValues = new Object[sig.params.length];
 		for(int i=0;i<paramValues.length;++i)
 			paramValues[i] = sig.params[i].parseRawValueString(parts[i+1]);
 
 		return new MethodBinding(sig,paramValues);
-	}
-
-	public String serialize(MethodBinding[] bindings){
-		StringBuilder builder = new StringBuilder();
-		for(int i=0;i<bindings.length;++i){
-			if(i!=0) builder.append("\r\n");
-			builder.append(serialize(bindings[i]));
-		}
-		return builder.toString();
 	}
 
 	private String serialize(MethodBinding binding){

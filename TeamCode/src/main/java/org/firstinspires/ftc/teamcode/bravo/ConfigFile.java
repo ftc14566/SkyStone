@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.bravo;
 import android.content.Context;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -29,6 +30,9 @@ public class ConfigFile {
             OutputStream o = context.openFileOutput(filename, Context.MODE_PRIVATE);
             o.write(content.getBytes());
             o.close();
+
+            File file = new File(filename);
+            file.setReadable(true,false);
         }catch(Exception ex){}
     }
     private String filename;

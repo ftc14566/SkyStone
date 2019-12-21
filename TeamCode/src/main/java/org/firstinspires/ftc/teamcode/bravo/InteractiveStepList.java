@@ -123,7 +123,7 @@ public class InteractiveStepList extends InteractiveList {
 
 	// region private fields
 
-	// Steps, current step
+	// Steps, current stepSize
 	final int DisplayCount = 4;
 	ArrayList<MethodBinding> steps;
 	int topOfPageStep = 0;

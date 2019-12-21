@@ -7,13 +7,13 @@ public class ParamInt extends Param {
 	public ParamInt(Config cfg){
 		super(cfg,int.class);
 
-		step = (int)Math.round(cfg.step());
-		if(step == 0 ) step = 1; else if(step<0) step = -step;
+		stepSize = (int)Math.round(cfg.step());
+		if(stepSize == 0 ) stepSize = 1; else if(stepSize <0) stepSize = -stepSize;
 
 		min = (int)Math.round(cfg.min());
 		max = (int)Math.round(cfg.max());
 		if(max < min){ int temp = max; max = min; min = temp; }
-		if(min == max) max = min + step * 100;
+		if(min == max) max = min + stepSize * 100;
 
 		displayScale = (int)Math.round(cfg.displayScale());
 
@@ -26,7 +26,7 @@ public class ParamInt extends Param {
 	@Override
 	public Object adjust(Object src, int steps){
 		if(steps==0) return src;
-		return clip( (int)src * steps*this.step );
+		return clip( (int)src + steps*this.stepSize);
 	}
 
 	int clip(int value){
@@ -52,7 +52,7 @@ public class ParamInt extends Param {
 
 	@Override
 	protected String getRangeString() {
-		return format(min) + " to " + format(max);
+		return format(min) + " to " + format(max) + " ("+format(stepSize)+")";
 	}
 
 	// region private fields
@@ -60,7 +60,7 @@ public class ParamInt extends Param {
 	int initialValue;
 	int min;
 	int max;
-	int step;
+	int stepSize;
 	int displayScale;
 	// endregion
 

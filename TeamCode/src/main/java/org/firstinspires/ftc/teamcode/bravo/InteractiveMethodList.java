@@ -30,13 +30,13 @@ public class InteractiveMethodList extends InteractiveList {
 	@Override
 	public void DpadUp_Pressed(){
 		if(curIndex >0) curIndex--;
-	//	while(curIndex<topOfPageIndex) --topOfPageIndex;
+		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
 	}
 
 	@Override
 	public void DpadDown_Pressed(){
 		if(curIndex < signatures.length-1) curIndex++;
-		while(topOfPageIndex<=curIndex) ++topOfPageIndex;
+		if (topOfPageIndex < curIndex - LinesPerPage) topOfPageIndex = curIndex - LinesPerPage;
 	}
 
 	@Override
