@@ -29,13 +29,16 @@ public class InteractiveMethodList extends InteractiveList {
 
 	@Override
 	public void DpadUp_Pressed(){
-		if(curIndex >0) curIndex--;
+		if(curIndex==0) return;
+		curIndex--;
 		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
 	}
 
 	@Override
 	public void DpadDown_Pressed(){
-		if(curIndex < signatures.length-1) curIndex++;
+		int last = signatures.length-1;
+		if(curIndex == last) return;
+		curIndex++;
 		if (topOfPageIndex < curIndex - LinesPerPage) topOfPageIndex = curIndex - LinesPerPage;
 	}
 

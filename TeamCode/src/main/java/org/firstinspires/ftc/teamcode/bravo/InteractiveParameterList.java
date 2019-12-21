@@ -45,14 +45,17 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DpadUp_Pressed(){
-		if(curIndex >0) curIndex--;
-		if(topOfPageIndex < curIndex +1-LinesPerPage) topOfPageIndex = curIndex +1-LinesPerPage;
+		if(curIndex==0) return;
+		curIndex--;
+		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
 	}
 
 	@Override
 	public void DpadDown_Pressed(){
-		if(curIndex < signature.params.length-1) curIndex++;
-		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
+		int last= signature.params.length-1;
+		if(curIndex == last) return;
+		curIndex++;
+		if(topOfPageIndex < curIndex +1-LinesPerPage) topOfPageIndex = curIndex +1-LinesPerPage;
 	}
 
 	@Override

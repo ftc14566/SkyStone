@@ -24,7 +24,7 @@ public class GrabberServo {
 
 	public void grab(){ servo.setPosition(grab); }
 	public void down(){ servo.setPosition(down); }
-	public void event(){ servo.setPosition(even); }
+	public void even(){ servo.setPosition(even); }
 	public void up(){ servo.setPosition(up); }
 
 }

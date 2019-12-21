@@ -19,7 +19,7 @@ public class InteractiveStepList extends InteractiveList {
 		steps.clear();
 		for(int index=0;index<bindings.length;++index)
 			steps.add(index,bindings[index]);
-		this.curStep = 0;
+		this.curIndex = 0;
 	}
 
 	public MethodBinding[] getBindings(){
@@ -33,8 +33,8 @@ public class InteractiveStepList extends InteractiveList {
 	@Override
 	public void DisplayStatus(Telemetry telemetry){
 		telemetry.addData("Mode","Select Step  A:sel X:del Y:ins L-BMP:clear R-BPM:toggle drag");
-		int end = Math.min(topOfPageStep +4, steps.size());
-		for(int index = topOfPageStep; index<=end; ++index){
+		int end = Math.min(topOfPageIndex +4, steps.size());
+		for(int index = topOfPageIndex; index<=end; ++index){
 			String text = getStepDescription(index);
 			text = decorateStepDescription(text,index);
 			telemetry.addData(""+index, text);
@@ -43,7 +43,7 @@ public class InteractiveStepList extends InteractiveList {
 	}
 
 	String decorateStepDescription(String description, int index){
-		if(index!=curStep) return description;
+		if(index!= curIndex) return description;
 		if(dragItem) return "[[["+description+"]]]";
 		return "["+description+"]";
 	}
@@ -56,66 +56,66 @@ public class InteractiveStepList extends InteractiveList {
 	}
 
 	public boolean bindingSelected(){
-		return curStep < steps.size()
-				&& steps.get(curStep) != null;
+		return curIndex < steps.size()
+				&& steps.get(curIndex) != null;
 	}
 
 	public void setCurrentSignature(MethodBinding binding){
-		steps.set(curStep,binding);
+		steps.set(curIndex,binding);
 	}
 
 	// region button handlers
 
 	@Override
 	public void DpadUp_Pressed(){
+		if(curIndex==0) return;
+		curIndex--;
+		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
 
-		if(curStep ==0) return;
-		if(dragItem && curStep < steps.size())
-			steps.add(curStep -1, steps.remove(curStep));
-		curStep--;
-		if(topOfPageStep > curStep) topOfPageStep = curStep;
+		if(dragItem && curIndex+1 < steps.size())
+			steps.add(curIndex, steps.remove(curIndex+1));
 	}
 
 	@Override
 	public void DpadDown_Pressed() {
-		if (curStep == steps.size()) return;
-		if( dragItem && curStep == steps.size()-1) return;
-		curStep++;
-		if(dragItem && curStep < steps.size())
-			steps.add(curStep, steps.remove(curStep -1));
-		if (topOfPageStep < curStep - DisplayCount) topOfPageStep = curStep - DisplayCount;
+		int last = dragItem ? steps.size()-1 : steps.size();
+		if (curIndex == last) return;
+		curIndex++;
+		if(dragItem && curIndex < steps.size())
+			steps.add(curIndex, steps.remove(curIndex -1));
+		if (topOfPageIndex < curIndex - DisplayCount) topOfPageIndex = curIndex - DisplayCount;
 	}
 
 	@Override
 	public void Y_Pressed() { // insert slot
-		if(curStep <= steps.size())
-			steps.add(curStep,null);
+		if(curIndex <= steps.size())
+			steps.add(curIndex,null);
 	}
 
 	@Override
 	public void X_Pressed() { // delete slot
-		if(curStep < steps.size())
-			steps.remove(curStep);
+		if(curIndex < steps.size())
+			steps.remove(curIndex);
 	}
 
 	@Override
 	public void A_Pressed() { // select
-		if(listener != null && curStep < steps.size()){
-			MethodBinding binding = steps.get(curStep);
+		if(listener != null && curIndex < steps.size()){
+			MethodBinding binding = steps.get(curIndex);
 			listener.stepSelected(binding);
 		}
 	}
 
 	@Override
 	public void LeftBumper_Pressed(){
-		if(curStep < steps.size())
-			steps.set(curStep,null);
+		if(curIndex < steps.size())
+			steps.set(curIndex,null);
 	}
 
 	@Override
 	public void RightBumper_Pressed(){
 		// prevent from them getting into drag mode when on end.
-		if(curStep < steps.size())
+		if(curIndex < steps.size())
 			dragItem = !dragItem;
 	}
 
@@ -126,8 +126,8 @@ public class InteractiveStepList extends InteractiveList {
 	// Steps, current stepSize
 	final int DisplayCount = 4;
 	ArrayList<MethodBinding> steps;
-	int topOfPageStep = 0;
-	int curStep = 0;
+	int topOfPageIndex = 0;
+	int curIndex = 0;
 	boolean dragItem;
 	CallbackListener listener;
 
