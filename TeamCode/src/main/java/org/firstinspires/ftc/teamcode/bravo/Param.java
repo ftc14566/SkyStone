@@ -2,75 +2,85 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-// Base class for different types of parameters
-// Matches Config annotation directly.
-// Pulling all derived requirements into the base class simplifies serialization/deserialization significantly
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 public abstract class Param {
 
-	// from annotation
-	public Param(Config cfg){
-		if(cfg==null)return;
-		label = cfg.label();
-		units = cfg.units();
-		value = cfg.value();
-		min = cfg.min();
-		max = cfg.max();
-		step = cfg.step();
-		displayScale = cfg.displayScale();
-		isTrue = cfg.isTrue();
-		trueString = cfg.trueString();
-		falseString = cfg.falseString();
+	// region factory
+
+	static public Param[] scanMethodParameters(Method method){
+
+		// init Parameters from Annotations on method
+		Class<?>[] parameterTypes = method.getParameterTypes();
+		Annotation[][] annotations = method.getParameterAnnotations();
+
+		if (annotations.length != parameterTypes.length)
+			throw new IllegalStateException("annotation length does not match params length");
+
+		Param[] params = new Param[parameterTypes.length];
+		for (int i = 0; i < params.length; ++i)
+			params[i] = Param.ConstructParamConfig(parameterTypes[i], annotations[i]);
+		return params;
 	}
 
-	// copy constructor
-	public Param(Param p){
-		label = p.label;
-		units = p.units;
-		value = p.value;
-		min = p.min;
-		max = p.max;
-		step = p.step;
-		displayScale = p.displayScale;
-		isTrue = p.isTrue;
-		trueString = p.trueString;
-		falseString = p.falseString;
+	static private Param ConstructParamConfig(Class<?> paramClass, Annotation[] annotations){
+		Config cfg = FindConfigAnnotation(annotations);
+		if(paramClass==double.class) return new ParamDouble(cfg);
+		if(paramClass==boolean.class) return new ParamBoolean(cfg);
+		if(paramClass==int.class) return new ParamInt(cfg);
+		if(paramClass==String.class) return new ParamString(cfg);
+		throw new IllegalStateException("Cannot auto-configure parameter of type:"+paramClass.getName());
 	}
 
-	abstract void inc();
-	abstract void dec();
-	abstract Object getValue();
-	abstract String getValueString();
-	abstract String getRangeString();
-	abstract Param Clone();
-
-	public void addParamToTelemetry(Telemetry telemetry, boolean selected){
-		telemetry.addData(label,selected ? getValueAndRange() : getValueString());
+	static private Config FindConfigAnnotation(Annotation[] annotations){
+		for(int i=0;i<annotations.length;++i){
+			Annotation a = annotations[i];
+			Class<?> aType = a.annotationType();
+			if(aType == Config.class)
+				return (Config)a;
+		}
+		return null;
 	}
 
-	String getValueAndRange(){ return "["+getValueString() + "] (" + getRangeString() + ")"; }
-
-	// ! pushing all derived class functionality down into base class to simplify:
-	//   initialization, serialization, deserialization
-	// Besides, there are a very limited number of parameter types.
-
-	// region used by all
-	protected String label;
-	protected String units;
 	// endregion
 
-	// region used by numerics
-	protected double value;
-	protected double min;
-	protected double max;
-	protected double step;
-	protected double displayScale;
+	// region constructors
+
+	public Param(Config cfg,Class parameterType){
+		this.parameterType = parameterType;
+		if(cfg!=null){
+			label = cfg.label();
+			units = cfg.units();
+		}
+		if(units==null) units="";
+		if(label==null||label.isEmpty()) label = this.parameterType.getName();
+
+	}
+
 	// endregion
 
-	// region used by boolean
-	protected boolean isTrue;
-	protected String trueString;
-	protected String falseString;
+	public String getScaledValueWithUnits(Object value){ return getScaledValueString(value)+units; }
+	abstract String getScaledValueString(Object value);
+	abstract public Object adjust(Object value, int steps);
 
+	abstract Object getInitialValue();
+	abstract protected String getRangeString();
+	Class getParamType(){ return parameterType; }
+	String getParamTypeString(){ return getParamType().getName(); }
+	abstract String getRawValueString(Object value);
+	abstract Object parseRawValueString(String s);
+
+	void addParamToTelemetry(Telemetry telemetry, Object value, boolean selected){
+		String s = getScaledValueWithUnits(value);
+		if(selected) s = "["+s+"] (" + getRangeString() + ")";
+		telemetry.addData(label,s);
+	}
+
+	// region private fields
+	private String units;
+	private String label;
+	private Class parameterType;
+	// endregion
 
 }

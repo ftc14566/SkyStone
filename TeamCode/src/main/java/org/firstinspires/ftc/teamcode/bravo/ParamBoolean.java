@@ -1,48 +1,51 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class ParamBoolean extends Param {
 
 	// region constructor
 
 	public ParamBoolean(Config cfg){
-		super(cfg);
-
-		// fix
-		if(label==null|| label.isEmpty()) label = "boolean";
+		super(cfg,boolean.class);
+		initialValue = cfg.isTrue();
+		trueString = cfg.trueString();
+		falseString = cfg.falseString();
 	}
-
-	ParamBoolean(ParamBoolean a){ super(a); }
 
 	// endregion
 
-	@Override
-	public void inc() {
-		isTrue = true;
+	public Object adjust(Object src, int steps){
+		if(steps==0) return src;
+		return steps>0;
 	}
 
 	@Override
-	public void dec() {
-		isTrue = false;
-	}
+	String getScaledValueString(Object value){ return ((boolean)value) ? trueString : falseString; }
 
-	public String getRangeString(){
+	protected String getRangeString(){
 		return falseString+" / "+trueString;
 	}
 
 	@Override
-	public Object getValue() {
-		return isTrue;
+	public Object getInitialValue() {
+		return initialValue;
 	}
 
 	@Override
-	public String getValueString(){
-		return isTrue ? trueString : falseString;
+	String getRawValueString(Object value){
+		return ((boolean)value) ? "true" : "false";
+	}
+	@Override
+	Object parseRawValueString(String s){
+		return s == "true";
 	}
 
-	@Override
-	public Param Clone() { return new ParamBoolean(this); }
+
+	// region used by boolean
+	private boolean initialValue;
+	private String trueString;
+	private String falseString;
+
+	// endregion
 
 
 }

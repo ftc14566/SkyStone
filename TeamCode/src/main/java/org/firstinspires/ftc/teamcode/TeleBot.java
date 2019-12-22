@@ -123,8 +123,10 @@ public class TeleBot {
 			rightSpeed/=sumLeft;
 		}
 
+
 		hardware.frontLeftDrive.setPower(forward+rightSpeed);//
 		hardware.rearLeftDrive.setPower(forward-rightSpeed);//
+
 		hardware.frontRightDrive.setPower(forward-rightSpeed);//
 		hardware.rearRightDrive.setPower(forward+rightSpeed);//
 
@@ -164,6 +166,7 @@ public class TeleBot {
 		strafe = targetStrafeRight/2;
 		// combine drive,turn,strafe
 		double fl = forward + turn + strafe;
+
 		double fr = forward - turn - strafe;
 		double rl = forward + turn - strafe;
 		double rr = forward - turn + strafe;

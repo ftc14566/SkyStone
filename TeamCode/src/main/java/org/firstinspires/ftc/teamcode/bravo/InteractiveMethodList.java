@@ -2,83 +2,60 @@ package org.firstinspires.ftc.teamcode.bravo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-
 public class InteractiveMethodList extends InteractiveList {
 
 	public InteractiveMethodList(CallbackListener listener){
-		_listener = listener;
+		this.listener = listener;
 	}
 
 	public void DisplayStatus(Telemetry telemetry){
 		telemetry.addData("Mode","Select Method  A:select B:cancel ");
 
-		int end = Math.min(_topOfPageIndex+LinesPerPage, _items.size()); // exclude this
-		for(int i = _topOfPageIndex; i<end; ++i){
-			String text = getMethodDisplayText(i);
-			if(i==_curIndex) text = "["+text+"]";
-			telemetry.addData(""+i, text);
+		int end = Math.min(topOfPageIndex +LinesPerPage, signatures.length); // exclude this
+		for(int index = topOfPageIndex; index<end; ++index){
+			String text = signatures[index].methodString;
+			if(index== curIndex) text = "["+text+"]";
+			telemetry.addData(""+index, text);
 		}
 		telemetry.update();
 	}
 
-	public void accessClass(Class c){
-		_items.clear();
-		final Method[] methods = c.getDeclaredMethods();
-		for(int i=0;i<methods.length;++i){
-			Method method = methods[i];
-			if(Modifier.isPublic(method.getModifiers())){
-				MethodSignature sig = new MethodSignature(method);
-				_items.add( sig );
-			}
-		}
+	public void initMethods(MethodSignature[] methods){
+		this.signatures = methods;
+		curIndex = 0;
 	}
 
+	// region button presses
 
-	String getMethodDisplayText(int index){
-		return _items.get(index).getName();
-	}
-
-
-	public ArrayList<MethodSignature> _items = new ArrayList<MethodSignature>();
-	int _curIndex = 0;
-	int _topOfPageIndex = 0;
-	final static int LinesPerPage = 4;
-
-	public MethodSignature getCurrent(){ return _items.get(_curIndex);}
-
-	@Override
-	public void DpadUp_Pressed(){
-		if(_curIndex>0) _curIndex--;
-	//	while(_curIndex<_topOfPageIndex) --_topOfPageIndex;
-	}
-
-	@Override
-	public void DpadDown_Pressed(){
-		if(_curIndex<_items.size()-1) _curIndex++;
-	//	while(_topOfPageIndex<=_curIndex) ++_topOfPageIndex;
-	}
+	@Override protected int getLastIndex(){ return signatures.length-1; }
 
 	@Override
 	public void A_Pressed(){
-		if(_curIndex < _items.size() )
-			if(_listener!=null)
-				_listener.selectMethod();
+		if(curIndex < signatures.length && listener !=null){
+			MethodSignature sig = signatures[curIndex];
+			listener.selectMethod( sig.createInitialBinding() );
+		}
 	}
 
 	@Override
 	public void B_Pressed(){
-		if(_listener!=null)
-			_listener.cancelMethodSelection();
+		if(listener !=null)
+			listener.cancelMethodSelection();
 	}
 
-	CallbackListener _listener;
+	// endregion
 
 	public interface CallbackListener {
-		public void selectMethod();
+		public void selectMethod(MethodBinding binding);
 		public void cancelMethodSelection();
 	}
+
+	// region fields
+
+	private MethodSignature[] signatures;
+	private CallbackListener listener;
+
+
+	// endregion
 
 }

@@ -11,10 +11,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Dictionary;
 
 public class MethodExplorer implements
 		InteractiveStepList.CallbackListener,
@@ -22,20 +18,29 @@ public class MethodExplorer implements
 		InteractiveParameterList.CallbackListener
 {
 
-	public MethodExplorer(HardwareMap hardwareMap){
-		context = hardwareMap.appContext;
+	public MethodExplorer(){
 
 		// modes
 		stepList = new InteractiveStepList(this);
 		methodList = new InteractiveMethodList(this);
-		paramList = new InteractiveParameterList(this); // does not depend on target
+		paramList = new InteractiveParameterList(this);
 		currentMode = stepList;
 
+		// init steps
+		stepList.setBindings(new MethodBinding[]{null});
+	}
+
+	public void bindToFile(ConfigFile file){
+		this.file = file;
+		MethodBinding[] steps = getBindingsFromFile();
+		if(steps.length > 0)
+			stepList.setBindings(steps);
 	}
 
 	public void setTarget(Object target){
 		this.target = target;
-		methodList.accessClass(target.getClass());
+		mgr = new MethodManager( target.getClass() );
+		methodList.initMethods(mgr.getAllSignatures());
 	}
 
 	public void displayStatus(Telemetry telemetry){
@@ -45,48 +50,45 @@ public class MethodExplorer implements
 	// region callbacks
 
 	@Override
-	public void stepSelected() {// step-index ->down-> select method
-		MethodSignature sig = stepList.getCurrentSignature();
-		if(sig != null) {
-			paramList.setMethodSignature(sig.Clone());
+	public void stepSelected(MethodBinding binding) {// stepSize-index ->down-> select method
+
+		if(binding != null) {
+			paramList.setBinding( binding );
 			currentMode = paramList;
 		} else {
 			currentMode = methodList;
 		}
 	}
-	@Override
-	public void cancelMethodSelection() {  // select method ->up-> step-index
 
+	@Override
+	public void cancelMethodSelection() {  // select method ->up-> stepSize-index
 		currentMode = stepList;
 	}
 
-
 	@Override
-	public void selectMethod() { // select method ->down-> config-params
-		paramList.setMethodSignature(methodList.getCurrent());
+	public void selectMethod( MethodBinding binding ) { // select method ->down-> config-params
+		paramList.setBinding( binding );
 		currentMode = paramList;
 	}
 
 	@Override
 	public void cancelMethodConfig() { // config-params ->up-> select method
-		MethodSignature sig = stepList.getCurrentSignature();
-		if(sig==null){
-			currentMode = methodList;
-		} else {
+		if( stepList.bindingSelected() )
 			currentMode = stepList;
-		}
+		else
+			currentMode = methodList;
 	}
 
 	@Override
-	public void executeMethod() {
-		paramList.execute(target);
+	public void executeMethod(MethodBinding binding) {
+		binding.invoke(target);
 	}
 
 	@Override
-	public void saveMethodConfig() {
-		stepList.setCurrentSignature( paramList.getMethodSignature().Clone() );
+	public void saveMethodConfig(MethodBinding binding) {
+		stepList.setCurrentSignature( binding );
 		currentMode = stepList;
-//		saveSteps();
+		saveSteps();
 	}
 
 	// endregion
@@ -94,43 +96,14 @@ public class MethodExplorer implements
 	// region load/save steps
 
 	void saveSteps(){
-		JsonBuilder builder = new JsonBuilder();
-		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
-		try {
-			OutputStream o = context.openFileOutput("steps.json", Context.MODE_PRIVATE);
-			o.write(builder.toString().getBytes());
-			o.close();
-		}catch(Exception ex){}
+		if(file==null) return;
+		String s = new MethodSerializer().serialize( stepList.getBindings() );
+		file.write(s);
 	}
-
-	void loadSteps(){
-		JsonBuilder builder = new JsonBuilder();
-		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
-		try {
-			InputStream ii = context.openFileInput("steps.json");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(ii));
-			StringBuilder out = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) out.append(line);
-			reader.close();
-
-			String source = out.toString();
-			ArrayList<Object> stepsConfigs = new JsonParser(source).DeserializeArray();
-			MethodSignature[] sigs = new MethodSignature[stepsConfigs.size()];
-			for(int i=0;i<sigs.length;++i){
-				Dictionary<String,Object> config = (Dictionary<String,Object>)stepsConfigs.get(i);
-				String methodName = (String)config.get("name");
-				ArrayList<Object> paramConfigs = (ArrayList<Object>)config.get("params");
-				Param[] params = new Param[paramConfigs.size()];
-				for(int j=0;j<params.length;++j){
-					// !!! need to figureout which type of parameter it is.
-				}
-			}
-			// Parse: array, object, boolean, string, double
-
-
-		}catch(Exception ex){}
-
+	MethodBinding[] getBindingsFromFile() {
+		String s = file.read();
+		if(s==null || s=="") return new MethodBinding[0];
+		return new MethodSerializer().deserialize(s,mgr);
 	}
 	// endregion
 
@@ -170,9 +143,10 @@ public class MethodExplorer implements
 	private InteractiveMethodList methodList;
 	private InteractiveParameterList paramList;
 	private InteractiveList currentMode;
-	private Context context;
 
+	private MethodManager mgr;
 	private Object target;
+	private ConfigFile file;
 
 	// endregion
 
