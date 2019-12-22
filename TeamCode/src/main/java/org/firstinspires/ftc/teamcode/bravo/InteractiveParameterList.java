@@ -43,20 +43,7 @@ public class InteractiveParameterList extends InteractiveList {
 		telemetry.update();
 	}
 
-	@Override
-	public void DpadUp_Pressed(){
-		if(curIndex==0) return;
-		curIndex--;
-		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
-	}
-
-	@Override
-	public void DpadDown_Pressed(){
-		int last= signature.params.length-1;
-		if(curIndex == last) return;
-		curIndex++;
-		if(topOfPageIndex < curIndex +1-LinesPerPage) topOfPageIndex = curIndex +1-LinesPerPage;
-	}
+	@Override protected int getLastIndex(){ return signature.params.length-1; }
 
 	@Override
 	public void DpadLeft_Pressed(){
@@ -109,9 +96,6 @@ public class InteractiveParameterList extends InteractiveList {
 
 	//region private fields
 
-	private int topOfPageIndex = 0;
-	private int curIndex = 0;
-	private static final int LinesPerPage = 4;
 
 	private Object[] paramValues;
 	private MethodSignature signature;

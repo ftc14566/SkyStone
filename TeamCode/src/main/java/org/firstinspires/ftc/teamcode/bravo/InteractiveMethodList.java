@@ -27,20 +27,7 @@ public class InteractiveMethodList extends InteractiveList {
 
 	// region button presses
 
-	@Override
-	public void DpadUp_Pressed(){
-		if(curIndex==0) return;
-		curIndex--;
-		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
-	}
-
-	@Override
-	public void DpadDown_Pressed(){
-		int last = signatures.length-1;
-		if(curIndex == last) return;
-		curIndex++;
-		if (topOfPageIndex < curIndex - LinesPerPage) topOfPageIndex = curIndex - LinesPerPage;
-	}
+	@Override protected int getLastIndex(){ return signatures.length-1; }
 
 	@Override
 	public void A_Pressed(){
@@ -66,11 +53,7 @@ public class InteractiveMethodList extends InteractiveList {
 	// region fields
 
 	private MethodSignature[] signatures;
-	private int curIndex = 0;
-	private int topOfPageIndex = 0;
 	private CallbackListener listener;
-
-	final static int LinesPerPage = 4;
 
 
 	// endregion

@@ -67,24 +67,18 @@ public class InteractiveStepList extends InteractiveList {
 	// region button handlers
 
 	@Override
-	public void DpadUp_Pressed(){
-		if(curIndex==0) return;
-		curIndex--;
-		if(topOfPageIndex > curIndex) topOfPageIndex = curIndex;
-
-		if(dragItem && curIndex+1 < steps.size())
-			steps.add(curIndex, steps.remove(curIndex+1));
+	protected void indexChanged(int oldIndex){
+		if(!dragItem) return;
+		if(curIndex<oldIndex) swap(curIndex,oldIndex);
+		else swap(oldIndex,curIndex);
 	}
+	void swap(int lower,int higher){ steps.add(lower, steps.remove(higher)); }
 
 	@Override
-	public void DpadDown_Pressed() {
-		int last = dragItem ? steps.size()-1 : steps.size();
-		if (curIndex == last) return;
-		curIndex++;
-		if(dragItem && curIndex < steps.size())
-			steps.add(curIndex, steps.remove(curIndex -1));
-		if (topOfPageIndex < curIndex - DisplayCount) topOfPageIndex = curIndex - DisplayCount;
+	protected int getLastIndex(){
+		return steps.size() - (dragItem ? 1 : 0);
 	}
+
 
 	@Override
 	public void Y_Pressed() { // insert slot
@@ -124,10 +118,7 @@ public class InteractiveStepList extends InteractiveList {
 	// region private fields
 
 	// Steps, current stepSize
-	final int DisplayCount = 4;
 	ArrayList<MethodBinding> steps;
-	int topOfPageIndex = 0;
-	int curIndex = 0;
 	boolean dragItem;
 	CallbackListener listener;
 

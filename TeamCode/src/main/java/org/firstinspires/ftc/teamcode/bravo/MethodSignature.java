@@ -15,7 +15,7 @@ public class MethodSignature {
 		this.name = method.getName();
 		this.params = Param.scanMethodParameters(method);
 		// part 3
-		methodString = formatMethodSignature(method);
+		methodString = formatMethodSignature();
 	}
 
 	// endregion
@@ -37,7 +37,14 @@ public class MethodSignature {
 		try {
 			method.invoke(host, paramValues);
 		}catch(InvocationTargetException ex){
+			Throwable cause = ex.getCause();
+			String msg = cause.getMessage() + " - " + cause.toString();
+			System.out.println(msg);
+			throw new IllegalStateException(msg);
+
 		} catch(IllegalAccessException ex) {
+			System.out.println(ex.toString());
+			throw new IllegalStateException("2:"+ex.toString());
 		}
 	}
 
@@ -50,14 +57,14 @@ public class MethodSignature {
 		return initialValues;
 	}
 
-	private static String formatMethodSignature(Method method){
+	private String formatMethodSignature(){
 		StringBuilder buf = new StringBuilder();
 		buf.append(method.getName());
 		buf.append('(');
-		Class<?>[] parameterTypes = method.getParameterTypes();
-		for(int index=0;index<parameterTypes.length;++index){
+//		Class<?>[] parameterTypes = method.getParameterTypes();
+		for(int index=0;index<params.length;++index){
 			if(index!=0) buf.append(',');
-			buf.append(parameterTypes[index].getName());
+			buf.append(params[index].getParamTypeString());
 		}
 		buf.append(')');
 		return buf.toString();

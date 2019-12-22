@@ -33,6 +33,9 @@ public class ParamString extends Param {
 	}
 
 	@Override
+	String getParamTypeString(){ return "String"; } // instead of java.lang.String
+
+	@Override
 	String getScaledValueString(Object value){ return (String)value; }
 	@Override
 	String getRawValueString(Object value){ return (String)value; }

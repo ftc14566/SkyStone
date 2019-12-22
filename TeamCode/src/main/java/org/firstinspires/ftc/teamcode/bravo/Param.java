@@ -67,6 +67,7 @@ public abstract class Param {
 	abstract Object getInitialValue();
 	abstract protected String getRangeString();
 	Class getParamType(){ return parameterType; }
+	String getParamTypeString(){ return getParamType().getName(); }
 	abstract String getRawValueString(Object value);
 	abstract Object parseRawValueString(String s);
 

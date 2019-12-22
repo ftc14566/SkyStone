@@ -15,6 +15,8 @@ public class BobMode extends LinearOpMode {
 		MethodExplorer explorer = new MethodExplorer();
 		explorer.setTarget( new BobBot(this ) );
 		explorer.bindToFile( new ConfigFile("bob_steps.json", hardwareMap.appContext) );
+		telemetry.addData("steps loaded from config.","");
+		telemetry.update();
 
 		waitForStart();
 

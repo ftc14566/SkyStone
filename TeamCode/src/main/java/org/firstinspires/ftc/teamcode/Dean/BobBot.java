@@ -92,7 +92,7 @@ public class BobBot {
             @Config(label="position", stringValue = "even",stringOptions = "up,even,down,grab") String position
     ){
 
-        GrabberServo grabber = _hardware.getBlockGrabber().leftGrabber;
+        BlockGrabber grabber = getBlockGrabber();
 
         grabber.move(position);
 
@@ -103,8 +103,6 @@ public class BobBot {
         while(testModeIsActive() && _opMode.time < endTime);
 
     }
-
-
 
     public void trackColorSensor(
             @Config(label="enable LED") boolean enableLed
@@ -160,6 +158,14 @@ public class BobBot {
     private void waitForBRelease(){ while(testModeIsPaused()); }
 
     // endregion
+
+    private BlockGrabber getBlockGrabber(){
+        if(blockGrabber==null)
+            blockGrabber = new BlockGrabber(_hardware.getServo0(), _hardware.getServo1());
+        return blockGrabber;
+    }
+    private BlockGrabber blockGrabber;
+
 
     // region fields
 

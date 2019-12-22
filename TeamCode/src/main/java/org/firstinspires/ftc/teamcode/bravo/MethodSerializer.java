@@ -28,14 +28,18 @@ public class MethodSerializer {
 		String[] parts = line.split(":");
 		MethodSignature sig = mgr.find(parts[0]);
 		// !!! if sig == null, do something clever
-		if(parts.length-1 != sig.params.length) {
+		if(sig==null || sig.params.length != parts.length-1) {
 			return null;
 			//throw new IllegalStateException("[" + line + "] had " + (parts.length - 1) + " params instead of " + sig.params.length);
 		}
 		Object[] paramValues = new Object[sig.params.length];
-		for(int i=0;i<paramValues.length;++i)
-			paramValues[i] = sig.params[i].parseRawValueString(parts[i+1]);
-
+		for(int i=0;i<paramValues.length;++i) {
+			try {
+				paramValues[i] = sig.params[i].parseRawValueString(parts[i + 1]);
+			} catch(Exception ex){
+				paramValues[i] = sig.params[i].getInitialValue();
+			}
+		}
 		return new MethodBinding(sig,paramValues);
 	}
 

@@ -11,29 +11,27 @@ public class GrabberServo {
 	final private double up;
 
 
-	public GrabberServo(Servo servo, double grab, double down, double event, double up){
+	public GrabberServo(Servo servo,
+		double rangeMin, double rangeMax, Servo.Direction direction,
+		double grab, double down, double even, double up
+	){
 		this.servo = servo;
-		servo.setDirection(Servo.Direction.FORWARD);
-		servo.scaleRange(0.0,1.0);
+		servo.setDirection(direction);
+		servo.scaleRange(rangeMin,rangeMax);
 
 		this.grab = grab;
 		this.down = down;
-		this.even = event;
+		this.even = even;
 		this.up = up;
 	}
 
 	public void move(String position){
 		switch(position) {
-			case "up":    up(); break;
-			case "even":  even(); break;
-			case "down":  down(); break;
-			case "grab":  grab(); break;
+			case "up":    servo.setPosition(up); break;
+			case "even":  servo.setPosition(even); break;
+			case "down":  servo.setPosition(down); break;
+			case "grab":  servo.setPosition(grab); break;
 		}
 	}
-
-	public void grab(){ servo.setPosition(grab); }
-	public void down(){ servo.setPosition(down); }
-	public void even(){ servo.setPosition(even); }
-	public void up(){ servo.setPosition(up); }
 
 }

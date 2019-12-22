@@ -9,8 +9,17 @@ public class BlockGrabber {
 	public GrabberServo rightGrabber;
 
 	public BlockGrabber(Servo leftServo, Servo rightServo){
-		leftGrabber = new GrabberServo(leftServo,0.14,0.17,0.53,0.89);
-		rightGrabber = new GrabberServo(rightServo,0.89,0.85,0.5,0.14);
+
+		leftGrabber = new GrabberServo(leftServo,
+				0.14, 0.89, Servo.Direction.REVERSE
+				,1.00,0.9,0.5,0.0
+		);
+
+		rightGrabber = new GrabberServo(rightServo,
+				0.14, 0.89, Servo.Direction.FORWARD,
+				1.0,0.9,0.5,0.0
+		);
+
 	}
 
 	public void move(String position){
