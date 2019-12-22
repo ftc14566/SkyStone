@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Dean;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class GrabberServo {
+public class BlockServo {
 
 	final private Servo servo;
 	final private double grab;
@@ -11,9 +11,9 @@ public class GrabberServo {
 	final private double up;
 
 
-	public GrabberServo(Servo servo,
-		double rangeMin, double rangeMax, Servo.Direction direction,
-		double grab, double down, double even, double up
+	public BlockServo(Servo servo,
+					  double rangeMin, double rangeMax, Servo.Direction direction,
+					  double grab, double down, double even, double up
 	){
 		this.servo = servo;
 		servo.setDirection(direction);
