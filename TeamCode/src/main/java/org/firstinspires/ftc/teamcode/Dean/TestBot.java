@@ -183,12 +183,12 @@ public class TestBot {
 		DcMotor lMotor = hardware.leftTowerMotor;
 		DcMotor rMotor = hardware.rightTowerMotor;
 
+		// Go Up
 		lMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		lMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		rMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		rMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-		// motor
 		lMotor.setPower(upPower);
 		rMotor.setPower(upPower);
 		lMotor.setTargetPosition(targetPosition);
@@ -205,6 +205,7 @@ public class TestBot {
 			opMode.telemetry.update();
 		}
 
+		// Go Down
 		lMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		rMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		lMotor.setPower(downPower);
