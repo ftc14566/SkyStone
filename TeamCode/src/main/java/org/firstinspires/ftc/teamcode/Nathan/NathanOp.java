@@ -58,6 +58,7 @@ public class NathanOp extends OpMode {
 
         bot.foundationServos(gamepad1.x, gamepad1.b);
         bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
+        /*
         if (gamepad2.b)
             bot.Extend(NathanBot.BridgePosition.Grabbing);
 
@@ -65,7 +66,7 @@ public class NathanOp extends OpMode {
             bot.Extend(NathanBot.BridgePosition.In);
         else if (gamepad2.y)
             bot.Extend(NathanBot.BridgePosition.Out);
-
+        */
 
         //bot.grab(gamepad2.x,bot.isBlockInFront());
         bot.blockGrabberWithActivate(gamepad2.x,gamepad2.b, bot.isBlockInFront(),gamepad2.left_bumper);
