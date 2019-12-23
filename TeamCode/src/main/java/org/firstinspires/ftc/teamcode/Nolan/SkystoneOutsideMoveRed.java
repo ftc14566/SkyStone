@@ -4,10 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Hardware;
-import org.firstinspires.ftc.teamcode.Nolan.AutoBot;
 
-@Autonomous(name="1R: Foundation Move", group="Linear Opmode")
-public class foundationMoveRed extends LinearOpMode {
+@Autonomous(name="2R: Outside Skystone Move", group="Linear Opmode")
+public class SkystoneOutsideMoveRed extends LinearOpMode {
 
 	public boolean allianceRed = true;
 
@@ -17,24 +16,20 @@ public class foundationMoveRed extends LinearOpMode {
 		// Init
 		Hardware hardware = new Hardware();
 		hardware.init(hardwareMap);
+
 		AutoDrive drive = new AutoDrive(hardware,this);
 		AutoBot bot = new AutoBot(hardware,this);
+		AutoVision vision = new AutoVision(hardware, this);
 
-        bot.releaseFoundation();
+		vision.startUp();
 
 		waitForStart();
 
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
 
-
 		// Run Code
-		drive.moveForwardDistanceSensor(2,0.3,3);
-		bot.grabFoundation();
-		sleep(3000);
-		//bot.releaseFoundation();
-		//bot.waitUntilRunTime(25);
-		//move to line
+		vision.activate();
 	}
 
 }
