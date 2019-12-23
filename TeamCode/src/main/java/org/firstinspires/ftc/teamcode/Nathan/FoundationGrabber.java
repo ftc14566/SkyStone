@@ -11,8 +11,8 @@ public class FoundationGrabber {
         this.leftServo.setDirection(Servo.Direction.REVERSE);
     }
     public void down(){
-        leftServo.setPosition(0.9);
-        rightServo.setPosition(0.42);
+        leftServo.setPosition(1);
+        rightServo.setPosition(0.52);
     }
     public void up(){
         leftServo.setPosition(0.53);
