@@ -75,7 +75,7 @@ public class InteractiveParameterList extends InteractiveList {
 	MethodBinding makeNewBinding(){ return new MethodBinding(signature,paramValues); }
 
 	final double PreRepeatWaitTime = 1000; // wait 1 second before speeding up
-	final double AutoPressTime = 70; // once every 70ms
+	final double AutoPressTime = 50; // once every 70ms
 	void trackPressedTime(){ _startRepeatingAtThisTime = currentTimeMillis() + PreRepeatWaitTime + AutoPressTime; }
 
 	@Override

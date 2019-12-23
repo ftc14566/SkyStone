@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Dean.BobHardware;
 import org.firstinspires.ftc.teamcode.bravo.Config;
 
 // Methods for testing on FTC-Bob controller.
@@ -18,7 +17,7 @@ public class BobBot {
 
     public BobBot(LinearOpMode opMode){
         _hardware = new BobHardware(opMode.hardwareMap);
-        _opMode = opMode;
+        this.opMode = opMode;
     }
 
     public void powerMotor(
@@ -33,29 +32,29 @@ public class BobBot {
 
         motor.setPower(power);
 
-        double startTime = _opMode.time;
+        double startTime = opMode.time;
         double endTime = startTime + timeout;
         int pos=0;
         while(testModeIsActive()
-                && (endTime)>_opMode.time
+                && (endTime)> opMode.time
         ){
             pos = motor.getCurrentPosition();
-            _opMode.telemetry.addData("motor position", pos);
-            _opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-            _opMode.telemetry.addData("time remaining", "%.1f", endTime-_opMode.time);
-            _opMode.telemetry.addData("To stop, press:", "gamepad1.b");
-            _opMode.telemetry.update();
+            opMode.telemetry.addData("motor position", pos);
+            opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
+            opMode.telemetry.addData("time remaining", "%.1f", endTime- opMode.time);
+            opMode.telemetry.addData("To stop, press:", "gamepad1.b");
+            opMode.telemetry.update();
         }
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // leave results on screen
-        _opMode.telemetry.addData("--Mode Complete--", "");
-        _opMode.telemetry.addData("motor position", pos);
-        _opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-        _opMode.telemetry.addData("elapsed time", "%.1f",_opMode.time - startTime );
-        _opMode.telemetry.addData("To return, press:", "gamepad1.b");
-        _opMode.telemetry.update();
+        opMode.telemetry.addData("--Mode Complete--", "");
+        opMode.telemetry.addData("motor position", pos);
+        opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
+        opMode.telemetry.addData("elapsed time", "%.1f", opMode.time - startTime );
+        opMode.telemetry.addData("To return, press:", "gamepad1.b");
+        opMode.telemetry.update();
 
         waitForBRelease();
         waitForBPress();
@@ -78,29 +77,29 @@ public class BobBot {
 
         s.setPosition(position);
 
-        _opMode.telemetry.addData("Servo Position:", "%.0f", position*100);
-        _opMode.telemetry.addData("Servo Dir:", directionForward?"forward":"reverse");
-        _opMode.telemetry.addData("Servo Range:", "%.0f to %.0f", rangeMin*100,rangeMax*100);
-        _opMode.telemetry.addData("To return, press:", "gamepad1.b");
-        _opMode.telemetry.update();
-        double endTime = _opMode.time+2.0; // wait 2 seconds
-        while(testModeIsActive() && _opMode.time < endTime);
+        opMode.telemetry.addData("Servo Position:", "%.0f", position*100);
+        opMode.telemetry.addData("Servo Dir:", directionForward?"forward":"reverse");
+        opMode.telemetry.addData("Servo Range:", "%.0f to %.0f", rangeMin*100,rangeMax*100);
+        opMode.telemetry.addData("To return, press:", "gamepad1.b");
+        opMode.telemetry.update();
+        double endTime = opMode.time+2.0; // wait 2 seconds
+        while(testModeIsActive() && opMode.time < endTime);
 
     }
 
     public void moveGrabber(
-            @Config(label="position", stringValue = "even",stringOptions = "up,even,down,grab") String position
+            @Config(label="position", stringValue = "even",stringOptions = "grab,down,even,up") String position
     ){
 
         BlockGrabber grabber = getBlockGrabber();
 
         grabber.move(position);
 
-        _opMode.telemetry.addData("Servo Grabber To:", position );
-        _opMode.telemetry.addData("To return, press:", "gamepad1.b");
-        _opMode.telemetry.update();
-        double endTime = _opMode.time+2.0; // wait 2 seconds
-        while(testModeIsActive() && _opMode.time < endTime);
+        opMode.telemetry.addData("Servo Grabber To:", position );
+        opMode.telemetry.addData("To return, press:", "gamepad1.b");
+        opMode.telemetry.update();
+        double endTime = opMode.time+2.0; // wait 2 seconds
+        while(testModeIsActive() && opMode.time < endTime);
 
     }
 
@@ -124,11 +123,11 @@ public class BobBot {
             float hsvValues[] = {0F,0F,0F};
             Color.RGBToHSV( red, green, blue, hsvValues);
 
-            _opMode.telemetry.addData("red green blue", red+" "+green+" "+blue);
-            _opMode.telemetry.addData("H/S/V", "%.2f %.2f %.2f", hsvValues[0],hsvValues[1],hsvValues[2] );
-            _opMode.telemetry.addData("Distance (cm)", "%.2f", distanceSensor.getDistance( DistanceUnit.CM ) );
-            _opMode.telemetry.addData("To return, press:", "gamepad1.b");
-            _opMode.telemetry.update();
+            opMode.telemetry.addData("red green blue", red+" "+green+" "+blue);
+            opMode.telemetry.addData("H/S/V", "%.2f %.2f %.2f", hsvValues[0],hsvValues[1],hsvValues[2] );
+            opMode.telemetry.addData("Distance (cm)", "%.2f", distanceSensor.getDistance( DistanceUnit.CM ) );
+            opMode.telemetry.addData("To return, press:", "gamepad1.b");
+            opMode.telemetry.update();
         }
 
         colorSensor.enableLed(false);
@@ -142,8 +141,8 @@ public class BobBot {
         DistanceSensor sensor = _hardware.getDistance2m();
 
         while(testModeIsActive()){
-            _opMode.telemetry.addData("Distance (in)", sensor.getDistance(DistanceUnit.INCH) );
-            _opMode.telemetry.update();
+            opMode.telemetry.addData("Distance (in)", sensor.getDistance(DistanceUnit.INCH) );
+            opMode.telemetry.update();
         }
         waitForBRelease();
 
@@ -152,8 +151,8 @@ public class BobBot {
 
     // region private helper methods
 
-    private boolean testModeIsActive(){ return _opMode.opModeIsActive() && !_opMode.gamepad1.b; }
-    private boolean testModeIsPaused(){ return _opMode.opModeIsActive() && _opMode.gamepad1.b; }
+    private boolean testModeIsActive(){ return opMode.opModeIsActive() && !opMode.gamepad1.b; }
+    private boolean testModeIsPaused(){ return opMode.opModeIsActive() && opMode.gamepad1.b; }
     private void waitForBPress(){ while(testModeIsActive()); }
     private void waitForBRelease(){ while(testModeIsPaused()); }
 
@@ -170,7 +169,7 @@ public class BobBot {
     // region fields
 
     BobHardware _hardware;
-    LinearOpMode _opMode;
+    LinearOpMode opMode;
 
     // endregion
 }
