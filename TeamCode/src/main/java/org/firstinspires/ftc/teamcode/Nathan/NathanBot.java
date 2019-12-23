@@ -11,9 +11,14 @@ import org.firstinspires.ftc.teamcode.TeleBot;
 
 public class NathanBot extends TeleBot {
 
-public NathanBot(Hardware hardware){
-    super(hardware);
-}
+    public NathanBot(Hardware hardware){
+        super(hardware);
+        grabber = new Grabber(hardware.grabberLeft, hardware.grabberRight);
+        foundationGrabber = new FoundationGrabber(hardware.leftFoundationServo, hardware.rightFoundationServo);
+    }
+
+    Grabber grabber;
+    FoundationGrabber foundationGrabber;
 
 /*	public void raiseElevators(double elevatorBind, double rate){
 
@@ -165,22 +170,23 @@ public NathanBot(Hardware hardware){
 
     }
 
-    public void grab(boolean open,boolean close){
+    public void grab(boolean open,boolean blockInFront, boolean closeButton){
 
 
         if(open)
-            setGrabberPos(0.5);
-
-        else if(close)
-            setGrabberPos(0.9);
+            grabber.open();
+        else if(blockInFront)
+           grabber.grab();
 
 
     }
-
-    private void setGrabberPos(double pos){
-        hardware.grabberLeft.setPosition(pos);
-        hardware.grabberRight.setPosition(pos);
-
+    public void blockGrabberWithActivate(boolean open, boolean close, boolean blockSenser, boolean activateSensor){
+        if (open)
+            grabber.open();
+        else if (close)
+            grabber.grab();
+        else if (activateSensor && blockSenser)
+            grabber.grab();
     }
 
     public boolean isBlockInFront(){
@@ -238,7 +244,12 @@ public NathanBot(Hardware hardware){
         hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
     }
-
+    public void foundationServos(boolean up, boolean down){
+        if (up)
+            foundationGrabber.up();
+        else if (down)
+            foundationGrabber.down();
+    }
     public void RaiseElevator(){}
     public void LowerElevator(){}
 

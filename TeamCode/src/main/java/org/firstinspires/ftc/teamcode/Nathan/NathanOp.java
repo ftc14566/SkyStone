@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware;
-import org.firstinspires.ftc.teamcode.Nathan.NathanBot;
 
 @TeleOp(name="NathanOp", group="Iterative Opmode")
 public class NathanOp extends OpMode {
@@ -57,8 +56,9 @@ public class NathanOp extends OpMode {
         bot.driveAndStraif(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
         //bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
 
-
+        bot.foundationServos(gamepad1.x, gamepad1.b);
         bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
+        /*
         if (gamepad2.b)
             bot.Extend(NathanBot.BridgePosition.Grabbing);
 
@@ -66,9 +66,10 @@ public class NathanOp extends OpMode {
             bot.Extend(NathanBot.BridgePosition.In);
         else if (gamepad2.y)
             bot.Extend(NathanBot.BridgePosition.Out);
+        */
 
-
-        bot.grab(gamepad2.x,bot.isBlockInFront());
+        //bot.grab(gamepad2.x,bot.isBlockInFront());
+        bot.blockGrabberWithActivate(gamepad2.x,gamepad2.b, bot.isBlockInFront(),gamepad2.left_bumper);
         telemetry.addData("Bridge", hardware.bridgeMotor.getCurrentPosition());
         telemetry.update();
     }
@@ -107,3 +108,4 @@ public class NathanOp extends OpMode {
     }
 
 }
+
