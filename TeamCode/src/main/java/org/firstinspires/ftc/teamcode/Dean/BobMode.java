@@ -12,7 +12,7 @@ public class BobMode extends LinearOpMode {
 	@Override
 	public void runOpMode() throws InterruptedException {
 
-		MethodExplorer explorer = new MethodExplorer();
+		MethodExplorer explorer = new MethodExplorer(gamepad1);
 		explorer.setTarget( new BobBot(this ) );
 		explorer.bindToFile( new ConfigFile("bob_steps.json", hardwareMap.appContext) );
 		telemetry.addData("steps loaded from config.","");
@@ -22,7 +22,7 @@ public class BobMode extends LinearOpMode {
 
 		while(this.opModeIsActive()){
 
-			explorer.TrackGamePad(gamepad1);
+			explorer.trackGamePad();
 
 			explorer.displayStatus(telemetry);
 

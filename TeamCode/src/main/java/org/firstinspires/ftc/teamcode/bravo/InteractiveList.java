@@ -35,11 +35,7 @@ public abstract class InteractiveList {
 
 	public void DpadLeft_Pressed(){}
 	public void DpadRight_Pressed(){}
-	public void DpadUp_Released(){}
-	public void DpadDown_Released(){}
 
-	public void DpadLeft_Released(){}
-	public void DpadRight_Released(){}
 	public void A_Pressed(){}
 	public void B_Pressed(){}
 	public void X_Pressed(){}

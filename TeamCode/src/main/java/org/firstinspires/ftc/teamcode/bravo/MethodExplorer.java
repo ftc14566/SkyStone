@@ -18,7 +18,9 @@ public class MethodExplorer implements
 		InteractiveParameterList.CallbackListener
 {
 
-	public MethodExplorer(){
+	public MethodExplorer(Gamepad gamepad){
+
+		this.tracker = new ButtonTracker(gamepad);
 
 		// modes
 		stepList = new InteractiveStepList(this);
@@ -107,38 +109,24 @@ public class MethodExplorer implements
 	}
 	// endregion
 
-	// region button tracking
-
-	public void TrackGamePad(Gamepad gamepad){
-		if(Changed(0,gamepad.a)) if(_cur) currentMode.A_Pressed();
-		if(Changed(1,gamepad.b)) if(_cur) currentMode.B_Pressed();
-		if(Changed(2,gamepad.x)) if(_cur) currentMode.X_Pressed();
-		if(Changed(3,gamepad.y)) if(_cur) currentMode.Y_Pressed();
-		if(Changed(4,gamepad.dpad_down)) if(_cur) currentMode.DpadDown_Pressed(); else currentMode.DpadDown_Released();
-		if(Changed(5,gamepad.dpad_up)) if(_cur) currentMode.DpadUp_Pressed(); else currentMode.DpadUp_Released();
-		if(Changed(6,gamepad.dpad_left)) if(_cur) currentMode.DpadLeft_Pressed(); else currentMode.DpadLeft_Released();
-		if(Changed(7,gamepad.dpad_right)) if(_cur) currentMode.DpadRight_Pressed(); else currentMode.DpadRight_Released();
-		if(Changed(8,gamepad.back)) if(_cur) currentMode.Back_Pressed();
-		if(Changed(9,gamepad.start)) if(_cur) currentMode.Start_Pressed();
-		if(Changed(10,gamepad.guide)) if(_cur) currentMode.Guide_Pressed();
-		if(Changed(11,gamepad.left_bumper)) if(_cur) currentMode.LeftBumper_Pressed();
-		if(Changed(12,gamepad.right_bumper)) if(_cur) currentMode.RightBumper_Pressed();
-		currentMode.doOtherWork(gamepad);
+	public void trackGamePad(){
+		if(tracker.aPressed()) currentMode.A_Pressed();
+		if(tracker.bPressed()) currentMode.B_Pressed();
+		if(tracker.xPressed()) currentMode.X_Pressed();
+		if(tracker.yPressed()) currentMode.Y_Pressed();
+		if(tracker.dpadDownPressed()) currentMode.DpadDown_Pressed();
+		if(tracker.dpadUpPressed()) currentMode.DpadUp_Pressed();
+		if(tracker.dpadLeftPressed()) currentMode.DpadLeft_Pressed();
+		if(tracker.dpadRightPressed()) currentMode.DpadRight_Pressed();
+		if(tracker.backPressed()) currentMode.Back_Pressed();
+		if(tracker.startPressed()) currentMode.Start_Pressed();
+		if(tracker.guidePressed()) currentMode.Guide_Pressed();
+		if(tracker.leftBumperPressed()) currentMode.LeftBumper_Pressed();
+		if(tracker.rightBumperPressed()) currentMode.RightBumper_Pressed();
+		currentMode.doOtherWork(tracker.gamepad);
 	}
-
-	private boolean Changed(int index,boolean newState){
-		boolean changed = newState != _lastState[index];
-		_lastState[index] = _cur = newState;
-		return changed;
-	}
-
-	private boolean _cur;
-	private boolean[] _lastState = new boolean[13];
-
-	// endregion
 
 	// region fields
-
 	private InteractiveStepList stepList;
 	private InteractiveMethodList methodList;
 	private InteractiveParameterList paramList;
@@ -147,6 +135,8 @@ public class MethodExplorer implements
 	private MethodManager mgr;
 	private Object target;
 	private ConfigFile file;
+
+	ButtonTracker tracker;
 
 	// endregion
 
