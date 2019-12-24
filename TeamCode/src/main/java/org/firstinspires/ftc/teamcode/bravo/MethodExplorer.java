@@ -1,16 +1,8 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-import android.content.Context;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 public class MethodExplorer implements
 		InteractiveStepList.CallbackListener,
@@ -123,7 +115,7 @@ public class MethodExplorer implements
 		if(tracker.guidePressed()) currentMode.Guide_Pressed();
 		if(tracker.leftBumperPressed()) currentMode.LeftBumper_Pressed();
 		if(tracker.rightBumperPressed()) currentMode.RightBumper_Pressed();
-		currentMode.doOtherWork(tracker.gamepad);
+		currentMode.update(tracker.gamepad);
 	}
 
 	// region fields

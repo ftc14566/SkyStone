@@ -7,9 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.bravo.Config;
 
-public class TestBot {
+public class TestBot extends TestBotBase {
 
 	public TestBot(LinearOpMode opMode){
+		super(opMode);
 		this.opMode = opMode;
 		hardware = new Hardware(opMode.hardwareMap);
 		blockGrabber = new BlockGrabber(hardware.grabberLeft,hardware.grabberRight);
@@ -44,7 +45,6 @@ public class TestBot {
 		while(testModeIsActive() && opMode.time < endTime);
 
 	}
-
 
 	public void moveServo(
 			@Config(label="servo", stringOptions = "L-grab,R-Grab,L-Found,R-Found",stringValue = "L-grab") String selectServo,
@@ -90,40 +90,7 @@ public class TestBot {
 	){
 		DcMotor motor = pickMotor(motorStr);
 		if(motor == null) return;
-		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-		motor.setPower(power);
-
-		double startTime = opMode.time;
-		double endTime = startTime + timeout;
-		int pos=0;
-		while(testModeIsActive()
-				&& (endTime)> opMode.time
-		){
-			pos = motor.getCurrentPosition();
-			opMode.telemetry.addData("motor position", pos);
-			opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-			opMode.telemetry.addData("time remaining", "%.1f", endTime- opMode.time);
-			opMode.telemetry.addData("To stop, press:", "gamepad1.b");
-			opMode.telemetry.update();
-		}
-
-		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-		// leave results on screen
-		opMode.telemetry.addData("--Mode Complete--", "");
-		opMode.telemetry.addData("motor position", pos);
-		opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-		opMode.telemetry.addData("elapsed time", "%.1f", opMode.time - startTime );
-		opMode.telemetry.addData("To return, press:", "gamepad1.b");
-		opMode.telemetry.update();
-
-		waitForBRelease();
-		waitForBPress();
-
-		waitForBRelease();
-
+		super.motorRunUsingEncoder(motor,power,timeout);
 	}
 
 	public void motorPosition(
@@ -134,43 +101,7 @@ public class TestBot {
 	){
 		DcMotor motor = pickMotor(motorStr);
 		if(motor == null) return;
-		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-		// motor
-		motor.setPower(power);
-		motor.setTargetPosition(targetPosition);
-
-		double startTime = opMode.time;
-		double endTime = startTime + timeout;
-		int pos=0;
-		while(testModeIsActive()
-				&& (endTime)> opMode.time
-		){
-			pos = motor.getCurrentPosition();
-			opMode.telemetry.addData("motor position", pos);
-			opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-			opMode.telemetry.addData("time remaining", "%.1f", endTime- opMode.time);
-			opMode.telemetry.addData("To stop, press:", "gamepad1.b");
-			opMode.telemetry.update();
-		}
-
-		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-		// leave results on screen
-		opMode.telemetry.addData("--Mode Complete--", "");
-		opMode.telemetry.addData("Target", targetPosition);
-		opMode.telemetry.addData("motor position", pos);
-		opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-		opMode.telemetry.addData("elapsed time", "%.1f", opMode.time - startTime );
-		opMode.telemetry.addData("To return, press:", "gamepad1.b");
-		opMode.telemetry.update();
-
-		waitForBRelease();
-		waitForBPress();
-
-		waitForBRelease();
-
+		super.motorRunToPosition(motor,targetPosition,power,timeout);
 	}
 
 
@@ -238,20 +169,11 @@ public class TestBot {
 
 	// endregion
 
-	// region private methods
-
-	private boolean testModeIsActive(){ return opMode.opModeIsActive() && !opMode.gamepad1.b; }
-	private boolean testModeIsPaused(){ return opMode.opModeIsActive() && opMode.gamepad1.b; }
-	private void waitForBPress(){ while(testModeIsActive()); }
-	private void waitForBRelease(){ while(testModeIsPaused()); }
-
-	// endregion
 
 	// region private fields
 
 	FoundationGrabber foundationGrabber;
 	BlockGrabber blockGrabber;
-	LinearOpMode opMode;
 	Hardware hardware;
 
 	// endregion

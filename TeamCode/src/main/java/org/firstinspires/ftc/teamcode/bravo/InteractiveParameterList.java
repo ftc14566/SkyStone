@@ -17,12 +17,13 @@ public class InteractiveParameterList extends InteractiveList {
 	// endregion
 
 	public void setBinding(MethodBinding binding){
-		curIndex = 0;
 
 		signature = binding.getSignature();
 
 		// clone values
 		paramValues = binding.getParamValues();
+
+		curIndex = 0;
 	}
 
 	public interface CallbackListener {
@@ -37,7 +38,7 @@ public class InteractiveParameterList extends InteractiveList {
 	public void DisplayStatus(Telemetry telemetry){
 		telemetry.addData("Mode","Enter Param Values for:"+ signature.methodString);
 
-		int end = Math.min(topOfPageIndex +LinesPerPage, signature.params.length); // exclude end-index
+		int end = Math.min(topOfPageIndex+LinesPerPage, signature.params.length); // exclude end-index
 		for(int i = topOfPageIndex; i<end; ++i)
 			signature.params[i].addParamToTelemetry(telemetry, paramValues[i], i== curIndex);
 		telemetry.update();
@@ -47,6 +48,7 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DpadLeft_Pressed(){
+		if(paramValues.length==0) return;
 		paramValues[curIndex] = signature.params[curIndex]
 				.adjust(paramValues[curIndex],-1);
 		trackPressedTime();
@@ -54,6 +56,7 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DpadRight_Pressed(){
+		if(paramValues.length==0) return;
 		paramValues[curIndex] = signature.params[curIndex]
 				.adjust(paramValues[curIndex],1);
 		trackPressedTime();
@@ -79,7 +82,7 @@ public class InteractiveParameterList extends InteractiveList {
 	void trackPressedTime(){ _startRepeatingAtThisTime = currentTimeMillis() + PreRepeatWaitTime + AutoPressTime; }
 
 	@Override
-	public void doOtherWork(Gamepad gamepad){
+	public void update(Gamepad gamepad){
 		// When left or righ dpad held down, auto-inc/dec 10 times a second.s
 		if(!gamepad.dpad_left && !gamepad.dpad_right) return;
 		int stepCount = gamepad.dpad_right ? 1 : -1;

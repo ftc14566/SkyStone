@@ -17,7 +17,7 @@ public abstract class InteractiveList {
 		telemetry.update();
 	}
 
-	public void doOtherWork(Gamepad gamepad){}
+	public void update(Gamepad gamepad){}
 
 	public void DpadUp_Pressed(){
 		if(curIndex==0) return;
