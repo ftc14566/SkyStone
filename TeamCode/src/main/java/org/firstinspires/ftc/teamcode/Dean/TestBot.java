@@ -53,30 +53,19 @@ public class TestBot extends TestBotBase {
 			@Config(label="range-min", min=0.0, max=1.0, step=.01, displayScale = 100, value = 0.0, units = "%") double rangeMin,
 			@Config(label="range-max", min=0.0, max=1.0, step=.01, displayScale = 100, value = 1.0, units = "%") double rangeMax
 	){
+		Servo s = pickServo(selectServo);
+		if(s==null) return;
+		super.moveServo(s,position,directionForward,rangeMin,rangeMax);
+	}
 
-		Servo s = null;
+	Servo pickServo(String selectServo){
 		switch(selectServo){
-			case "L-grab": s=hardware.grabberLeft; break;
-			case "R-grab": s=hardware.grabberRight; break;
-			case "L-Found": s = hardware.leftFoundationServo; break;
-			case "R-Found": s = hardware.rightFoundationServo; break;
-			default: return;
+			case "L-grab": return hardware.grabberLeft;
+			case "R-grab": return hardware.grabberRight;
+			case "L-Found": return hardware.leftFoundationServo;
+			case "R-Found": return hardware.rightFoundationServo;
 		}
-
-		// configure
-		s.scaleRange(rangeMin,rangeMax);
-		s.setDirection(directionForward ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
-
-		s.setPosition(position);
-
-		opMode.telemetry.addData("Servo Position:", "%.0f", position*100);
-		opMode.telemetry.addData("Servo Dir:", directionForward?"forward":"reverse");
-		opMode.telemetry.addData("Servo Range:", "%.0f to %.0f", rangeMin*100,rangeMax*100);
-		opMode.telemetry.addData("To return, press:", "gamepad1.b");
-		opMode.telemetry.update();
-		double endTime = opMode.time+2.0; // wait 2 seconds
-		while(testModeIsActive() && opMode.time < endTime);
-
+		return null;
 	}
 
 	// endregion
@@ -168,7 +157,6 @@ public class TestBot extends TestBotBase {
 	}
 
 	// endregion
-
 
 	// region private fields
 

@@ -32,112 +32,56 @@ public class TestBotBase {
 	public void motorRunWithoutEncoder(DcMotor motor, double power, int timeout){
 		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
 		motor.setPower(power);
-
-		setTimeout(timeout);
-		int pos=0;
-		double rev = 0.0;
-		double starTime= opMode.time;
-		while(testModeIsActive()){
-			pos = motor.getCurrentPosition();
-			rev = pos/BobHardware.COUNTS_PER_MOTOR_REV;
-			opMode.telemetry.addData("motor position", pos);
-			opMode.telemetry.addData("revolutions", "%.2f",rev);
-			tellUserTimeRemaining();
-			tellUserHowToExit();
-			opMode.telemetry.update();
-		}
-		clearTimeout();
-
-		double elapsed = opMode.time-starTime;
-		int posRate = (int)Math.round(pos/elapsed);
-		double revRate = Math.round(pos/(BobHardware.COUNTS_PER_MOTOR_REV*elapsed));
-
-		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-		// leave results on screen
-		opMode.telemetry.addData("--Mode Complete--", "");
-		opMode.telemetry.addData("position (#,rev)", "%i %.2f", pos, rev);
-		opMode.telemetry.addData("vel (#,rev/s)", "%i %.2f", posRate, revRate);
-		tellUserHowToExit();
-		opMode.telemetry.update();
-
-		waitForBRelease();
-		waitForBPress();
-
-		waitForBRelease();
-
+		runMotor(motor,timeout);
 	}
+
 
 	public void motorRunUsingEncoder(DcMotor motor, double power, int timeout){
 		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 		motor.setPower(power);
-
-		setTimeout(timeout);
-		int pos=0;
-		while(testModeIsActive()){
-			pos = motor.getCurrentPosition();
-			opMode.telemetry.addData("motor position", pos);
-			opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-			tellUserTimeRemaining();
-			tellUserHowToExit();
-			opMode.telemetry.update();
-		}
-		clearTimeout();
-
-		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-		// leave results on screen
-		opMode.telemetry.addData("--Mode Complete--", "");
-		opMode.telemetry.addData("motor position", pos);
-		opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
-		tellUserTimeRemaining();
-		tellUserHowToExit();
-		opMode.telemetry.update();
-
-		waitForBRelease();
-		waitForBPress();
-		waitForBRelease();
-
+		runMotor(motor, timeout);
 	}
 
 	public void motorRunToPosition(DcMotor motor, int targetPosition, double power, int timeout){
 		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-		// motor
 		motor.setPower(power);
 		motor.setTargetPosition(targetPosition);
+		runMotor(motor, timeout);
+	}
 
-		int pos=0;
+	private void runMotor(DcMotor motor, int timeout) {
 		setTimeout(timeout);
+		int pos=0;
+		double rev=0.0;
+		double starTime = opMode.time;
 		while(testModeIsActive()){
 			pos = motor.getCurrentPosition();
-			opMode.telemetry.addData("motor position", pos);
-			opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
+			rev = pos/BobHardware.COUNTS_PER_MOTOR_REV;
+			opMode.telemetry.addData("pos (#,rev)", "%i %.2f", pos, rev);
 			tellUserTimeRemaining();
 			tellUserHowToExit();
 			opMode.telemetry.update();
 		}
 		clearTimeout();
-
 		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+		double elapsed = opMode.time-starTime;
+		int posRate = (int)Math.round(pos/elapsed);
+		double revRate = rev/elapsed;
 
 		// leave results on screen
 		opMode.telemetry.addData("--Mode Complete--", "");
-		opMode.telemetry.addData("Target", targetPosition);
-		opMode.telemetry.addData("motor position", pos);
-		opMode.telemetry.addData("revolutions", "%.2f",pos/ BobHardware.COUNTS_PER_MOTOR_REV);
+		opMode.telemetry.addData("pos (#,rev)", "%i %.2f", pos, rev);
+		opMode.telemetry.addData("rate (#/s,rev/s)", "%i %.2f", posRate, revRate);
 		tellUserHowToExit();
 		opMode.telemetry.update();
 
 		waitForBRelease();
 		waitForBPress();
 		waitForBRelease();
-
 	}
 
 
