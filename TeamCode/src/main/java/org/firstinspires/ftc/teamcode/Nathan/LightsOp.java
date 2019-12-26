@@ -42,9 +42,7 @@ public class LightsOp extends OpMode {
 
     @Override
     public void loop() {
-    bot.SetLightPattern();
-
-
+    bot.SetLightColor(gamepad1.a,gamepad1.b);
        }
 
 }
