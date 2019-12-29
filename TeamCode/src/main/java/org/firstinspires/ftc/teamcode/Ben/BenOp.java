@@ -21,11 +21,6 @@ public class BenOp extends OpMode {
 		hardware.init( hardwareMap );
 		bot = new BenBot(hardware);
 
-		telemetry.addLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-		telemetry.addLine("(*_*)");
-		telemetry.addLine("How did you find me?");
-		telemetry.addLine("Tell Ben");
-		telemetry.update();
 	}
 
 	/*
@@ -64,7 +59,7 @@ public class BenOp extends OpMode {
 		bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
 		bot.towerDown(gamepad2.right_trigger);
 
-		bot.encodersWithGrabber(gamepad2.left_trigger, false);
+		//TODO bot.encodersWithGrabber(gamepad2.left_trigger, false);
 
 		bot.extend(gamepad2.y,gamepad2.a);
 

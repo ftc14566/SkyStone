@@ -9,7 +9,8 @@ public class TeleBot {
 
 	protected Hardware hardware;
 
-	public double towerPositionRight;//'' = hardware.rightTowerMotor.getCurrentPosition();
+	public double towerPositionRight;//
+    // = hardware.rightTowerMotor.getCurrentPosition();
 	public double towerPositionLeft;// = hardware.leftTowerMotor.getCurrentPosition();
 
 
@@ -51,31 +52,37 @@ public class TeleBot {
 
 	public void encodersWithGrabber(float autoGrabBind, boolean bridgePosition){ //TRUE = OUT :: FALSE = IN
 		double power=0;
-		if(bridgePosition = false)power=0.3;
-		if(bridgePosition = true)power=-0.3;
+		if(bridgePosition = false)power=0.1;
+		if(bridgePosition = true)power=-0.1;
 		if(autoGrabBind > .25){
 			hardware.bridgeMotor.setPower(power);
 			double toBlock = hardware.distanceSensor.getDistance(DistanceUnit.INCH);
 			int perInch = (int)hardware.COUNTS_PER_INCH;
-			while(toBlock > .01){
+			if (bridgePosition = true){
+				hardware.bridgeMotor.setTargetPosition(0);
+			}
+			else {
+				hardware.bridgeMotor.setTargetPosition(perInch);
+			}
+			while(perInch > .01){
 				hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			}
-			hardware.bridgeMotor.setTargetPosition(perInch);
-			hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			//hardware.bridgeMotor.setTargetPosition(perInch);
+			//hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		}
 		else{
 			hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		}
 	}
 
-	public void moveFoundation(float foundationBind){//, double foundationGrabbed, double foundationBack){
+	public void moveFoundation(float foundationBind){
 	    if(foundationBind > .25){
 	        hardware.leftFoundationServo.setPosition(0);
-	        hardware.rightFoundationServo.setPosition(0);
+	        hardware.rightFoundationServo.setPosition(50);
         }
 	    else {
             hardware.leftFoundationServo.setPosition(50);
-            hardware.rightFoundationServo.setPosition(50);
+            hardware.rightFoundationServo.setPosition(90);
 	    }
     }
 
