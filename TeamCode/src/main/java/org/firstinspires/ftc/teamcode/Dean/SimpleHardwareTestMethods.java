@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Dean;
 import android.graphics.Color;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -241,6 +242,57 @@ public class SimpleHardwareTestMethods extends TestBotBase {
             tellUserHowToExit();
             opMode.telemetry.update();
         }
+        waitForBRelease();
+    }
+
+    public void blinkinLeds(RevBlinkinLedDriver driver){
+        RevBlinkinLedDriver.BlinkinPattern color = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+
+        RevBlinkinLedDriver.BlinkinPattern[] colors = new RevBlinkinLedDriver.BlinkinPattern[]{
+                RevBlinkinLedDriver.BlinkinPattern.BLACK,
+                RevBlinkinLedDriver.BlinkinPattern.RED,
+                RevBlinkinLedDriver.BlinkinPattern.ORANGE,
+                RevBlinkinLedDriver.BlinkinPattern.YELLOW,
+                RevBlinkinLedDriver.BlinkinPattern.GREEN,
+                RevBlinkinLedDriver.BlinkinPattern.BLUE,
+                RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET,
+                RevBlinkinLedDriver.BlinkinPattern.VIOLET,
+                RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.RAINBOW_FOREST_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER,
+                RevBlinkinLedDriver.BlinkinPattern.CONFETTI,
+                RevBlinkinLedDriver.BlinkinPattern.SHOT_RED,
+                RevBlinkinLedDriver.BlinkinPattern.SHOT_BLUE,
+                RevBlinkinLedDriver.BlinkinPattern.SHOT_WHITE,
+                RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.SINELON_PARTY_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.SINELON_OCEAN_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_OCEAN_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE,
+                RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE,
+        };
+
+        int index = 0;
+        driver.setPattern(colors[index]);
+
+        ButtonTracker tracker = new ButtonTracker(opMode.gamepad1);
+
+        while(testModeIsActive()) {
+            if(tracker.dpadRightPressed() && index<colors.length-1) driver.setPattern(colors[++index]);
+            if(tracker.dpadLeftPressed() && index>0 ) driver.setPattern(colors[--index]);
+            opMode.telemetry.addData("BLINKING Lights", "");
+            opMode.telemetry.addData("Pattern:", colors[index].toString() );
+            opMode.telemetry.addData("Change Colors","left/right dpad");
+            tellUserHowToExit();
+            opMode.telemetry.update();
+        }
+
         waitForBRelease();
     }
 
