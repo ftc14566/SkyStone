@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.*;
 
 
@@ -35,6 +36,7 @@ public class Hardware {
 	public Servo grabberRight;
 	public Servo leftFoundationServo;
 	public Servo rightFoundationServo;
+	public RevBlinkinLedDriver Lights;
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
@@ -81,7 +83,7 @@ public class Hardware {
 
 		distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
-
+		Lights = hardwareMap.get(RevBlinkinLedDriver .class, "Lights");
 
 		Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)distanceSensor;
 
