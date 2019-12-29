@@ -7,23 +7,26 @@ public class ParamDouble extends Param {
 	public ParamDouble(Config cfg){
 		super(cfg,double.class);
 
+		if(cfg!=null){
+			stepSize = cfg.step();
+			min = cfg.min();
+			max = cfg.max();
+			displayScale = cfg.displayScale();
+			initialValue = cfg.value();
+		}
 		// stepSize
-		stepSize = cfg.step();
 		if(stepSize == 0.0) stepSize = 0.1; else if(stepSize <0.0) stepSize = -stepSize;
 
 		// min,max
-		min = cfg.min();
-		max = cfg.max();
 		if(max<min){ double temp = max; max=min;min=temp; }
 		if(min==max) max = min + stepSize * 100;
 
 		// display scale and format
-		displayScale = cfg.displayScale();
 		if(displayScale == 0) displayScale=1.0;
 		scaledFormat = determineFormat(stepSize *displayScale);
 		rawFormat = determineFormat(stepSize);
 
-		initialValue = clip(cfg.value());
+		initialValue = clip(initialValue);
 
 	}
 

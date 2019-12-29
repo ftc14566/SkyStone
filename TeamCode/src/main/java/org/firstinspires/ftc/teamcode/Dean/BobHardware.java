@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Dean;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.*;
 
 // Hardware for Testing on FTC-Bob
@@ -13,7 +14,12 @@ public class BobHardware {
 
     // region motors
 
-    public static final double  COUNTS_PER_MOTOR_REV    = 288 ;
+    public DcMotor getMotor2(){
+        if(motor2==null)
+            motor2 = hardwareMap.get(DcMotor.class, "motor2");
+        return motor2;
+    }
+    private DcMotor motor2 = null;
 
     public DcMotor getMotor3(){
         if(motor3==null)
@@ -21,6 +27,19 @@ public class BobHardware {
         return motor3;
     }
     private DcMotor motor3 = null;
+
+    public DcMotorPair getMotor23Pair(){
+        if(motor23Pair==null) {
+            DcMotor left = getMotor2();
+            DcMotor right = getMotor3();
+            left.setDirection(DcMotorSimple.Direction.REVERSE);
+            right.setDirection(DcMotorSimple.Direction.FORWARD);
+            motor23Pair = new DcMotorPair(left, right);
+        }
+        return motor23Pair;
+    }
+    private DcMotorPair motor23Pair;
+
 
     // endregion
 
@@ -44,23 +63,17 @@ public class BobHardware {
 
     public DistanceSensor getDistance2m(){
         if(distance2m==null)
-            distance2m = hardwareMap.get(DistanceSensor.class, "bus2");
+            distance2m = hardwareMap.get(DistanceSensor.class, "distance0");
         return distance2m;
     }
-
-    public DistanceSensor getDistance0(){
-        if(distance0==null)
-            distance0 = hardwareMap.get(DistanceSensor.class, "color0");
-        return distance0;
-    }
-
-    public ColorSensor getColorSensor(){
-        if(colorSensor==null)
-            colorSensor = hardwareMap.get(ColorSensor.class, "color0");
-        return colorSensor;
-    }
-    private ColorSensor colorSensor = null;
-    private DistanceSensor distance0 = null;
     private DistanceSensor distance2m = null;
+
+    private BlockGrabber getBlockGrabber(){
+        if(blockGrabber==null)
+            blockGrabber = new BlockGrabber(getServo0(), getServo1());
+        return blockGrabber;
+    }
+    private BlockGrabber blockGrabber;
+
 
 }

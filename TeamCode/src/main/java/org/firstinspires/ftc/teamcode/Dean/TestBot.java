@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.Dean;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.bravo.ButtonTracker;
 import org.firstinspires.ftc.teamcode.bravo.Config;
 
 public class TestBot extends TestBotBase {
@@ -12,7 +12,7 @@ public class TestBot extends TestBotBase {
 	public TestBot(LinearOpMode opMode){
 		super(opMode);
 		this.opMode = opMode;
-		hardware = new Hardware(opMode.hardwareMap);
+		Hardware hardware = new Hardware(opMode.hardwareMap);
 		blockGrabber = new BlockGrabber(hardware.grabberLeft,hardware.grabberRight);
 	}
 
@@ -46,123 +46,122 @@ public class TestBot extends TestBotBase {
 
 	}
 
-	public void moveServo(
-			@Config(label="servo", stringOptions = "L-grab,R-Grab,L-Found,R-Found",stringValue = "L-grab") String selectServo,
-			@Config(label="position", min=0.0, max=1.0, step=.01, displayScale = 100, value = 0.5, units = "%") double position,
-			@Config(label="direction", isTrue=true, trueString = "forward", falseString = "backward") boolean directionForward,
-			@Config(label="range-min", min=0.0, max=1.0, step=.01, displayScale = 100, value = 0.0, units = "%") double rangeMin,
-			@Config(label="range-max", min=0.0, max=1.0, step=.01, displayScale = 100, value = 1.0, units = "%") double rangeMax
-	){
-		Servo s = pickServo(selectServo);
-		if(s==null) return;
-		super.moveServo(s,position,directionForward,rangeMin,rangeMax);
-	}
-
-	Servo pickServo(String selectServo){
-		switch(selectServo){
-			case "L-grab": return hardware.grabberLeft;
-			case "R-grab": return hardware.grabberRight;
-			case "L-Found": return hardware.leftFoundationServo;
-			case "R-Found": return hardware.rightFoundationServo;
-		}
-		return null;
-	}
-
 	// endregion
 
-	// region motor
+	// region motor pairs
 
-	public void motorPower(
-			@Config(label="motor", stringOptions = "FL,FR,RL,RR,L-Tower,R-Tower,Bridge") String motorStr,
-			@Config(label="power", value = 0.2, min=-1.0, max=1.0, step=0.05, displayScale = 100, units = "%") double power,
-			@Config(label="timeout", value = 30, min=5, max=120, step=5, units="sec") int timeout
+	public void mPairPosition(
+			DcMotorPair motor,
+			@Config(label = "target", min = 0, max=5000, step=100, value=300, units = " counts")int targetPosition,
+			@Config(label = "power", min = 0, max=1.0, step=0.01, value=0.2, displayScale = 100, units = "%") double power,
+			@Config(label = "target delta", min = 0, max=1000, step=10, value=100, units = " counts")int positionStepSize
 	){
-		DcMotor motor = pickMotor(motorStr);
-		if(motor == null) return;
-		super.motorRunUsingEncoder(motor,power,timeout);
-	}
+		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motor.setPower(power);
+		motor.setTargetPosition(targetPosition); // must come before .setMode(RUN_TO_POSITION)
 
-	public void motorPosition(
-			@Config(label="motor", stringOptions = "FL,FR,RL,RR,L-Tower,R-Tower,Bridge") String motorStr,
-			@Config(label="target pos", min=-5000, max=5000, step = 100, value = 100) int targetPosition,
-			@Config(label="power", value = 0.2, min=-1.0, max=1.0, step=0.05, displayScale = 100, units = "%") double power,
-			@Config(label="timeout", value = 30, min=5, max=120, step=5, units="sec") int timeout
-	){
-		DcMotor motor = pickMotor(motorStr);
-		if(motor == null) return;
-		super.motorRunToPosition(motor,targetPosition,power,timeout);
-	}
+		motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+		ButtonTracker tracker = new ButtonTracker(opMode.gamepad1);
 
-	public void towerMotor(
-		@Config(label="target pos", min=-5000, max=5000, step = 100, value = 100) int targetPosition,
-		@Config(label="raise power", value = 0.2, min=0.0, max=1.0, step=0.05, displayScale = 100, units = "%") double upPower,
-		@Config(label="lower power", value = 0.02, min=0.0, max=.20, step=0.005, displayScale = 100, units = "%") double downPower,
-		@Config(label="timeout", value = 30, min=5, max=120, step=5, units="sec") int timeout
-	) {
-		DcMotor lMotor = hardware.leftTowerMotor;
-		DcMotor rMotor = hardware.rightTowerMotor;
+		while(testModeIsActive()) {
+			if(tracker.dpadRightPressed()) {targetPosition += positionStepSize; motor.setTargetPosition(targetPosition);}
+			if(tracker.dpadLeftPressed()) {targetPosition -= positionStepSize; motor.setTargetPosition(targetPosition);}
 
-		// Go Up
-		lMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		lMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		rMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		rMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-		lMotor.setPower(upPower);
-		rMotor.setPower(upPower);
-		lMotor.setTargetPosition(targetPosition);
-		rMotor.setTargetPosition(targetPosition);
-
-		double startTime = opMode.time;
-		double endTime = startTime + timeout;
-		while (testModeIsActive()
-				&& (endTime) > opMode.time
-		) {
-			int pos = lMotor.getCurrentPosition();
-			opMode.telemetry.addData("raising position", pos);
-			opMode.telemetry.addData("time remaining", "%.1f", endTime - opMode.time);
+			int pos = motor.getCurrentPosition();
+			double rev = pos/ SimpleHardwareTestMethods.COUNTS_PER_MOTOR_REV;
+			opMode.telemetry.addData("Motor Position - Interactive", "");
+			opMode.telemetry.addData("Target/Power:", "%d %.0f", targetPosition, power*100 );
+			opMode.telemetry.addData("curPos (#,rev)", "%d %.2f", pos, rev);
+			opMode.telemetry.addData("Change position using:", "dpad-left/dpad-right");
+			tellUserHowToExit();
 			opMode.telemetry.update();
 		}
 
-		// Go Down
-		lMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		rMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		lMotor.setPower(downPower);
-		rMotor.setPower(downPower);
+		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		waitForBRelease();
+	}
 
-		startTime = opMode.time;
-		endTime = startTime + timeout;
-		while (testModeIsActive()
-				&& (endTime) > opMode.time
-		) {
-			int pos = lMotor.getCurrentPosition();
-			opMode.telemetry.addData("lower position", pos);
-			opMode.telemetry.addData("time remaining", "%.1f", endTime - opMode.time);
+	public void mPairSpeed(
+			DcMotorPair motor,
+			@Config(label = "speed", min = -1.0, max=1.0, value = 0.2, step=0.01, displayScale = 100, units = "%") double speed,
+			@Config(label = "speed delta", min = 0, max=0.2, step=.005, value=0.1, displayScale = 100, units = "%")double speedStepSize
+	){
+		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		motor.setPower(speed);
+
+		ButtonTracker tracker = new ButtonTracker(opMode.gamepad1);
+
+		while(testModeIsActive()) {
+			if(tracker.dpadRightPressed()) {speed += speedStepSize; motor.setPower(speed);}
+			if(tracker.dpadLeftPressed()) {speed -= speedStepSize; motor.setPower(speed);}
+
+			int pos = motor.getCurrentPosition();
+			double rev = pos/ SimpleHardwareTestMethods.COUNTS_PER_MOTOR_REV;
+			opMode.telemetry.addData("Motor Speed - Interactive", "");
+			opMode.telemetry.addData("Speed:", "%.0f", speed*100 );
+			opMode.telemetry.addData("curPos (#,rev)", "%d %.2f", pos, rev);
+			opMode.telemetry.addData("Change speed using:", "dpad-left/dpad-right");
+			tellUserHowToExit();
 			opMode.telemetry.update();
 		}
+
+		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		waitForBRelease();
 	}
 
-	DcMotor pickMotor(String motorStr){
-		switch(motorStr){
-			case "FL": return hardware.frontLeftDrive;
-			case "FR": return hardware.frontRightDrive;
-			case "RL": return hardware.rearLeftDrive;
-			case "RR": return hardware.rearRightDrive;
-			case "L-Tower": return hardware.leftTowerMotor;
-			case "R-Tower": return hardware.rightTowerMotor;
-			//case "Bridge": return null;
+	public void mPairPower(
+			DcMotorPair motor,
+			@Config(label = "power", min = -1.0, max=1.0, value = 0.2, step=0.01, displayScale = 100, units = "%") double power,
+			@Config(label = "power delta", min = 0, max=0.2, step=.005, value=0.1, displayScale = 100, units = "%")double powerStepSize
+	){
+		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		motor.setPower(power);
+
+		ButtonTracker tracker = new ButtonTracker(opMode.gamepad1);
+
+		while(testModeIsActive()) {
+			if(tracker.dpadRightPressed()) {power += powerStepSize; motor.setPower(power);}
+			if(tracker.dpadLeftPressed()) {power -= powerStepSize; motor.setPower(power);}
+
+			int pos = motor.getCurrentPosition();
+			double rev = pos/ SimpleHardwareTestMethods.COUNTS_PER_MOTOR_REV;
+			opMode.telemetry.addData("Motor Power - Interactive", "");
+			opMode.telemetry.addData("Power:", "%.0f", power*100 );
+			opMode.telemetry.addData("curPos (#,rev)", "%d %.2f", pos, rev);
+			opMode.telemetry.addData("Change power using:", "dpad-left/dpad-right");
+			tellUserHowToExit();
+			opMode.telemetry.update();
 		}
-		return null;
+
+		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		waitForBRelease();
 	}
+
 
 	// endregion
+
+	public void moveGrabber(
+			BlockGrabber grabber,
+			@Config(label="position", stringValue = "even",stringOptions = "grab,down,even,up") String position
+	){
+		grabber.move(position);
+
+		opMode.telemetry.addData("Servo Grabber To:", position );
+		opMode.telemetry.addData("To return, press:", "gamepad1.b");
+		opMode.telemetry.update();
+		double endTime = opMode.time+2.0; // wait 2 seconds
+		while(testModeIsActive() && opMode.time < endTime);
+
+	}
 
 	// region private fields
 
 	FoundationGrabber foundationGrabber;
 	BlockGrabber blockGrabber;
-	Hardware hardware;
+
 
 	// endregion
 

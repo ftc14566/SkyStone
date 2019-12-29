@@ -36,7 +36,7 @@ public class InteractiveParameterList extends InteractiveList {
 
 	@Override
 	public void DisplayStatus(Telemetry telemetry){
-		telemetry.addData("Mode","Enter Param Values for:"+ signature.methodString);
+		telemetry.addData("Method",signature.methodString);
 
 		int end = Math.min(topOfPageIndex+LinesPerPage, signature.params.length); // exclude end-index
 		for(int i = topOfPageIndex; i<end; ++i)
