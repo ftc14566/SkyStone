@@ -4,6 +4,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class Param {
 
@@ -30,6 +32,9 @@ public abstract class Param {
 		if(paramClass==boolean.class) return new ParamBoolean(cfg);
 		if(paramClass==int.class) return new ParamInt(cfg);
 		if(paramClass==String.class) return new ParamString(cfg);
+		// try generic value
+		ParamValue paramValue = ParamValue.getValuesFor(paramClass);
+		if(paramValue != null) return paramValue;
 		throw new IllegalStateException("Cannot auto-configure parameter of type:"+paramClass.getName());
 	}
 
@@ -54,8 +59,13 @@ public abstract class Param {
 			units = cfg.units();
 		}
 		if(units==null) units="";
-		if(label==null||label.isEmpty()) label = this.parameterType.getName();
+		if(label==null||label.isEmpty()) label = this.getParamTypeString();
+	}
 
+	public Param(Class parameterType){
+		this.parameterType = parameterType;
+		this.label = this.getParamTypeString();
+		this.units = "";
 	}
 
 	// endregion
@@ -67,7 +77,7 @@ public abstract class Param {
 	abstract Object getInitialValue();
 	abstract protected String getRangeString();
 	Class getParamType(){ return parameterType; }
-	String getParamTypeString(){ return getParamType().getName(); }
+	String getParamTypeString(){ return Linq.getShortName(getParamType()); }
 	abstract String getRawValueString(Object value);
 	abstract Object parseRawValueString(String s);
 

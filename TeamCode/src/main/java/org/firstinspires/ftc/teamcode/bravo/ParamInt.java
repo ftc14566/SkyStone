@@ -7,17 +7,20 @@ public class ParamInt extends Param {
 	public ParamInt(Config cfg){
 		super(cfg,int.class);
 
-		stepSize = (int)Math.round(cfg.step());
+		if(cfg!=null){
+			stepSize = (int)Math.round(cfg.step());
+			min = (int)Math.round(cfg.min());
+			max = (int)Math.round(cfg.max());
+			displayScale = (int)Math.round(cfg.displayScale());
+			initialValue = (int)Math.round(cfg.value() );
+		}
+
 		if(stepSize == 0 ) stepSize = 1; else if(stepSize <0) stepSize = -stepSize;
 
-		min = (int)Math.round(cfg.min());
-		max = (int)Math.round(cfg.max());
 		if(max < min){ int temp = max; max = min; min = temp; }
 		if(min == max) max = min + stepSize * 100;
 
-		displayScale = (int)Math.round(cfg.displayScale());
-
-		initialValue = clip( (int)Math.round(cfg.value() ));
+		initialValue = clip( initialValue );
 
 	}
 

@@ -17,9 +17,14 @@ public class MethodManager {
 		for(int i=0;i<methods.length;++i){
 			Method method = methods[i];
 			if(Modifier.isPublic(method.getModifiers())){
-				MethodSignature sig = new MethodSignature(method);
-				newItems.add(sig);
-				table.put(sig.methodString,sig);
+				try {
+					MethodSignature sig = new MethodSignature(method);
+					newItems.add(sig);
+					table.put(sig.methodString, sig);
+				}catch(IllegalStateException ex){ // !!! replace with a custom exception
+					// when we have an unmatched parameter
+					// don't include it.
+				}
 			}
 		}
 

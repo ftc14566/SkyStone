@@ -123,7 +123,6 @@ public class TeleBot {
 			rightSpeed/=sumLeft;
 		}
 
-
 		hardware.frontLeftDrive.setPower(forward+rightSpeed);//
 		hardware.rearLeftDrive.setPower(forward-rightSpeed);//
 

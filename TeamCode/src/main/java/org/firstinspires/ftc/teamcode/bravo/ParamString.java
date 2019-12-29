@@ -4,10 +4,20 @@ public class ParamString extends Param {
 	public ParamString(Config cfg){
 		super(cfg,String.class);
 
-		initialValue = cfg.stringValue();
-		joinedOptions = cfg.stringOptions();
+		if(cfg!=null){
+			joinedOptions = cfg.stringOptions();
+			initialValue = cfg.stringValue();
+		}
+
+		if(joinedOptions==null || joinedOptions=="")
+			joinedOptions="-no options specified-";
+
 		options = joinedOptions.split(",");
 		max = options.length-1;
+
+		if(initialValue == null || initialValue=="")
+			initialValue = options[0];
+
 	}
 
 	// endregion
@@ -31,9 +41,6 @@ public class ParamString extends Param {
 		// could throw an exception here...
 		return 0;
 	}
-
-	@Override
-	String getParamTypeString(){ return "String"; } // instead of java.lang.String
 
 	@Override
 	String getScaledValueString(Object value){ return (String)value; }
