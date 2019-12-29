@@ -1,20 +1,8 @@
 package org.firstinspires.ftc.teamcode.bravo;
 
-import android.content.Context;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Dictionary;
 
 public class MethodExplorer implements
 		InteractiveStepList.CallbackListener,
@@ -22,20 +10,31 @@ public class MethodExplorer implements
 		InteractiveParameterList.CallbackListener
 {
 
-	public MethodExplorer(HardwareMap hardwareMap){
-		context = hardwareMap.appContext;
+	public MethodExplorer(Gamepad gamepad){
+
+		this.tracker = new ButtonTracker(gamepad);
 
 		// modes
 		stepList = new InteractiveStepList(this);
 		methodList = new InteractiveMethodList(this);
-		paramList = new InteractiveParameterList(this); // does not depend on target
+		paramList = new InteractiveParameterList(this);
 		currentMode = stepList;
 
+		// init steps
+		stepList.setBindings(new MethodBinding[]{null});
+	}
+
+	public void bindToFile(ConfigFile file){
+		this.file = file;
+		MethodBinding[] steps = getBindingsFromFile();
+		if(steps.length > 0)
+			stepList.setBindings(steps);
 	}
 
 	public void setTarget(Object target){
 		this.target = target;
-		methodList.accessClass(target.getClass());
+		mgr = new MethodManager( target.getClass() );
+		methodList.initMethods(mgr.getAllSignatures());
 	}
 
 	public void displayStatus(Telemetry telemetry){
@@ -45,48 +44,45 @@ public class MethodExplorer implements
 	// region callbacks
 
 	@Override
-	public void stepSelected() {// step-index ->down-> select method
-		MethodSignature sig = stepList.getCurrentSignature();
-		if(sig != null) {
-			paramList.setMethodSignature(sig.Clone());
+	public void stepSelected(MethodBinding binding) {// stepSize-index ->down-> select method
+
+		if(binding != null) {
+			paramList.setBinding( binding );
 			currentMode = paramList;
 		} else {
 			currentMode = methodList;
 		}
 	}
-	@Override
-	public void cancelMethodSelection() {  // select method ->up-> step-index
 
+	@Override
+	public void cancelMethodSelection() {  // select method ->up-> stepSize-index
 		currentMode = stepList;
 	}
 
-
 	@Override
-	public void selectMethod() { // select method ->down-> config-params
-		paramList.setMethodSignature(methodList.getCurrent());
+	public void selectMethod( MethodBinding binding ) { // select method ->down-> config-params
+		paramList.setBinding( binding );
 		currentMode = paramList;
 	}
 
 	@Override
 	public void cancelMethodConfig() { // config-params ->up-> select method
-		MethodSignature sig = stepList.getCurrentSignature();
-		if(sig==null){
-			currentMode = methodList;
-		} else {
+		if( stepList.bindingSelected() )
 			currentMode = stepList;
-		}
+		else
+			currentMode = methodList;
 	}
 
 	@Override
-	public void executeMethod() {
-		paramList.execute(target);
+	public void executeMethod(MethodBinding binding) {
+		binding.invoke(target);
 	}
 
 	@Override
-	public void saveMethodConfig() {
-		stepList.setCurrentSignature( paramList.getMethodSignature().Clone() );
+	public void saveMethodConfig(MethodBinding binding) {
+		stepList.setCurrentSignature( binding );
 		currentMode = stepList;
-//		saveSteps();
+		saveSteps();
 	}
 
 	// endregion
@@ -94,85 +90,45 @@ public class MethodExplorer implements
 	// region load/save steps
 
 	void saveSteps(){
-		JsonBuilder builder = new JsonBuilder();
-		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
-		try {
-			OutputStream o = context.openFileOutput("steps.json", Context.MODE_PRIVATE);
-			o.write(builder.toString().getBytes());
-			o.close();
-		}catch(Exception ex){}
+		if(file==null) return;
+		String s = new MethodSerializer().serialize( stepList.getBindings() );
+		file.write(s);
 	}
-
-	void loadSteps(){
-		JsonBuilder builder = new JsonBuilder();
-		builder.append( stepList.steps.toArray(new MethodSignature[0]) );
-		try {
-			InputStream ii = context.openFileInput("steps.json");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(ii));
-			StringBuilder out = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) out.append(line);
-			reader.close();
-
-			String source = out.toString();
-			ArrayList<Object> stepsConfigs = new JsonParser(source).DeserializeArray();
-			MethodSignature[] sigs = new MethodSignature[stepsConfigs.size()];
-			for(int i=0;i<sigs.length;++i){
-				Dictionary<String,Object> config = (Dictionary<String,Object>)stepsConfigs.get(i);
-				String methodName = (String)config.get("name");
-				ArrayList<Object> paramConfigs = (ArrayList<Object>)config.get("params");
-				Param[] params = new Param[paramConfigs.size()];
-				for(int j=0;j<params.length;++j){
-					// !!! need to figureout which type of parameter it is.
-				}
-			}
-			// Parse: array, object, boolean, string, double
-
-
-		}catch(Exception ex){}
-
+	MethodBinding[] getBindingsFromFile() {
+		String s = file.read();
+		if(s==null || s=="") return new MethodBinding[0];
+		return new MethodSerializer().deserialize(s,mgr);
 	}
 	// endregion
 
-	// region button tracking
-
-	public void TrackGamePad(Gamepad gamepad){
-		if(Changed(0,gamepad.a)) if(_cur) currentMode.A_Pressed();
-		if(Changed(1,gamepad.b)) if(_cur) currentMode.B_Pressed();
-		if(Changed(2,gamepad.x)) if(_cur) currentMode.X_Pressed();
-		if(Changed(3,gamepad.y)) if(_cur) currentMode.Y_Pressed();
-		if(Changed(4,gamepad.dpad_down)) if(_cur) currentMode.DpadDown_Pressed(); else currentMode.DpadDown_Released();
-		if(Changed(5,gamepad.dpad_up)) if(_cur) currentMode.DpadUp_Pressed(); else currentMode.DpadUp_Released();
-		if(Changed(6,gamepad.dpad_left)) if(_cur) currentMode.DpadLeft_Pressed(); else currentMode.DpadLeft_Released();
-		if(Changed(7,gamepad.dpad_right)) if(_cur) currentMode.DpadRight_Pressed(); else currentMode.DpadRight_Released();
-		if(Changed(8,gamepad.back)) if(_cur) currentMode.Back_Pressed();
-		if(Changed(9,gamepad.start)) if(_cur) currentMode.Start_Pressed();
-		if(Changed(10,gamepad.guide)) if(_cur) currentMode.Guide_Pressed();
-		if(Changed(11,gamepad.left_bumper)) if(_cur) currentMode.LeftBumper_Pressed();
-		if(Changed(12,gamepad.right_bumper)) if(_cur) currentMode.RightBumper_Pressed();
-		currentMode.doOtherWork(gamepad);
+	public void trackGamePad(){
+		if(tracker.aPressed()) currentMode.A_Pressed();
+		if(tracker.bPressed()) currentMode.B_Pressed();
+		if(tracker.xPressed()) currentMode.X_Pressed();
+		if(tracker.yPressed()) currentMode.Y_Pressed();
+		if(tracker.dpadDownPressed()) currentMode.DpadDown_Pressed();
+		if(tracker.dpadUpPressed()) currentMode.DpadUp_Pressed();
+		if(tracker.dpadLeftPressed()) currentMode.DpadLeft_Pressed();
+		if(tracker.dpadRightPressed()) currentMode.DpadRight_Pressed();
+		if(tracker.backPressed()) currentMode.Back_Pressed();
+		if(tracker.startPressed()) currentMode.Start_Pressed();
+		if(tracker.guidePressed()) currentMode.Guide_Pressed();
+		if(tracker.leftBumperPressed()) currentMode.LeftBumper_Pressed();
+		if(tracker.rightBumperPressed()) currentMode.RightBumper_Pressed();
+		currentMode.update(tracker.gamepad);
 	}
-
-	private boolean Changed(int index,boolean newState){
-		boolean changed = newState != _lastState[index];
-		_lastState[index] = _cur = newState;
-		return changed;
-	}
-
-	private boolean _cur;
-	private boolean[] _lastState = new boolean[13];
-
-	// endregion
 
 	// region fields
-
 	private InteractiveStepList stepList;
 	private InteractiveMethodList methodList;
 	private InteractiveParameterList paramList;
 	private InteractiveList currentMode;
-	private Context context;
 
+	private MethodManager mgr;
 	private Object target;
+	private ConfigFile file;
+
+	ButtonTracker tracker;
 
 	// endregion
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Nathan;
 
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -11,9 +12,14 @@ import org.firstinspires.ftc.teamcode.TeleBot;
 
 public class NathanBot extends TeleBot {
 
-public NathanBot(Hardware hardware){
-    super(hardware);
-}
+    public NathanBot(Hardware hardware){
+        super(hardware);
+        grabber = new Grabber(hardware.grabberLeft, hardware.grabberRight);
+        foundationGrabber = new FoundationGrabber(hardware.leftFoundationServo, hardware.rightFoundationServo);
+    }
+
+    Grabber grabber;
+    FoundationGrabber foundationGrabber;
 
 /*	public void raiseElevators(double elevatorBind, double rate){
 
@@ -72,9 +78,9 @@ public NathanBot(Hardware hardware){
     }
 
     public void SpinRight(double speed){;
-        hardware.frontLeftDrive.setPower(-speed);
+        hardware.frontLeftDrive.setPower(speed);
         hardware.frontRightDrive.setPower(-speed);
-        hardware.rearLeftDrive.setPower(-speed);
+        hardware.rearLeftDrive.setPower(speed);
         hardware.rearRightDrive.setPower(-speed);
     }
 
@@ -87,8 +93,8 @@ public NathanBot(Hardware hardware){
             rightSpeed/=sumLeft;
         }
 
-        hardware.frontLeftDrive.setPower(-forward-rightSpeed);//
-        hardware.rearLeftDrive.setPower(-forward+rightSpeed);//
+        hardware.frontLeftDrive.setPower(forward+rightSpeed);//
+        hardware.rearLeftDrive.setPower(forward-rightSpeed);//
         hardware.frontRightDrive.setPower(forward-rightSpeed);//
         hardware.rearRightDrive.setPower(forward+rightSpeed);//
 
@@ -143,10 +149,10 @@ public NathanBot(Hardware hardware){
 
 
         // combine drive,turn,straif
-        double fl = -forward - turnRight - straifRight;
-        double fr = forward - turnRight  - straifRight;
-        double rl = -forward - turnRight + straifRight;
-        double rr = forward - turnRight  + straifRight;
+        double fl = forward + turnRight + straifRight;
+        double rl = forward + turnRight - straifRight;
+        double fr = forward - turnRight - straifRight;
+        double rr = forward - turnRight + straifRight;
 
         // limit each drom to 1.0 max
         double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
@@ -165,22 +171,35 @@ public NathanBot(Hardware hardware){
 
     }
 
-    public void grab(boolean open,boolean close){
+    public void grab(boolean open,boolean blockInFront, boolean closeButton){
 
 
         if(open)
-            setGrabberPos(0.5);
-
-        else if(close)
-            setGrabberPos(0.9);
+            grabber.open();
+        else if(blockInFront)
+           grabber.grab();
 
 
     }
 
-    private void setGrabberPos(double pos){
-        hardware.grabberLeft.setPosition(pos);
-        hardware.grabberRight.setPosition(pos);
+    public void blockGrabberWithActivate(String action){
 
+        switch(action){
+            case "open": grabber.open(); break;
+            case "grab": grabber.grab(); break;
+        }
+
+    }
+
+    public String determineGrabberAction(boolean open, boolean close, boolean blockSenser, boolean activateSensor) {
+        String action = "";
+        if (open)
+            action = "open";
+        else if (close)
+            action = "grab";
+        else if (activateSensor && blockSenser)
+            action = "grab";
+        return action;
     }
 
     public boolean isBlockInFront(){
@@ -189,7 +208,7 @@ public NathanBot(Hardware hardware){
     }
 
     public enum BridgePosition{In,Out,Grabbing}
-    public void Extend(BridgePosition position){
+    public void ExtendWithEncoders(BridgePosition position){
 
         switch(position){
             case In:
@@ -232,12 +251,66 @@ public NathanBot(Hardware hardware){
             rightSpeedRight/=sumRight;
         }
 
-        hardware.frontLeftDrive.setPower(-forwardSpeedLeft-rightSpeedLeft);//
-        hardware.rearLeftDrive.setPower(-forwardSpeedLeft+rightSpeedLeft);//
+        hardware.frontLeftDrive.setPower(forwardSpeedLeft+rightSpeedLeft);//
+        hardware.rearLeftDrive.setPower(forwardSpeedLeft-rightSpeedLeft);//
         hardware.frontRightDrive.setPower(forwardSpeedRight-rightSpeedRight);//
         hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
     }
+    public void foundationServos(boolean up, boolean down){
+        if (up)
+            foundationGrabber.up();
+        else if (down)
+            foundationGrabber.down();
+    }
+
+    public void SetLightColor (double time,boolean foundationDown, boolean grabberDown,boolean grabberOpen){
+
+        RevBlinkinLedDriver.BlinkinPattern color;
+
+
+        if (foundationDown)
+            color = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
+        else if (grabberDown)
+            color = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+        else if (grabberOpen)
+            color = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+        else if (time <90)
+            color = RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
+        else if (time < 90.1)
+            color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+        else if (time < 90.2)
+            color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        else if (time < 90.3)
+            color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+        else if (time < 90.4)
+            color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        else if (time < 90.5)
+            color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+        else if (time < 90.6)
+            color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        else if (time < 90.7)
+            color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+        else if (time < 90.8)
+            color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        else if (time < 90.9)
+            color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+
+        else
+            color = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE;
+        hardware.Lights.setPattern(color);
+    }
+
+    public void extend (boolean out, boolean in){
+        double power = 0;
+        if (out) power = 0.3;
+        if (in) power = -0.3;
+
+        hardware.bridgeMotor.setPower(power);
+        hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    }
+
 
     public void RaiseElevator(){}
     public void LowerElevator(){}

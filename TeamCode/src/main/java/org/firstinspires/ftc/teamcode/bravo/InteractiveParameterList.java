@@ -11,103 +11,99 @@ public class InteractiveParameterList extends InteractiveList {
 	// region consturctor
 
 	public InteractiveParameterList(CallbackListener listener){
-		_listener = listener;
+		this.listener = listener;
 	}
 
 	// endregion
 
+	public void setBinding(MethodBinding binding){
+
+		signature = binding.getSignature();
+
+		// clone values
+		paramValues = binding.getParamValues();
+
+		curIndex = 0;
+	}
+
+	public interface CallbackListener {
+		void executeMethod(MethodBinding binding); //
+		void saveMethodConfig(MethodBinding binding);
+		void cancelMethodConfig();
+	}
+
+	// region interface InteractiveList
+
 	@Override
 	public void DisplayStatus(Telemetry telemetry){
-		telemetry.addData("Mode","Enter Param Values for:"+ _signature.getName());
+		telemetry.addData("Method",signature.methodString);
 
-		int end = Math.min(_topOfPageIndex+LinesPerPage, _signature.params.length); // exclude end-index
-		for(int i = _topOfPageIndex; i<end; ++i)
-			_signature.params[i].addParamToTelemetry(telemetry,i==_curIndex);
+		int end = Math.min(topOfPageIndex+LinesPerPage, signature.params.length); // exclude end-index
+		for(int i = topOfPageIndex; i<end; ++i)
+			signature.params[i].addParamToTelemetry(telemetry, paramValues[i], i== curIndex);
 		telemetry.update();
 	}
 
-	public void setMethodSignature(MethodSignature methodData){
-		_curIndex = 0;
-		_signature = methodData;
-	}
-
-	public MethodSignature getMethodSignature(){
-		return _signature;
-	}
-
-	public void execute(Object o){
-		_signature.execute(o);
-	}
-
-	// region button presses
+	@Override protected int getLastIndex(){ return signature.params.length-1; }
 
 	@Override
-	public void DpadUp_Pressed(){
-		if(_curIndex>0) _curIndex--;
-		if(_topOfPageIndex<_curIndex+1-LinesPerPage) _topOfPageIndex=_curIndex+1-LinesPerPage;
+	public void DpadLeft_Pressed(){
+		if(paramValues.length==0) return;
+		paramValues[curIndex] = signature.params[curIndex]
+				.adjust(paramValues[curIndex],-1);
+		trackPressedTime();
 	}
 
 	@Override
-	public void DpadDown_Pressed(){
-		if(_curIndex< _signature.params.length-1) _curIndex++;
-		if(_topOfPageIndex>_curIndex) _topOfPageIndex=_curIndex;
+	public void DpadRight_Pressed(){
+		if(paramValues.length==0) return;
+		paramValues[curIndex] = signature.params[curIndex]
+				.adjust(paramValues[curIndex],1);
+		trackPressedTime();
 	}
 
-	Param getCurParam(){ return _signature.params[_curIndex]; }
+	@Override
+	public void B_Pressed() { listener.cancelMethodConfig(); }
 
 	@Override
-	public void DpadLeft_Pressed(){ getCurParam().dec(); trackPressedTime(); }
+	public void A_Pressed() {
+		listener.executeMethod( makeNewBinding() );
+	}
 
 	@Override
-	public void DpadRight_Pressed(){ getCurParam().inc(); trackPressedTime(); }
+	public void LeftBumper_Pressed() {
+		listener.saveMethodConfig( makeNewBinding() );
+	}
 
-	@Override
-	public void B_Pressed() { _listener.cancelMethodConfig(); }
-
-	@Override
-	public void A_Pressed() { _listener.executeMethod(); }
-
-	@Override
-	public void LeftBumper_Pressed() { _listener.saveMethodConfig(); }
+	MethodBinding makeNewBinding(){ return new MethodBinding(signature,paramValues); }
 
 	final double PreRepeatWaitTime = 1000; // wait 1 second before speeding up
-	final double AutoPressTime = 70; // once every 70ms
+	final double AutoPressTime = 50; // once every 70ms
 	void trackPressedTime(){ _startRepeatingAtThisTime = currentTimeMillis() + PreRepeatWaitTime + AutoPressTime; }
 
 	@Override
-	public void doOtherWork(Gamepad gamepad){
+	public void update(Gamepad gamepad){
 		// When left or righ dpad held down, auto-inc/dec 10 times a second.s
 		if(!gamepad.dpad_left && !gamepad.dpad_right) return;
-		boolean doInc = gamepad.dpad_right;
+		int stepCount = gamepad.dpad_right ? 1 : -1;
 		double now = currentTimeMillis();
-		Param cur = getCurParam();
+		Param cur =  signature.params[curIndex];
 		while( _startRepeatingAtThisTime < now){
 			_startRepeatingAtThisTime += AutoPressTime;
-			if(doInc) cur.inc(); else cur.dec();
+			paramValues[curIndex] = cur.adjust( paramValues[curIndex], stepCount );
 		}
 	}
 	private double _startRepeatingAtThisTime;
 
 	//endregion
 
-	//region interface
-
-	public interface CallbackListener {
-		void executeMethod();
-		void saveMethodConfig();
-		void cancelMethodConfig();
-	}
-
-	//endregion
-
 	//region private fields
 
-	private int _topOfPageIndex = 0;
-	private int _curIndex = 0;
-	private static final int LinesPerPage = 4;
-	private MethodSignature _signature;
 
-	CallbackListener _listener;
+	private Object[] paramValues;
+	private MethodSignature signature;
+
+	CallbackListener listener;
 
 	//endregion
 

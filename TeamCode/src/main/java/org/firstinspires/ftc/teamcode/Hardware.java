@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.*;
 
 
@@ -13,7 +14,7 @@ public class Hardware {
 	//==============================
 	// Add Hardware Constants here:
 	//==============================
-	// static final double     WHEEL_SEPARATION = 15.25 ;
+
 	 public static final double     WHEEL_DIAMETER_INCHES   = 1.25 ;// For figuring circumference
 	 public static final double     COUNTS_PER_MOTOR_REV    = 288 ;
 	 public static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -35,19 +36,21 @@ public class Hardware {
 	public Servo grabberRight;
 	public Servo leftFoundationServo;
 	public Servo rightFoundationServo;
+	public RevBlinkinLedDriver Lights;
 
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
-		frontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
+		rearLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 		frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightWheel");
 		frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
-		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
-		rearLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
-		rearRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
 		leftTowerMotor = hardwareMap.get(DcMotor.class, "leftTowerMotor");
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -57,12 +60,13 @@ public class Hardware {
 		bridgeMotor = hardwareMap.get(DcMotor.class, "bridge");
 		bridgeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-		grabberLeft = hardwareMap.get(Servo.class, "graberLeft");
-		grabberRight = hardwareMap.get(Servo.class, "graberRight");
+		grabberLeft = hardwareMap.get(Servo.class, "grabberLeft");
+		grabberRight = hardwareMap.get(Servo.class, "grabberRight");
 		grabberLeft.setDirection(Servo.Direction.REVERSE);
 
-		leftFoundationServo = hardwareMap.get(Servo.class, "leftFoundationServo");
+		leftFoundationServo = hardwareMap.get(Servo.class,"leftFoundationServo");
 		rightFoundationServo = hardwareMap.get(Servo.class, "rightFoundationServo");
+
 
 		leftColorSensor = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
 		leftColorSensor.red();
@@ -78,9 +82,11 @@ public class Hardware {
 		rightColorSensor.argb();
 
 		distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
+		Lights = hardwareMap.get(RevBlinkinLedDriver .class, "Lights");
+
 		Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)distanceSensor;
 
-		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 	}
 
 }

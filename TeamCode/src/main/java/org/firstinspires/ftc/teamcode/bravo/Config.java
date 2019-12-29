@@ -6,10 +6,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface Config {
+
     // region used by all
     String label() default "";
     String units() default "";
     // endregion
+
     // region used by numerics
     double value() default 0.0;
     double min() default 0.0;
@@ -17,10 +19,17 @@ public @interface Config {
     double step() default 0.0;
     double displayScale() default 1.0;
     // endregion
+
+    // region used by string
+    String stringOptions() default "";
+    String stringValue() default "";
+    // endregion
+
     // region used by boolean
     boolean isTrue() default false;
     String trueString() default "true";
     String falseString() default "false";
     // endregion
+
 }
 
