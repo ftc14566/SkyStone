@@ -27,7 +27,7 @@ public class DeanDriverOp extends OpMode {
 	@Override
 	public void loop() {
 
-		bot.driveAndStrafe(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+		bot.driveAndStrafe(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x, gamepad1.right_trigger);
 		bot.deanLift(gamepad2.dpad_up, gamepad2.dpad_down);
 		bot.extend(gamepad2.y, gamepad2.a);
 

@@ -51,13 +51,13 @@ public class BenOp extends OpMode {
 	public void loop() {
 
 		// Drive
-		bot.driveAndStrafe(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+		bot.driveAndStrafe(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_trigger);
 		//bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 		//bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
 
 		// Lift
 		bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
-		bot.towerDown(gamepad2.right_trigger);
+		bot.towerDown(gamepad2.right_trigger, true);
 
 		//TODO bot.encodersWithGrabber(gamepad2.left_trigger, false);
 
@@ -65,7 +65,7 @@ public class BenOp extends OpMode {
 
 		bot.grab(gamepad2.x,gamepad2.b);
 
-		bot.moveFoundation(gamepad1.right_trigger);
+		bot.moveFoundation(gamepad1.right_bumper);
 
 		telemetry.addData("Right Foundation Position", hardware.rightFoundationServo.getPosition());
 		telemetry.addData("Left Foundation Position", hardware.leftFoundationServo.getPosition());

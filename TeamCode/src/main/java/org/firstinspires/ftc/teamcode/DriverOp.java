@@ -51,7 +51,7 @@ public class DriverOp extends OpMode {
 
         // Drive
         //bot.driveAndStraif(gamepad1.right_trigger, -gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-        bot.driveAndStrafe(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+        bot.driveAndStrafe(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x, gamepad1.right_trigger);
         //bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
 
         // Lift

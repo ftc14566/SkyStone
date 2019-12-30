@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -26,27 +27,33 @@ public class TeleBot {
 			while (hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235 && hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235) {
 				while (hardware.leftColorSensor.blue() <= 52 && hardware.leftColorSensor.blue() >= 52 && hardware.rightColorSensor.blue() <= 52 && hardware.rightColorSensor.blue() >= 52) {
 					//TODO Block Collector Code
-					this.Move(0.0, 0.0); //STOP
+					//this.Move(0.0, 0.0); //STOP
 				}
 			}
 		}
 	}
 
 
-	public void towerDown(float towerDownBind) {
+	public void towerDown(float towerDownBind, boolean runWithEncoders) {
 		//towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
 		//towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
 		if (towerDownBind > 0.25) {
-            hardware.leftTowerMotor.setPower(0.9);
-            hardware.rightTowerMotor.setPower(0.9);
-            hardware.leftTowerMotor.setTargetPosition(0);
-            hardware.rightTowerMotor.setTargetPosition(0);
-            hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+			while(hardware.leftTowerMotor.getCurrentPosition() != 0)
+				hardware.leftTowerMotor.setPower(0.1);
+				hardware.rightTowerMotor.setPower(0.1);
+				hardware.leftTowerMotor.setTargetPosition(0);
+				hardware.rightTowerMotor.setTargetPosition(0);
+				if(runWithEncoders = true) {
+					hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+					hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+					runWithEncoders = false;
+				
+			}
         }
 		else{
 			hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Stop and Reset
 			hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+			runWithEncoders = true;
 		}
 	}
 
@@ -73,10 +80,11 @@ public class TeleBot {
 		else{
 			hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		}
+
 	}
 
-	public void moveFoundation(float foundationBind){
-	    if(foundationBind > .25){
+	public void moveFoundation(boolean foundationBind){
+	    if(foundationBind = true){
 	        hardware.leftFoundationServo.setPosition(0);
 	        hardware.rightFoundationServo.setPosition(50);
         }
@@ -88,30 +96,32 @@ public class TeleBot {
 
 
 
-	public void raiseElevators(double elevatorBind, double rate){
-
-		if(elevatorBind >= .25)
+	public void raiseElevators(double elevatorBind, double rate) {
+		/*
+		if (elevatorBind >= .25)
 			hardware.leftTowerMotor.setPower(rate);
 			hardware.rightTowerMotor.setPower(rate);
+		}
 		if(elevatorBind <= -.25) {
 			hardware.leftTowerMotor.setPower(-rate);
 			hardware.rightTowerMotor.setPower(-rate);
 		}
+		 */
 
 	}
 
 
 
 	public void DriveForward(double speed){
-		this.Move(speed,0.0);
+		//this.Move(speed,0.0);
 	}
 
 	public void Stop(){
-		this.Move(0.0,0.0);
+		//this.Move(0.0,0.0);
 	}
 
 	public void StrafeRight(double speed){
-		this.Move(0,speed);
+		//this.Move(0,speed);
 	}
 
 	public void SpinRight(double speed){;
@@ -122,20 +132,28 @@ public class TeleBot {
 	}
 
 
-	public void Move(double forward, double rightSpeed){
+	public void Move(double forward, double rightSpeed, boolean slowBind){
 
 		double sumLeft=Math.abs(forward)+Math.abs(rightSpeed);
 		if(sumLeft > 1.0){
 			forward/=sumLeft;
 			rightSpeed/=sumLeft;
 		}
-
-		hardware.frontLeftDrive.setPower(forward+rightSpeed);//
-		hardware.rearLeftDrive.setPower(forward-rightSpeed);//
-
-		hardware.frontRightDrive.setPower(forward-rightSpeed);//
-		hardware.rearRightDrive.setPower(forward+rightSpeed);//
-
+		
+		if(slowBind){
+			hardware.frontLeftDrive.setPower(forward+rightSpeed);//
+			hardware.rearLeftDrive.setPower(forward-rightSpeed);//
+			
+			hardware.frontRightDrive.setPower(forward-rightSpeed);//
+			hardware.rearRightDrive.setPower(forward+rightSpeed);//
+		}
+		else {
+			hardware.frontLeftDrive.setPower(forward + rightSpeed);//
+			hardware.rearLeftDrive.setPower(forward - rightSpeed);//
+			
+			hardware.frontRightDrive.setPower(forward - rightSpeed);//
+			hardware.rearRightDrive.setPower(forward + rightSpeed);//
+		}
 	}
 
 	public void Lift(boolean up, boolean down){
@@ -166,7 +184,7 @@ public class TeleBot {
 		}
 	}
 
-	public void driveAndStrafe (double targetFoward, double targetTurnRight, double targetStrafeRight){
+	public void driveAndStrafe (double targetFoward, double targetTurnRight, double targetStrafeRight, float slowMode){
 		forward = targetFoward/2;
 		turn = targetTurnRight/2;
 		strafe = targetStrafeRight/2;
@@ -187,10 +205,19 @@ public class TeleBot {
 			rl/=maxPower;
 			rr/=maxPower;
 		}
-		hardware.frontLeftDrive.setPower(fl);
-		hardware.frontRightDrive.setPower(fr);
-		hardware.rearLeftDrive.setPower(rl);
-		hardware.rearRightDrive.setPower(rr);
+		if(slowMode < 0.25) {
+			hardware.frontLeftDrive.setPower(fl);
+			hardware.frontRightDrive.setPower(fr);
+			hardware.rearLeftDrive.setPower(rl);
+			hardware.rearRightDrive.setPower(rr);
+		}
+		else{
+			hardware.frontLeftDrive.setPower(fl/2);
+			hardware.frontRightDrive.setPower(fr/2);
+			hardware.rearLeftDrive.setPower(rl/2);
+			hardware.rearRightDrive.setPower(rr/2);
+			
+		}
 
 	}
 
