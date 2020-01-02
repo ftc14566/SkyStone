@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Hardware;
 
 @Autonomous(name="1R: Foundation Move", group="Linear Opmode")
-public class foundationMoveRed extends LinearOpMode {
+public class BenFoundationMoveRed extends LinearOpMode {
 
 	public boolean allianceRed = true;
 
@@ -16,8 +16,8 @@ public class foundationMoveRed extends LinearOpMode {
 		// Init
 		Hardware hardware = new Hardware();
 		hardware.init(hardwareMap);
-		AutoDrive drive = new AutoDrive(hardware,this);
-		AutoBot bot = new AutoBot(hardware,this);
+		BenAutoDrive drive = new BenAutoDrive(hardware,this);
+		BenAutoBot bot = new BenAutoBot(hardware,this);
 
 		waitForStart();
 
@@ -25,7 +25,10 @@ public class foundationMoveRed extends LinearOpMode {
 		telemetry.update();
 
 		// Run Code
-		drive.moveForwardDistanceSensor(2,0.3,999);
+		//drive.moveForwardDistanceSensor(2,0.3,999);
+		drive.encoderRun();
+		bot.driveAndStrafe(0,0,10); //TODO ENCODER VALUES
+		
 		//bot.grabFoundation();
 		//move to building zone
 		//bot.releaseFoundation();

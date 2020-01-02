@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware;
 
-public class AutoDrive {
+public class BenAutoDrive {
 
-    public AutoDrive(Hardware hardware, LinearOpMode mode ){
+    public BenAutoDrive(Hardware hardware, LinearOpMode mode ){
         this.hardware = hardware;
         this.opMode = mode;
     }

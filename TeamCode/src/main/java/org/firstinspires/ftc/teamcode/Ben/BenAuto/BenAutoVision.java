@@ -9,9 +9,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "AutoVision", group="DogeCV")
+@Autonomous(name = "BenAutoVision", group="DogeCV")
 //@Disabled
-public class AutoVision extends LinearOpMode {
+public class BenAutoVision extends LinearOpMode {
     private OpenCvCamera phoneCam;
     private SkystoneDetector skyStoneDetector;
 
@@ -70,11 +70,6 @@ public class AutoVision extends LinearOpMode {
             telemetry.addData("Stone Position X", skyStoneDetector.getScreenPosition().x);
             telemetry.addData("Stone Position Y", skyStoneDetector.getScreenPosition().y);
             telemetry.addData("Frame Count", phoneCam.getFrameCount());
-            //telemetry.addData("FPS", String.format(Locale.US, "%.2f", phoneCam.getFps()));
-            //telemetry.addData("Total frame time ms", phoneCam.getTotalFrameTimeMs());
-            //telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
-            //telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
-            //telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
             telemetry.update();
 
             /*

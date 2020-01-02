@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.teamcode.Nathan;
+package org.firstinspires.ftc.teamcode.Ben.BenAuto;
 import com.qualcomm.robotcore.hardware.Servo;
-public class FoundationGrabber {
+
+public class BenFoundationGrabber {
 
     Servo leftServo;
     Servo rightServo;
 
-    public FoundationGrabber (Servo leftServo,Servo rightServo){
+    public BenFoundationGrabber(Servo leftServo, Servo rightServo){
         this.leftServo = leftServo;
         this.rightServo = rightServo;
         this.leftServo.setDirection(Servo.Direction.REVERSE);

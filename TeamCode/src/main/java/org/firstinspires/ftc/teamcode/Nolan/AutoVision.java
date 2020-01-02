@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "AutoVision", group="DogeCV")
+@Autonomous(name = "BenAutoVision", group="DogeCV")
 //@Disabled
 public class AutoVision extends LinearOpMode {
     private OpenCvCamera phoneCam;
