@@ -295,9 +295,10 @@ public class NathanBot extends TeleBot {
             color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
         else if (time < 90.9)
             color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
-
-        else
+        else if (time <120)
             color = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE;
+        else
+            color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
         hardware.Lights.setPattern(color);
     }
 
