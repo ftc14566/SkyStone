@@ -6,9 +6,11 @@ public class ParamBoolean extends Param {
 
 	public ParamBoolean(Config cfg){
 		super(cfg,boolean.class);
-		initialValue = cfg.isTrue();
-		trueString = cfg.trueString();
-		falseString = cfg.falseString();
+		if(cfg!=null){
+			initialValue = cfg.isTrue();
+			trueString = cfg.trueString();
+			falseString = cfg.falseString();
+		}
 	}
 
 	// endregion

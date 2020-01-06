@@ -55,7 +55,6 @@ public class InteractiveMethodList extends InteractiveList {
 	private MethodSignature[] signatures;
 	private CallbackListener listener;
 
-
 	// endregion
 
 }
