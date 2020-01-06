@@ -17,8 +17,9 @@ public class AutoBot {
 	private Hardware hardware;
 	private LinearOpMode opMode;
 
+
 	public void waitUntilRunTime(int time) {
-		while (opMode.opModeIsActive() && time < opMode.getRuntime()) {
+		while (opMode.opModeIsActive() && time <= opMode.getRuntime()) {
 			opMode.sleep(50);
 		}
 	}
@@ -28,7 +29,6 @@ public class AutoBot {
 		hardware.rightFoundationServo.setPosition(0.52);
 		opMode.sleep(100);
 	}
-
 
 	public void releaseFoundation() {
 		hardware.leftFoundationServo.setPosition(0.53);
