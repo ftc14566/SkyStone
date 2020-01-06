@@ -65,6 +65,7 @@ public class Hardware {
 		grabberLeft.setDirection(Servo.Direction.REVERSE);
 
 		leftFoundationServo = hardwareMap.get(Servo.class,"leftFoundationServo");
+		leftFoundationServo.setDirection(Servo.Direction.REVERSE);
 		rightFoundationServo = hardwareMap.get(Servo.class, "rightFoundationServo");
 
 
