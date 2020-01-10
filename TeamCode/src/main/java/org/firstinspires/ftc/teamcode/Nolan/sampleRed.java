@@ -16,8 +16,9 @@ public class sampleRed extends LinearOpMode {
 		hardware.init(hardwareMap);
 		AutoDrive drive = new AutoDrive(hardware,this);
 		AutoBot bot = new AutoBot(hardware,this);
-
-        bot.releaseFoundation();
+		AutoLift lift = new AutoLift(hardware,this);
+        //bot.releaseFoundation();
+        lift.releaseBlock();
 
 		waitForStart();
 
@@ -26,8 +27,16 @@ public class sampleRed extends LinearOpMode {
 
 
 		// Run Code
-		drive.moveForwardDistanceSensor(6,0.3,5);
-		drive.skystoneAlign(allianceRed);
+		lift.linearSlideSet();
+		drive.moveForwardDistanceSensor(10,0.3,5);
+		lift.grabBlock();
+		lift.upLifter();
+		drive.driveForward(-7,-7,0.3);
+		drive.strafeRight(80,0.4);
+		lift.downLifter();
+		lift.releaseBlock();
+		drive.strafeRight(-30,0.4);
+		drive.driveForward(7,7,0.3);
 	}
 
 }

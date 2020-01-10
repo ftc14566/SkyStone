@@ -130,7 +130,7 @@ public class AutoDrive {
         hardware.rearLeftDrive.setPower(speed);
         hardware.rearRightDrive.setPower(speed);
 
-        int endCount = timeout*20;
+        int endCount = timeout*10000000;
         int count = 0;
         while(opMode.opModeIsActive() && ((count < endCount) && (CM <= hardware.distanceSensor.getDistance(DistanceUnit.CM)))){
             //opMode.telemetry.addData("distance inch", hardware.distanceSensor.getDistance(DistanceUnit.INCH));
