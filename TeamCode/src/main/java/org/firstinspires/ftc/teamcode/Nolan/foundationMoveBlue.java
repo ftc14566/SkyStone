@@ -4,10 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Hardware;
-import org.firstinspires.ftc.teamcode.Nolan.AutoBot;
 
-@Autonomous(name="1R: Foundation Move", group="Linear Opmode")
-public class foundationMoveRed extends LinearOpMode {
+@Autonomous(name="1B: Foundation Move", group="Linear Opmode")
+public class foundationMoveBlue extends LinearOpMode {
 
 	public boolean allianceRed = true;
 
@@ -31,9 +30,9 @@ public class foundationMoveRed extends LinearOpMode {
 		// Run Code
 		drive.moveForwardDistanceSensor(4,0.3,3);
 		bot.grabFoundation();
-		drive.spinRight(300,0.4);
-		drive.driveStrait(15,0.3);
-		drive.strafeRight(50, 0.3);
+		drive.spinRight(-90,0.4);
+		drive.driveStrait(10,0.3);
+		drive.strafeRight(-27, 0.3);
 		bot.releaseFoundation();
 		bot.waitUntilRunTime(25);
 		drive.driveStrait(-48,0.3);

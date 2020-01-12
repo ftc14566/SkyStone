@@ -15,7 +15,7 @@ public class FoundationGrabber {
         rightServo.setPosition(0.52);
     }
     public void up(){
-        leftServo.setPosition(0.53);
-        rightServo.setPosition(0.08);
+        leftServo.setPosition(0.45);
+        rightServo.setPosition(0.0);
     }
 }

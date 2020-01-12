@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Nathan.FoundationGrabber;
+import org.firstinspires.ftc.teamcode.Nathan.Grabber;
 
 public class TeleBot {
 
@@ -18,7 +21,12 @@ public class TeleBot {
 		this.hardware = hardware;
 		towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
 		towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
+		grabber = new Grabber(hardware.grabberLeft, hardware.grabberRight);
+		foundationGrabber = new FoundationGrabber(hardware.leftFoundationServo, hardware.rightFoundationServo);
 	}
+
+	Grabber grabber;
+	FoundationGrabber foundationGrabber;
 
 	public void colorSensorsYellow() {
 		while (hardware.leftColorSensor.red() <= 235 && hardware.leftColorSensor.red() >= 213 && hardware.rightColorSensor.red() <= 235 && hardware.rightColorSensor.red() >= 213) {
@@ -31,6 +39,12 @@ public class TeleBot {
 		}
 	}
 
+	public void foundationServos(boolean up, boolean down){
+		if (up)
+			foundationGrabber.up();
+		else if (down)
+			foundationGrabber.down();
+	}
 
 	public void towerDown(float towerDownBind) {
 		//towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
@@ -131,6 +145,15 @@ public class TeleBot {
 
 	}
 
+	public void blockGrabberWithActivate(String action){
+
+		switch(action){
+			case "open": grabber.open(); break;
+			case "grab": grabber.grab(); break;
+		}
+
+	}
+
 	public void Lift(boolean up, boolean down){
 		double power = 0.2;
 		if(up)power = 1.0;
@@ -159,16 +182,46 @@ public class TeleBot {
 		}
 	}
 
-	public void driveAndStrafe (double targetFoward, double targetTurnRight, double targetStrafeRight){
-		forward = targetFoward/2;
-		turn = targetTurnRight/2;
-		strafe = targetStrafeRight/2;
-		// combine drive,turn,strafe
-		double fl = forward + turn + strafe;
+	public String determineGrabberAction(boolean open, boolean close, boolean blockSenser, boolean activateSensor) {
+		String action = "";
+		if (open)
+			action = "open";
+		else if (close)
+			action = "grab";
+		else if (activateSensor && blockSenser)
+			action = "grab";
+		return action;
+	}
 
-		double fr = forward - turn - strafe;
-		double rl = forward + turn - strafe;
-		double rr = forward - turn + strafe;
+	public void driveAndStrafe (double forward, double turnRight, double straifRight){
+
+		double scale = 1;
+
+		forward *= scale;
+		turnRight *= scale;
+		straifRight *= scale;
+
+		//foward = ramp(foward, targetFoward, 0.15);
+		//turnRight = ramp(turnRight, targetTurnRight, 0.15);
+		//straifRight = ramp(straifRight, targetStraifRight, 0.15);
+
+//		if(forward > .25) {
+//			forward = scale2;
+//			turnRight = scale2;
+//			straifRight = scale2;
+//		} else{
+//			forward = scale;
+//			turnRight = scale;
+//			straifRight = scale;
+//		}
+
+
+
+		// combine drive,turn,straif
+		double fl = forward + turnRight + straifRight;
+		double rl = forward + turnRight - straifRight;
+		double fr = forward - turnRight - straifRight;
+		double rr = forward - turnRight + straifRight;
 
 		// limit each drom to 1.0 max
 		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
@@ -186,7 +239,6 @@ public class TeleBot {
 		hardware.rearRightDrive.setPower(rr);
 
 	}
-
 	public void grab(boolean open,boolean close){
 
         if(open)
@@ -216,6 +268,7 @@ public class TeleBot {
 		hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 	}
+
 	private double AdjustInputs(double x){
 		return x*x*x;
 	}
@@ -244,6 +297,44 @@ public class TeleBot {
 		hardware.frontRightDrive.setPower(forwardSpeedRight-rightSpeedRight);//
 		hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
 
+	}
+
+	public void SetLightColor (double time,boolean foundationDown, boolean grabberDown,boolean grabberOpen){
+
+		RevBlinkinLedDriver.BlinkinPattern color;
+
+
+		if (foundationDown)
+			color = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
+		else if (grabberDown)
+			color = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+		else if (grabberOpen)
+			color = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+		else if (time <90)
+			color = RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
+		else if (time < 90.1)
+			color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+		else if (time < 90.2)
+			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+		else if (time < 90.3)
+			color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+		else if (time < 90.4)
+			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+		else if (time < 90.5)
+			color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+		else if (time < 90.6)
+			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+		else if (time < 90.7)
+			color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+		else if (time < 90.8)
+			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+		else if (time < 90.9)
+			color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+		else if (time <120)
+			color = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE;
+		else
+			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+		hardware.Lights.setPattern(color);
 	}
 
 	public void RaiseElevator(){}

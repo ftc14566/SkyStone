@@ -55,21 +55,24 @@ public class NathanOp extends OpMode {
         //bot.driveAndStraif(gamepad1.right_trigger, -gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
         bot.driveAndStraif(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
         //bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
-
+        bot.extend(gamepad2.y,gamepad2.a);
         bot.foundationServos(gamepad1.x, gamepad1.b);
         bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
         /*
         if (gamepad2.b)
-            bot.Extend(NathanBot.BridgePosition.Grabbing);
+            bot.ExtendWithEncoders(NathanBot.BridgePosition.Grabbing);
 
         else if (gamepad2.a)
-            bot.Extend(NathanBot.BridgePosition.In);
+            bot.ExtendWithEncoders(NathanBot.BridgePosition.In);
         else if (gamepad2.y)
-            bot.Extend(NathanBot.BridgePosition.Out);
+            bot.ExtendWithEncoders(NathanBot.BridgePosition.Out);
         */
+        String grabberAction = bot.determineGrabberAction(gamepad2.x,gamepad2.b, bot.isBlockInFront(),gamepad2.left_bumper);
+
+        bot.SetLightColor(this.time,gamepad1.b,grabberAction=="grab",gamepad2.x);
 
         //bot.grab(gamepad2.x,bot.isBlockInFront());
-        bot.blockGrabberWithActivate(gamepad2.x,gamepad2.b, bot.isBlockInFront(),gamepad2.left_bumper);
+        bot.blockGrabberWithActivate(grabberAction);
         telemetry.addData("Bridge", hardware.bridgeMotor.getCurrentPosition());
         telemetry.update();
     }
