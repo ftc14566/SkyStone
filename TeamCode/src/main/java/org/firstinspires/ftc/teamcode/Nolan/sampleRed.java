@@ -20,6 +20,9 @@ public class sampleRed extends LinearOpMode {
         //bot.releaseFoundation();
         lift.releaseBlock();
 
+        hardware.leftColorSensor.enableLed(true);
+        hardware.rightColorSensor.enableLed(true);
+
 		waitForStart();
 
 		telemetry.addData("Status", "Initialized");
@@ -29,14 +32,10 @@ public class sampleRed extends LinearOpMode {
 		// Run Code
 		lift.linearSlideSet();
 		drive.moveForwardDistanceSensor(10,0.3,5);
-		lift.grabBlock();
-		lift.upLifter();
-		drive.driveForward(-7,-7,0.3);
-		drive.strafeRight(80,0.4);
-		lift.downLifter();
-		lift.releaseBlock();
-		drive.strafeRight(-30,0.4);
-		drive.driveForward(7,7,0.3);
+		double addedDistance = drive.skystoneAlignRight();
+        drive.driveForward(-5,-50,0.3);
+        drive.strafeRight(30 + addedDistance, 0.4);
+        lift.releaseBlock();
 	}
 
 }
