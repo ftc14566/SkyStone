@@ -10,11 +10,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-<<<<<<< HEAD
+
 @Autonomous(name = "BenAutoVision", group="DogeCV")
 //@Disabled
-public class AutoVision extends LinearOpMode {
-=======
 public class AutoVision {
 
     public AutoVision(Hardware hardware, LinearOpMode mode ){
@@ -25,7 +23,7 @@ public class AutoVision {
     private Hardware hardware;
     private LinearOpMode opMode;
 
->>>>>>> 6fbf2d70d95e974cc551bcc0eea3cfe6071b5fa0
+
     private OpenCvCamera phoneCam;
     private SkystoneDetector skyStoneDetector;
 
