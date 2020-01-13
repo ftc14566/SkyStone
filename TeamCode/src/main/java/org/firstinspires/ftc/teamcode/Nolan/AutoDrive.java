@@ -41,6 +41,13 @@ public class AutoDrive {
         hardware.rearRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void setPowerStrafe(double speed) {
+        hardware.frontLeftDrive.setPower(speed);
+        hardware.frontRightDrive.setPower(speed);
+        hardware.rearLeftDrive.setPower(speed);
+        hardware.rearRightDrive.setPower(speed);
+    }
+
     public void stopDrive(){
         hardware.frontLeftDrive.setPower(0);
         hardware.frontRightDrive.setPower(0);
@@ -130,7 +137,7 @@ public class AutoDrive {
         hardware.rearLeftDrive.setPower(speed);
         hardware.rearRightDrive.setPower(speed);
 
-        int endCount = timeout*20;
+        int endCount = timeout*10000000;
         int count = 0;
         while(opMode.opModeIsActive() && ((count < endCount) && (CM <= hardware.distanceSensor.getDistance(DistanceUnit.CM)))){
             //opMode.telemetry.addData("distance inch", hardware.distanceSensor.getDistance(DistanceUnit.INCH));
@@ -151,8 +158,15 @@ public class AutoDrive {
         }
     }
 
-    public void skystoneAlignRight() {
+    public double skystoneAlignRight() {
+        double startPosition = hardware.frontLeftDrive.getCurrentPosition();
+        if(hardware.leftColorSensor.alpha() > 20) {
+            setPowerStrafe(0.3);
+            while(opMode.opModeIsActive() && (hardware.leftColorSensor.alpha() > 20)){opMode.sleep(10);}
+            stopDrive();
 
+        }
+        return ((hardware.frontRightDrive.getCurrentPosition() - startPosition) / COUNTS_PER_INCH);
     }
 
 
