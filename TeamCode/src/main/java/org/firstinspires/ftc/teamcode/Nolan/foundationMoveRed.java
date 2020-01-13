@@ -20,18 +20,23 @@ public class foundationMoveRed extends LinearOpMode {
 		AutoDrive drive = new AutoDrive(hardware,this);
 		AutoBot bot = new AutoBot(hardware,this);
 
+        bot.releaseFoundation();
+
 		waitForStart();
 
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
 
+
 		// Run Code
-		drive.moveForwardDistanceSensor(2,0.3,999);
-		//bot.grabFoundation();
-		//move to building zone
-		//bot.releaseFoundation();
-		//bot.waitUntilRunTime(25);
-		//move to line
+		drive.moveForwardDistanceSensor(4,0.3,3);
+		bot.grabFoundation();
+		drive.spinRight(300,0.4);
+		drive.driveStrait(15,0.3);
+		drive.strafeRight(50, 0.3);
+		bot.releaseFoundation();
+		bot.waitUntilRunTime(25);
+		drive.driveStrait(-48,0.3);
 	}
 
 }

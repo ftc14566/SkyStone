@@ -17,20 +17,22 @@ public class AutoBot {
 	private Hardware hardware;
 	private LinearOpMode opMode;
 
+
 	public void waitUntilRunTime(int time) {
-		while (opMode.opModeIsActive() && time < opMode.getRuntime()) {
+		while (opMode.opModeIsActive() && time <= opMode.getRuntime()) {
 			opMode.sleep(50);
 		}
 	}
 
 	public void grabFoundation() {
-		//hardware.foundationServoLeft.setPosition(1);
-		//hardware.foundationServoRight.setPosition(1);
+		hardware.leftFoundationServo.setPosition(1);
+		hardware.rightFoundationServo.setPosition(0.52);
+		opMode.sleep(100);
 	}
 
-
 	public void releaseFoundation() {
-		//hardware.foundationServoLeft.setPosition(0);
-		//hardware.foundationServoRight.setPosition(0);
+		hardware.leftFoundationServo.setPosition(0.53);
+		hardware.rightFoundationServo.setPosition(0.08);
+		opMode.sleep(50);
 	}
 }

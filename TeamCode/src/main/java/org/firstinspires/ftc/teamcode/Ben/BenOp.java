@@ -61,9 +61,9 @@ public class BenOp extends OpMode {
 
 		//TODO bot.encodersWithGrabber(gamepad2.left_trigger, false);
 
-		bot.extend(gamepad2.y,gamepad2.a);
+		//bot.extend(gamepad2.y,gamepad2.a);
 
-		bot.grab(gamepad2.x,gamepad2.b);
+		//bot.grab(gamepad2.x,gamepad2.b);
 
 		bot.moveFoundation(gamepad1.right_bumper);
 
