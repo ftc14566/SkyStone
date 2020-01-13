@@ -16,7 +16,7 @@ public class BenOp extends OpMode {
 
 	@Override
 	public void init() {
-
+		
 		hardware = new Hardware();
 		hardware.init( hardwareMap );
 		bot = new BenBot(hardware);
@@ -31,8 +31,8 @@ public class BenOp extends OpMode {
 
 	@Override
 	public void init_loop() {
-		//hardware.leftTowerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		//hardware.rightTowerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		hardware.leftTowerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		hardware.rightTowerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 	}
 
 	/*
@@ -54,10 +54,10 @@ public class BenOp extends OpMode {
 		bot.driveAndStrafe(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_trigger);
 		//bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
 		//bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
-
+		
 		// Lift
 		bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
-		bot.towerDown(gamepad2.right_trigger, true);
+		bot.towerDown(gamepad2.right_trigger);
 
 		//TODO bot.encodersWithGrabber(gamepad2.left_trigger, false);
 

@@ -10,8 +10,7 @@ public class TeleBot {
 
 	protected Hardware hardware;
 
-	public double towerPositionRight;//
-    // = hardware.rightTowerMotor.getCurrentPosition();
+	public double towerPositionRight;// = hardware.rightTowerMotor.getCurrentPosition();
 	public double towerPositionLeft;// = hardware.leftTowerMotor.getCurrentPosition();
 
 
@@ -34,27 +33,23 @@ public class TeleBot {
 	}
 
 
-	public void towerDown(float towerDownBind, boolean runWithEncoders) {
+	public void towerDown(float towerDownBind) {
 		//towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
 		//towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
 		if (towerDownBind > 0.25) {
-			while(hardware.leftTowerMotor.getCurrentPosition() != 0)
-				hardware.leftTowerMotor.setPower(0.1);
-				hardware.rightTowerMotor.setPower(0.1);
-				hardware.leftTowerMotor.setTargetPosition(0);
-				hardware.rightTowerMotor.setTargetPosition(0);
-				if(runWithEncoders = true) {
-					hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-					hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-					runWithEncoders = false;
-				
+			hardware.leftTowerMotor.setTargetPosition(0);
+			hardware.rightTowerMotor.setTargetPosition(0);
+			hardware.leftTowerMotor.setPower(0.1);
+			hardware.rightTowerMotor.setPower(0.1);
+			while (hardware.rightTowerMotor.getCurrentPosition() != 0 || hardware.rightTowerMotor.getCurrentPosition() != 0) {
+				hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+				hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 			}
-        }
-		else{
-			hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Stop and Reset
-			hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-			runWithEncoders = true;
 		}
+		else{
+            hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Stop and Reset
+            hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 	}
 
 	public void encodersWithGrabber(float autoGrabBind, boolean bridgePosition){ //TRUE = OUT :: FALSE = IN
