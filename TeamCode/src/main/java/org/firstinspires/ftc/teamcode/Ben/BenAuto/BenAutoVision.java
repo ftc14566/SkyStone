@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Ben.BenAuto;
 
 import com.disnodeteam.dogecv.detectors.skystone.SkystoneDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.openftc.easyopencv.OpenCvCamera;
@@ -10,6 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(name = "BenAutoVision", group="DogeCV")
+@Disabled
 //@Disabled
 public class BenAutoVision extends LinearOpMode {
     private OpenCvCamera phoneCam;
