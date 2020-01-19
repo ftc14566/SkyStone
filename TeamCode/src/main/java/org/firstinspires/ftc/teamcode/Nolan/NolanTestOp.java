@@ -94,6 +94,20 @@ public class NolanTestOp extends OpMode
         hardware.bridgeMotor.setPower(0);
     }
 
+    public void grabBlock() {
+       if(gamepad1.a) {
+           hardware.grabberLeft.setPosition(0.9);
+           hardware.grabberRight.setPosition(0.9);
+       }
+    }
+
+    public void releaseBlock() {
+        if(gamepad1.b) {
+            hardware.grabberLeft.setPosition(0.1);
+            hardware.grabberRight.setPosition(0.1);
+        }
+    }
+
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -144,13 +158,17 @@ public class NolanTestOp extends OpMode
         lifterDown();
         bridgeOut();
         bridgeIn();
+        grabBlock();
+        releaseBlock();
 
         telemetry.addData("right color sensor",hardware.rightColorSensor.alpha());
         telemetry.addData("left color sensor",hardware.leftColorSensor.alpha());
         telemetry.addData("distance(CM)", hardware.distanceSensor.getDistance(DistanceUnit.CM));
         telemetry.addData("right tower motor", hardware.rightTowerMotor.getCurrentPosition());
         telemetry.addData("left tower motor", hardware.leftTowerMotor.getCurrentPosition());
+        telemetry.addData("bridge motor", hardware.bridgeMotor.getCurrentPosition());
         telemetry.update();
+
     }
 
     /*

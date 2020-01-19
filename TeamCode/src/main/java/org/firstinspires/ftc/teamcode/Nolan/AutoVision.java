@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 
-@Autonomous(name = "BenAutoVision", group="DogeCV")
+//@Autonomous(name = "BenAutoVision", group="DogeCV")
 //@Disabled
 public class AutoVision {
 
