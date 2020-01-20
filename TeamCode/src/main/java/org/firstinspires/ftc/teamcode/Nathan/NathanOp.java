@@ -53,7 +53,9 @@ public class NathanOp extends OpMode {
 
         // Drive
         //bot.driveAndStraif(gamepad1.right_trigger, -gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-        bot.driveAndStraif(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+        bot.driveAndStraif(-gamepad1.left_stick_y*-gamepad1.left_stick_y*-gamepad1.left_stick_y
+                ,gamepad1.left_stick_x*gamepad1.left_stick_x*gamepad1.left_stick_x
+                ,gamepad1.right_stick_x*gamepad1.right_stick_x*gamepad1.right_stick_x);
         //bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
         bot.extend(gamepad2.y,gamepad2.a);
         bot.foundationServos(gamepad1.x, gamepad1.b);
