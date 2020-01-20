@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.Nolan;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -61,6 +63,8 @@ public class NolanTestOp extends OpMode
     // Declare OpMode members.
     private Hardware hardware;
     private ElapsedTime runtime = new ElapsedTime();
+
+    private int rightHSV;
 
     public void lifterUp() {
         while(gamepad1.dpad_up) {
@@ -152,6 +156,10 @@ public class NolanTestOp extends OpMode
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
+    float hsvValues[] = {0F, 0F, 0F};
+    final float values[] = hsvValues;
+    final double SCALE_FACTOR = 255;
+
     @Override
     public void loop() {
         lifterUp();
@@ -160,6 +168,11 @@ public class NolanTestOp extends OpMode
         bridgeIn();
         grabBlock();
         releaseBlock();
+
+         Color.RGBToHSV((int) (hardware.rightColorSensor.red() * SCALE_FACTOR),
+                (int) (hardware.rightColorSensor.green() * SCALE_FACTOR),
+                (int) (hardware.rightColorSensor.blue() * SCALE_FACTOR),
+                hsvValues);
 
         telemetry.addData("right color sensor",hardware.rightColorSensor.alpha());
         telemetry.addData("left color sensor",hardware.leftColorSensor.alpha());
