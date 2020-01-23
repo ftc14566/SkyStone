@@ -336,7 +336,24 @@ public class TeleBot {
 			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 		hardware.Lights.setPattern(color);
 	}
-	
+
+	private void setTowerPower(double power){
+		hardware.leftTowerMotor.setPower(power);
+		hardware.rightTowerMotor.setPower(power);
+	}
+
+	private int liftCounter = 0;
+	private void goDownBetter(){
+		if (liftCounter<1)
+			setTowerPower(0.0);
+		else
+			setTowerPower(-0.005);
+
+		liftCounter += 1;
+		if (liftCounter == 2)
+			liftCounter = 0;
+	}
+
 	public void RaiseElevator(){}
 	public void LowerElevator(){}
 	
