@@ -164,7 +164,7 @@ public class TeleBot {
 			liftIdle ();
 	}
 	private void goUp(){
-		setTowerPower(0.5);
+		setTowerPower(0.55);
 	}
 	private void liftIdle(){
 		setTowerPower(0.2);
