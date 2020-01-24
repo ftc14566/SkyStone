@@ -163,7 +163,7 @@ public class TeleBot {
 			liftIdle ();
 	}
 	private void goUp(){
-		setTowerPower(0.5);
+		setTowerPower(0.55);
 	}
 	private void liftIdle(){
 		setTowerPower(0.2);
@@ -353,7 +353,7 @@ public class TeleBot {
 		if (liftCounter<1)
 			setTowerPower(0.0);
 		else
-			setTowerPower(-0.01);
+			setTowerPower(0.01);
 		liftCounter += 1;
 		if (liftCounter == 2)
 			liftCounter = 0;
