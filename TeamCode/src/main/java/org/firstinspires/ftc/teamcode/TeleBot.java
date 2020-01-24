@@ -159,6 +159,7 @@ public class TeleBot {
 			goUp();
 		else if (down)
 			goDownBetter();
+
 		else
 			liftIdle ();
 	}
@@ -353,7 +354,7 @@ public class TeleBot {
 		if (liftCounter<1)
 			setTowerPower(0.0);
 		else
-			setTowerPower(-0.01);
+			setTowerPower(0.01);
 		liftCounter += 1;
 		if (liftCounter == 2)
 			liftCounter = 0;
