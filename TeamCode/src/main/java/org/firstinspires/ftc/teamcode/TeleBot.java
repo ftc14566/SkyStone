@@ -201,22 +201,6 @@ public class TeleBot {
 		turnRight *= scale;
 		straifRight *= scale;
 		
-		//foward = ramp(foward, targetFoward, 0.15);
-		//turnRight = ramp(turnRight, targetTurnRight, 0.15);
-		//straifRight = ramp(straifRight, targetStraifRight, 0.15);
-
-//    if(forward > .25) {
-//       forward = scale2;
-//       turnRight = scale2;
-//       straifRight = scale2;
-//    } else{
-//       forward = scale;
-//       turnRight = scale;
-//       straifRight = scale;
-//    }
-		
-		
-		
 		// combine drive,turn,straif
 		double fl = forward + turnRight + straifRight;
 		double rl = forward + turnRight - straifRight;
