@@ -101,7 +101,7 @@ public class NathanBot extends TeleBot {
 
     public void Lift(boolean up, boolean down){
         if(up)
-           goUp();
+            goUp();
         else if (down)
             goDownBetter();
         else

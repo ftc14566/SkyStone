@@ -153,16 +153,22 @@ public class TeleBot {
 		}
 		
 	}
-	
+
 	public void Lift(boolean up, boolean down){
-		double power = 0.2;
-		if(up)power = 1.0;
-		if(down)power = 0.02;
-		
-		hardware.leftTowerMotor.setPower(power);
-		hardware.rightTowerMotor.setPower(power);
+		if(up)
+			goUp();
+		else if (down)
+			goDownBetter();
+		else
+			liftIdle ();
 	}
-	
+	private void goUp(){
+		setTowerPower(0.5);
+	}
+	private void liftIdle(){
+		setTowerPower(0.2);
+	}
+
 	double leftGrabberPosition;
 	double rightGrabberPosition;
 	
@@ -347,8 +353,7 @@ public class TeleBot {
 		if (liftCounter<1)
 			setTowerPower(0.0);
 		else
-			setTowerPower(-0.005);
-
+			setTowerPower(-0.01);
 		liftCounter += 1;
 		if (liftCounter == 2)
 			liftCounter = 0;
