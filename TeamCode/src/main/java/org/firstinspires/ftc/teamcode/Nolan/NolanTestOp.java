@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.Nolan;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -62,6 +64,8 @@ public class NolanTestOp extends OpMode
     private Hardware hardware;
     private ElapsedTime runtime = new ElapsedTime();
 
+    private int rightHSV;
+
     public void lifterUp() {
         while(gamepad1.dpad_up) {
             hardware.leftTowerMotor.setPower(1);
@@ -92,6 +96,20 @@ public class NolanTestOp extends OpMode
             hardware.bridgeMotor.setPower(-0.2);
         }
         hardware.bridgeMotor.setPower(0);
+    }
+
+    public void grabBlock() {
+       if(gamepad1.a) {
+           hardware.grabberLeft.setPosition(0.9);
+           hardware.grabberRight.setPosition(0.9);
+       }
+    }
+
+    public void releaseBlock() {
+        if(gamepad1.b) {
+            hardware.grabberLeft.setPosition(0.1);
+            hardware.grabberRight.setPosition(0.1);
+        }
     }
 
     @Override
@@ -138,19 +156,32 @@ public class NolanTestOp extends OpMode
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
+    float hsvValues[] = {0F, 0F, 0F};
+    final float values[] = hsvValues;
+    final double SCALE_FACTOR = 255;
+
     @Override
     public void loop() {
         lifterUp();
         lifterDown();
         bridgeOut();
         bridgeIn();
+        grabBlock();
+        releaseBlock();
+
+         Color.RGBToHSV((int) (hardware.rightColorSensor.red() * SCALE_FACTOR),
+                (int) (hardware.rightColorSensor.green() * SCALE_FACTOR),
+                (int) (hardware.rightColorSensor.blue() * SCALE_FACTOR),
+                hsvValues);
 
         telemetry.addData("right color sensor",hardware.rightColorSensor.alpha());
         telemetry.addData("left color sensor",hardware.leftColorSensor.alpha());
         telemetry.addData("distance(CM)", hardware.distanceSensor.getDistance(DistanceUnit.CM));
         telemetry.addData("right tower motor", hardware.rightTowerMotor.getCurrentPosition());
         telemetry.addData("left tower motor", hardware.leftTowerMotor.getCurrentPosition());
+        telemetry.addData("bridge motor", hardware.bridgeMotor.getCurrentPosition());
         telemetry.update();
+
     }
 
     /*

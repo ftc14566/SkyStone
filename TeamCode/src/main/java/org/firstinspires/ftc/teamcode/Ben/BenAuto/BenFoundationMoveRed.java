@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Ben.BenAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Hardware;
 
 @Autonomous(name="1R: Foundation Move", group="Linear Opmode")
+@Disabled
 public class BenFoundationMoveRed extends LinearOpMode {
 
 	public boolean allianceRed = true;

@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.Ben.BenAuto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -82,6 +83,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 @TeleOp(name="SKYSTONE_IDENTIFICATION", group ="Concept")
+@Disabled
 //@Disabled
 public class Skystone_Identification extends LinearOpMode {
 

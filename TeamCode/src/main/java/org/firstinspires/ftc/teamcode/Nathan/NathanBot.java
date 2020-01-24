@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Nathan;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware;
@@ -101,17 +100,41 @@ public class NathanBot extends TeleBot {
     }
 
     public void Lift(boolean up, boolean down){
+        if(up)
+            goUp();
+        else if (down)
+            goDownBetter();
+        else
+            liftIdle ();
+    }
 
-        double power = 0.2;
-        if(up)power = 1.0;
-        if(down)power = 0.02;
+    private void goDown(){
+        setTowerPower(0.01);
+    }
 
+    private int liftCounter = 0;
+    private void goDownBetter(){
+        if (liftCounter<1)
+            setTowerPower(0.0);
+        else
+            setTowerPower(-0.005);
 
+        liftCounter += 1;
+        if (liftCounter == 2)
+            liftCounter = 0;
+    }
+
+    private void setTowerPower(double power){
         hardware.leftTowerMotor.setPower(power);
         hardware.rightTowerMotor.setPower(power);
     }
 
-
+    private void goUp(){
+       setTowerPower(0.5);
+    }
+    private void liftIdle(){
+        setTowerPower(0.2);
+    }
     private double ramp (double current, double target, double stepUpSize){
         if(current<target){
             // going up

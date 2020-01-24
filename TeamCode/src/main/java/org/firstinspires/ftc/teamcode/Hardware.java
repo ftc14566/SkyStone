@@ -41,16 +41,23 @@ public class Hardware {
 	public void init(HardwareMap hardwareMap) {
 		frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftWheel");
 		frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 		rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftWheel");
 		rearLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 		frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightWheel");
 		frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 		rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightWheel");
 		rearRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
 
 		leftTowerMotor = hardwareMap.get(DcMotor.class, "leftTowerMotor");
 		leftTowerMotor.setDirection(DcMotorSimple.Direction.REVERSE);

@@ -1,22 +1,21 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Nathan;
 
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Nathan.FoundationGrabber;
-import org.firstinspires.ftc.teamcode.Nathan.Grabber;
+import org.firstinspires.ftc.teamcode.Hardware;
 
-public class TeleBot {
-	
+public class NathanTeleBot {
+
 	protected Hardware hardware;
-	
+
 	public double towerPositionRight;//'' = hardware.rightTowerMotor.getCurrentPosition();
 	public double towerPositionLeft;// = hardware.leftTowerMotor.getCurrentPosition();
-	
-	
-	public TeleBot(Hardware hardware) {
+
+
+	public NathanTeleBot(Hardware hardware) {
 		
 		this.hardware = hardware;
 		towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
@@ -153,22 +152,16 @@ public class TeleBot {
 		}
 		
 	}
-
+	
 	public void Lift(boolean up, boolean down){
-		if(up)
-			goUp();
-		else if (down)
-			goDownBetter();
-		else
-			liftIdle ();
+		double power = 0.2;
+		if(up)power = 1.0;
+		if(down)power = 0.02;
+		
+		hardware.leftTowerMotor.setPower(power);
+		hardware.rightTowerMotor.setPower(power);
 	}
-	private void goUp(){
-		setTowerPower(0.5);
-	}
-	private void liftIdle(){
-		setTowerPower(0.2);
-	}
-
+	
 	double leftGrabberPosition;
 	double rightGrabberPosition;
 	
@@ -327,21 +320,6 @@ public class TeleBot {
 		hardware.Lights.setPattern(color);
 	}
 
-	private void setTowerPower(double power){
-		hardware.leftTowerMotor.setPower(power);
-		hardware.rightTowerMotor.setPower(power);
-	}
-
-	private int liftCounter = 0;
-	private void goDownBetter(){
-		if (liftCounter<1)
-			setTowerPower(0.0);
-		else
-			setTowerPower(-0.01);
-		liftCounter += 1;
-		if (liftCounter == 2)
-			liftCounter = 0;
-	}
 
 	public void RaiseElevator(){}
 	public void LowerElevator(){}

@@ -65,8 +65,8 @@ public class AutoDrive {
         encoderRun();
 
         int frontLeftTarget = hardware.frontLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-        int frontRightTarget = hardware.frontLeftDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-        int rearLeftTarget = hardware.frontLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        int frontRightTarget = hardware.frontRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        int rearLeftTarget = hardware.rearLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
         int rearRightTarget = hardware.rearRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
 
         hardware.frontLeftDrive.setTargetPosition(frontLeftTarget);
@@ -103,8 +103,8 @@ public class AutoDrive {
         encoderRun();
 
         int frontLeftTarget = hardware.frontLeftDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH) ;
-        int frontRightTarget = (hardware.frontLeftDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH))*-1;
-        int rearLeftTarget = (hardware.frontLeftDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH))*-1;
+        int frontRightTarget = (hardware.frontRightDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH))*-1;
+        int rearLeftTarget = (hardware.rearLeftDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH))*-1;
         int rearRightTarget = hardware.rearRightDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
 
         hardware.frontLeftDrive.setTargetPosition(frontLeftTarget);
@@ -124,7 +124,7 @@ public class AutoDrive {
 
         while(opMode.opModeIsActive() &&
                 ((hardware.frontLeftDrive.isBusy() && hardware.frontRightDrive.isBusy())
-                        && (hardware.rearLeftDrive.isBusy() && hardware.frontRightDrive.isBusy()))){
+                        && (hardware.rearLeftDrive.isBusy() && hardware.rearRightDrive.isBusy()))){
             opMode.sleep(100);
         }
         stopDrive();

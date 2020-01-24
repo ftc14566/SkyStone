@@ -26,6 +26,9 @@ public class DriverOp extends OpMode {
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
 
+    public double cube (double d){
+        return d*d*d;
+    }
 
 
     @Override
@@ -51,7 +54,7 @@ public class DriverOp extends OpMode {
 
         // Drive
         //bot.driveAndStraif(gamepad1.right_trigger, -gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-        bot.driveAndStrafe(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+        bot.driveAndStrafe(cube(-gamepad1.left_stick_y),cube(gamepad1.left_stick_x),cube(gamepad1.right_stick_x));
         //bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
         bot.extend(gamepad2.y,gamepad2.a);
         bot.foundationServos(gamepad1.x, gamepad1.b);
