@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Nolan;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -19,6 +20,7 @@ public class sampleBlue extends LinearOpMode {
 		AutoLift lift = new AutoLift(hardware,this);
         //bot.releaseFoundation();
         lift.releaseBlock();
+		hardware.Lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
 
         hardware.leftColorSensor.enableLed(true);
         hardware.rightColorSensor.enableLed(true);
@@ -31,7 +33,7 @@ public class sampleBlue extends LinearOpMode {
 
 		// Run Code
 		lift.linearSlideSet();
-		drive.moveForwardDistanceSensor(5,0.5,5);
+		drive.moveForwardDistanceSensor(5,0.3,5);
 		lift.grabBlock();
 		//double addedDistance = drive.skystoneAlignRight();
         drive.driveForward(-15,-15,0.3);
