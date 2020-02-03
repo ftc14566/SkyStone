@@ -199,6 +199,126 @@ public class TeleBot {
 		return action;
 	}
 	
+	public void stairDrive(double forward, double turn, double strafe){
+		double scale = 1;
+		
+		forward *= scale;
+		turn *= scale;
+		strafe *= scale;
+		
+		//Stair Driving Code
+		if ((forward > .33 || turn > .33 || strafe > .33) && (forward < .66 || turn < .66 || strafe < .66)) {
+			//TODO 1/3 Max Power
+			forward *= 1 / 3; //Max Power
+			turn *= 1 / 3; //Max Power
+			strafe *= 1 / 3; //Max Power
+		}
+		if (forward > .66 || turn > .66 || strafe > .66 && (forward < .66 || turn < .66 || strafe < .66)) {
+			//TODO 2/3 Max Power
+			forward *= 2 / 3; //Max Power
+			turn *= 2 / 3; //Max Power
+			strafe *= 2 / 3; //Max Power
+		}
+		if (forward > .99 || turn > .99 || strafe > .99 && (forward < .66 || turn < .66 || strafe < .66)){
+			//TODO Max Power
+			forward *= 1; //Max Power
+			turn *= 1; //Max Power
+			strafe *= 1; //Max Power
+		}
+	
+		double fl = forward + turn + strafe;
+		double rl = forward + turn - strafe;
+		double fr = forward - turn - strafe;
+		double rr = forward - turn + strafe;
+	
+		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
+		maxPower = Math.max(maxPower,Math.abs(rl));
+		maxPower = Math.max(maxPower,Math.abs(rr));
+		if(maxPower > 1.0){
+			fl /= maxPower;
+			fr /= maxPower;
+			rl /= maxPower;
+			rr /= maxPower;
+		}
+		hardware.frontLeftDrive.setPower(fl);
+		hardware.frontRightDrive.setPower(fr);
+		hardware.rearLeftDrive.setPower(rl);
+		hardware.rearRightDrive.setPower(rr);
+	}
+	
+	
+	public void checkSpeed(float checkButton, double forward, double turnRight, double straifRight) {
+		if (checkButton > .25) {
+			slowDriveAndStrafe(forward, turnRight, straifRight);
+		}
+		else {
+			driveAndStrafe(forward, turnRight, straifRight);
+		}
+	}
+	
+	public void squareDrive(double forward, double turn, double strafe) {
+		double scale = 1;
+		
+		forward *= scale;
+		turn *= scale;
+		strafe *= scale;
+		
+		
+		
+		// combine drive,turn,straif
+		double fl = forward + turn + strafe;
+		double rl = forward + turn - strafe;
+		double fr = forward - turn - strafe;
+		double rr = forward - turn + strafe;
+		
+		// limit each drom to 1.0 max
+		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
+		maxPower = Math.max(maxPower,Math.abs(rl));
+		maxPower = Math.max(maxPower,Math.abs(rr));
+		if(maxPower>1.0){
+			fl/=maxPower;
+			fr/=maxPower;
+			rl/=maxPower;
+			rr/=maxPower;
+		}
+		hardware.frontLeftDrive.setPower(fl);
+		hardware.frontRightDrive.setPower(fr);
+		hardware.rearLeftDrive.setPower(rl);
+		hardware.rearRightDrive.setPower(rr);
+		
+	}
+	
+	public void slowDriveAndStrafe (double forward, double turnRight, double straifRight){
+		
+		double scale = .25;
+		
+		forward *= scale;
+		turnRight *= scale;
+		straifRight *= scale;
+		
+		// combine drive,turn,straif
+		double fl = forward + turnRight + straifRight;
+		double rl = forward + turnRight - straifRight;
+		double fr = forward - turnRight - straifRight;
+		double rr = forward - turnRight + straifRight;
+		
+		// limit each drom to 1.0 max
+		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
+		maxPower = Math.max(maxPower,Math.abs(rl));
+		maxPower = Math.max(maxPower,Math.abs(rr));
+		if(maxPower>1.0){
+			fl/=maxPower;
+			fr/=maxPower;
+			rl/=maxPower;
+			rr/=maxPower;
+		}
+		hardware.frontLeftDrive.setPower(fl);
+		hardware.frontRightDrive.setPower(fr);
+		hardware.rearLeftDrive.setPower(rl);
+		hardware.rearRightDrive.setPower(rr);
+		
+	}
+	
 	public void driveAndStrafe (double forward, double turnRight, double straifRight){
 		
 		double scale = 1;
@@ -229,6 +349,7 @@ public class TeleBot {
 		hardware.rearRightDrive.setPower(rr);
 		
 	}
+	
 	public void grab(boolean open,boolean close){
 		
 		if(open)
@@ -259,8 +380,8 @@ public class TeleBot {
 		
 	}
 	
-	private double AdjustInputs(double x){
-		return x*x*x;
+	private double AdjustInputs(double x) {
+		return x * x * x;
 	}
 	
 	public void MoveLR(double forwardSpeedLeft, double rightSpeedLeft,double forwardSpeedRight, double rightSpeedRight){

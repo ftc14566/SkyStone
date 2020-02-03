@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-        import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.ColorSensor;
         import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,10 +52,7 @@ public class DriverOp extends OpMode {
     @Override
     public void loop() {
 
-        // Drive
-        //bot.driveAndStraif(gamepad1.right_trigger, -gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
-        bot.driveAndStrafe(cube(-gamepad1.left_stick_y),cube(gamepad1.left_stick_x),cube(gamepad1.right_stick_x));
-        //bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
+        bot.checkSpeed(gamepad1.left_trigger, -gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
         bot.extend(gamepad2.y,gamepad2.a);
         bot.foundationServos(gamepad1.x, gamepad1.b);
         bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
