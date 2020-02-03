@@ -32,7 +32,7 @@ public class foundationMoveBlue extends LinearOpMode {
 		drive.strafeRight(-25,0.4);
 		drive.moveForwardDistanceSensor(4,0.4,3);
 		bot.grabFoundation();
-		drive.driveForward(-35,-35,0.5);
+		drive.driveForward(-25,-25,0.5);
 		drive.spinRight(-600,0.7);
 		//drive.spinRight(-20,0.4);
 		//drive.driveStrait(15,0.3);

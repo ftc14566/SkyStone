@@ -36,7 +36,7 @@ public class AutoLift {
         opMode.sleep(775);
         hardware.bridgeMotor.setPower(0);
         hardware.leftTowerMotor.setPower(1); hardware.rightTowerMotor.setPower(1);
-        opMode.sleep(40);
+        opMode.sleep(30);
         hardware.leftTowerMotor.setPower(0.2); hardware.rightTowerMotor.setPower(0.2);
     }
 

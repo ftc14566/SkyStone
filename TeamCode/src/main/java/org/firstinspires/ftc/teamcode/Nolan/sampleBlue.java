@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Hardware;
 
-@Autonomous(name="2R: Sample", group="Linear Opmode")
-public class sampleRed extends LinearOpMode {
+@Autonomous(name="2B: Sample", group="Linear Opmode")
+public class sampleBlue extends LinearOpMode {
 	public boolean allianceRed = true;
 	@Override
 	public void runOpMode() {
@@ -35,11 +35,11 @@ public class sampleRed extends LinearOpMode {
 		lift.grabBlock();
 		//double addedDistance = drive.skystoneAlignRight();
         drive.driveForward(-15,-15,0.3);
-        drive.strafeRight(80, 0.4);
+        drive.strafeRight(-80, 0.4);
         lift.releaseBlock();
-		drive.strafeRight(-25, 0.4);
+		drive.strafeRight(25, 0.4);
 		lift.linearSlideIn();
-		drive.driveForward(6,6,0.3);
+		drive.driveForward(8,8,0.3);
 	}
 
 }
