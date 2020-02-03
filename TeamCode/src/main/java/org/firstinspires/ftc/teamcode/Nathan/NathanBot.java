@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Nathan;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware;
@@ -20,48 +21,6 @@ public class NathanBot extends TeleBot {
     Grabber grabber;
     FoundationGrabber foundationGrabber;
 
-/*	public void raiseElevators(double elevatorBind, double rate){
-
-	public void towerEncoders(double towerPosition){
-		towerPosition = hardware.rightTowerMotor.getCurrentPosition();
-
-	}
-
-	public void towerDown(float towerDownBind){
-		double towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
-		double towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
-		if(towerDownBind > 0.25){
-			while(towerPositionRight > 0) {
-				hardware.leftTowerMotor.setTargetPosition(0);
-				hardware.rightTowerMotor.setTargetPosition(0);
-				hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-				hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-				hardware.leftTowerMotor.setPower(.10);
-				hardware.rightTowerMotor.setPower(.10);
-				while(hardware.leftTowerMotor.isBusy() || hardware.rightTowerMotor.isBusy()) {
-					hardware.leftColorSensor.enableLed(true);
-					hardware.rightColorSensor.enableLed(true);
-					hardware.leftColorSensor.enableLed(false);
-					hardware.rightColorSensor.enableLed(false);
-				}
-				hardware.leftTowerMotor.setPower(0);
-				hardware.rightTowerMotor.setPower(0);
-			}
-		}
-	}
-
-	public void raiseElevators(double elevatorBind, double rate){
->>>>>>> 85c45fb77021d3248a58c487724831c3c45f7d09
-		if(elevatorBind >= .25)
-			hardware.leftTowerMotor.setPower(rate);
-			hardware.rightTowerMotor.setPower(rate);
-		if(elevatorBind <= -.25) {
-			hardware.leftTowerMotor.setPower(-rate);
-			hardware.rightTowerMotor.setPower(-rate);
-		}
-
-	}
-*/
 
 
     public void DriveForward(double speed){
@@ -99,13 +58,123 @@ public class NathanBot extends TeleBot {
 
     }
 
-    public void Lift(boolean up, boolean down){
-        if(up)
-            goUp();
-        else if (down)
+    public enum LiftAction{
+        idle,up,down,slowUp,slowDown
+    }
+
+    public void Lift(LiftAction action){
+        if(action == LiftAction.up)
+            setTowerPower(0.5);
+        else if (action == LiftAction.slowUp)
+            setTowerPower(0.35);
+        else if(hardware.touchSensor.isPressed()|| hardware.leftTowerMotor.getCurrentPosition()<80 )
+            liftIdle();
+        else if (action == LiftAction.down)
             goDownBetter();
+        else if (action == LiftAction.slowDown)
+            setTowerPower(0.02);
         else
             liftIdle ();
+    }
+
+
+    private boolean doAutoGrab = false;
+    private boolean autoExtend = false;
+
+    public int leftzero = 0;
+    public int rightzero = 0;
+
+    double time;
+    double downTime = 0;
+    boolean wasDown = false;
+
+    public void autoGrab (Gamepad gamepad, double time){
+        this.time = time;
+
+        if (gamepad.a) {
+            doAutoGrab = true;
+            autoExtend = true;
+        }else if (gamepad.dpad_up || gamepad.dpad_right || gamepad.dpad_down || gamepad.dpad_left){
+            doAutoGrab = false;
+            autoExtend = false;
+        }
+
+
+        boolean isDown = hardware.touchSensor.isPressed();
+        if (isDown) {
+            leftzero = hardware.leftTowerMotor.getCurrentPosition();
+            rightzero = hardware.rightTowerMotor.getCurrentPosition();
+        }
+        if(!wasDown && isDown) downTime = time;
+        wasDown = isDown; //record for next time
+
+        if (doAutoGrab){
+            boolean isBlock = hardware.distanceSensor.getDistance(DistanceUnit.CM)<3;
+
+            int liftPosition = (
+                    hardware.leftTowerMotor.getCurrentPosition()-leftzero
+                    +hardware.rightTowerMotor.getCurrentPosition()-rightzero
+            )/2;
+            if (isBlock) {
+                Lift(LiftAction.down);
+            } else {
+                int grabHight = 130;
+                if (liftPosition < grabHight)
+                    Lift(LiftAction.slowUp);
+                else if (liftPosition > grabHight + 60)
+                    Lift(LiftAction.slowDown);
+                else
+                    Lift(LiftAction.idle);
+            }
+ 
+/////////EXTEND/////////////////////////////////////////////////////////////////////////////////////
+            if (liftPosition<150 && hardware.distanceSensor.getDistance(DistanceUnit.CM)>4 && autoExtend) {
+                if (hardware.bridgeDistance.getDistance(DistanceUnit.CM) < 22)
+                    extend(BridgeAction.out);
+                else if (hardware.bridgeDistance.getDistance(DistanceUnit.CM) > 23)
+                    extend(BridgeAction.inSlow);
+                else {
+                    extend(BridgeAction.idle);
+                    autoExtend = false;
+                }
+            }
+            else
+                extend(BridgeAction.idle);
+
+            if (isBlock)
+                doGraberAction("grab");
+            else
+                doGraberAction("open");
+
+        }
+        else {
+            //// MANUAL OVERIDE ////////////////////////////////////////////////////////////////////
+            LiftAction liftAction = determinLiftActionFromButtons(gamepad.dpad_up, gamepad.dpad_down);
+            String grabberAction = determineGrabberAction(gamepad.x, gamepad.b, isBlockInFront(),gamepad.left_bumper);
+            BridgeAction bridgeAction = determinBridgeAction (gamepad.dpad_left, gamepad.dpad_right);
+
+            Lift(liftAction);
+            extend(gamepad.dpad_right,gamepad.dpad_left);
+            doGraberAction(grabberAction);
+
+        }
+    }
+
+    private BridgeAction determinBridgeAction(boolean dpad_left, boolean dpad_right) {
+        if (dpad_left)
+            return BridgeAction.in;
+        if (dpad_right)
+            return BridgeAction.out;
+        return BridgeAction.idle;
+    }
+
+    private NathanBot.LiftAction determinLiftActionFromButtons(boolean up, boolean down) {
+        NathanBot.LiftAction action = NathanBot.LiftAction.idle;
+        if (up)
+            action = NathanBot.LiftAction.up;
+        else if (down)
+            action = NathanBot.LiftAction.down;
+        return action;
     }
 
     private void goDown(){
@@ -129,11 +198,13 @@ public class NathanBot extends TeleBot {
         hardware.rightTowerMotor.setPower(power);
     }
 
-    private void goUp(){
-       setTowerPower(0.5);
-    }
+
+
     private void liftIdle(){
-        setTowerPower(0.2);
+        if (hardware.touchSensor.isPressed() && downTime+1 < time   )
+            setTowerPower(0);
+        else
+            setTowerPower(0.2);
     }
     private double ramp (double current, double target, double stepUpSize){
         if(current<target){
@@ -154,22 +225,6 @@ public class NathanBot extends TeleBot {
         forward *= scale;
         turnRight *= scale;
         straifRight *= scale;
-
-        //foward = ramp(foward, targetFoward, 0.15);
-        //turnRight = ramp(turnRight, targetTurnRight, 0.15);
-        //straifRight = ramp(straifRight, targetStraifRight, 0.15);
-
-//		if(forward > .25) {
-//			forward = scale2;
-//			turnRight = scale2;
-//			straifRight = scale2;
-//		} else{
-//			forward = scale;
-//			turnRight = scale;
-//			straifRight = scale;
-//		}
-
-
 
         // combine drive,turn,straif
         double fl = forward + turnRight + straifRight;
@@ -205,7 +260,7 @@ public class NathanBot extends TeleBot {
 
     }
 
-    public void blockGrabberWithActivate(String action){
+    public void doGraberAction(String action){
 
         switch(action){
             case "open": grabber.open(); break;
@@ -325,18 +380,30 @@ public class NathanBot extends TeleBot {
         hardware.Lights.setPattern(color);
     }
 
-    public void extend (boolean out, boolean in){
+    enum BridgeAction {
+        idle,in,out,inSlow,outSlow
+    }
+
+    public void extend (BridgeAction action){
         double power = 0;
-        if (out) power = 0.3;
-        if (in) power = -0.3;
+        if (action == BridgeAction.out) power = 0.3;
+        if (action == BridgeAction.in) power = -0.3;
+        if (action == BridgeAction.inSlow) power = -0.2;
+        if (action == BridgeAction.outSlow) power = 0.1;
 
         hardware.bridgeMotor.setPower(power);
         hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
+    public void checkSpeed(float checkButton, double forward, double turnRight, double straifRight) {
+        if (checkButton > .25) {
+            slowDriveAndStrafe(forward, turnRight, straifRight);
+        }
+        else {
+            driveAndStrafe(forward, turnRight, straifRight);
+        }
+    }
 
-    public void RaiseElevator(){}
-    public void LowerElevator(){}
 
 }
