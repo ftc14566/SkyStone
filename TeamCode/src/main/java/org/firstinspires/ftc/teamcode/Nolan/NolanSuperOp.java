@@ -29,18 +29,14 @@
 
 package org.firstinspires.ftc.teamcode.Nolan;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+//mport com.qualcomm.robotcore.hardware.
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Hardware;
-import org.firstinspires.ftc.teamcode.TeleBot;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -57,70 +53,19 @@ import org.firstinspires.ftc.teamcode.TeleBot;
  */
 
 @TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
-//@Disabled
-public class NolanTestOp extends OpMode
+@Disabled
+public class NolanSuperOp extends OpMode
 {
     // Declare OpMode members.
-    private Hardware hardware;
-    private ElapsedTime runtime = new ElapsedTime();
+    //public ColorSensor nolanIsCool;
 
-    private int rightHSV;
-
-    public void lifterUp() {
-        while(gamepad1.dpad_up) {
-            hardware.leftTowerMotor.setPower(1);
-            hardware.leftTowerMotor.setPower(1);
-        }
-        hardware.leftTowerMotor.setPower(0.2);
-        hardware.leftTowerMotor.setPower(0.2);
-    }
-
-    public void lifterDown() {
-        while(gamepad1.dpad_down) {
-            hardware.leftTowerMotor.setPower(0.02);
-            hardware.rightTowerMotor.setPower(0.02);
-        }
-        hardware.leftTowerMotor.setPower(0.2);
-        hardware.leftTowerMotor.setPower(0.2);
-    }
-
-    public void bridgeOut() {
-        while(gamepad1.dpad_right) {
-            hardware.bridgeMotor.setPower(0.2);
-        }
-        hardware.bridgeMotor.setPower(0);
-    }
-
-    public void bridgeIn() {
-        while(gamepad1.dpad_left) {
-            hardware.bridgeMotor.setPower(-0.2);
-        }
-        hardware.bridgeMotor.setPower(0);
-    }
-
-    public void grabBlock() {
-       if(gamepad1.a) {
-           hardware.grabberLeft.setPosition(0.9);
-           hardware.grabberRight.setPosition(0.9);
-       }
-    }
-
-    public void releaseBlock() {
-        if(gamepad1.b) {
-            hardware.grabberLeft.setPosition(0.1);
-            hardware.grabberRight.setPosition(0.1);
-        }
-    }
-
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        hardware = new Hardware();
-        hardware.init( hardwareMap );
 
-        hardware.leftTowerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.leftTowerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //bot = new TeleBot(hardware);
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
@@ -133,7 +78,7 @@ public class NolanTestOp extends OpMode
         //rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
-       // telemetry.addData("Status", "Initialized");
+        telemetry.addData("Status", "Initialized");
     }
 
     /*
@@ -146,54 +91,42 @@ public class NolanTestOp extends OpMode
     /*
      * Code to run ONCE when the driver hits PLAY
      */
-    @Override
-    public void start() {
-        runtime.reset();
-        hardware.leftColorSensor.enableLed(true);
-        hardware.rightColorSensor.enableLed(true);
-    }
+   // @Override
+    //public void start() {
+    //    runtime.reset();
+   // }
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
-    float hsvValues[] = {0F, 0F, 0F};
-    final float values[] = hsvValues;
-    final double SCALE_FACTOR = 255;
-
     @Override
     public void loop() {
-        lifterUp();
-        lifterDown();
-        bridgeOut();
-        bridgeIn();
-        grabBlock();
-        releaseBlock();
+        // Setup a variable for each drive wheel to save power level for telemetry
+        double leftPower;
+        double rightPower;
 
-         if((((hardware.leftColorSensor.red() / hardware.leftColorSensor.blue())*
-                 (hardware.leftColorSensor.green() / hardware.leftColorSensor.blue())) <= 2 )) {
+        // Choose to drive using either Tank Mode, or POV Mode
+        // Comment out the method that's not used.  The default below is POV.
 
-             telemetry.addData("left color sensor","Yes");
-         }
-         else {
-             telemetry.addData("left color sensor","No");
-         }
+        // POV Mode uses left stick to go forward, and right stick to turn.
+        // - This uses basic math to combine motions and is easier to drive straight.
+        double drive = -gamepad1.left_stick_y;
+        double turn  =  gamepad1.right_stick_x;
+        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-        if((((hardware.rightColorSensor.red() / hardware.rightColorSensor.blue())*
-                (hardware.rightColorSensor.green() / hardware.rightColorSensor.blue())) <= 2 )) {
+        // Tank Mode uses one stick to control each wheel.
+        // - This requires no math, but it is hard to drive forward slowly and keep straight.
+        // leftPower  = -gamepad1.left_stick_y ;
+        // rightPower = -gamepad1.right_stick_y ;
 
-            telemetry.addData("right color sensor","Yes");
-        }
-        else {
-            telemetry.addData("right color sensor","No");
-        }
+        // Send calculated power to wheels
+        //leftDrive.setPower(leftPower);
+        //rightDrive.setPower(rightPower);
 
-        telemetry.addData("left color sensor",hardware.leftColorSensor.alpha());
-        telemetry.addData("distance(CM)", hardware.distanceSensor.getDistance(DistanceUnit.CM));
-        telemetry.addData("right tower motor", hardware.rightTowerMotor.getCurrentPosition());
-        telemetry.addData("left tower motor", hardware.leftTowerMotor.getCurrentPosition());
-        telemetry.addData("bridge motor", hardware.bridgeMotor.getCurrentPosition());
-        telemetry.update();
-
+        // Show the elapsed game time and wheel power.
+       // telemetry.addData("Status", "Run Time: " + runtime.toString());
+       // telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
     }
 
     /*
@@ -201,12 +134,6 @@ public class NolanTestOp extends OpMode
      */
     @Override
     public void stop() {
-        hardware.leftTowerMotor.setPower(0);
-        hardware.rightTowerMotor.setPower(0);
-        hardware.bridgeMotor.setPower(0);
-
-        hardware.leftColorSensor.enableLed(false);
-        hardware.rightColorSensor.enableLed(false);
     }
 
 }

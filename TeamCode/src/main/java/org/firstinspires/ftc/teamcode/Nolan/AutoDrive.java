@@ -149,26 +149,32 @@ public class AutoDrive {
         stopDrive();
     }
 
-    public void skystoneAlign(boolean allianceRed) {
-        if(allianceRed) {
-            skystoneAlignRight();
-        }
-        else if(!allianceRed) {
+    public void moveForwardDistanceBreaking(double CM, double startSpeed, double startDecrease ,double decreaseFactor) {
+        hardware.frontLeftDrive.setPower(startSpeed);
+        hardware.rearLeftDrive.setPower(startSpeed);
+        hardware.frontRightDrive.setPower(startSpeed);
+        hardware.rearRightDrive.setPower(startSpeed);
 
+        double newSpeed = startSpeed;
+
+        while(opMode.opModeIsActive() && (CM <= hardware.distanceSensor.getDistance(DistanceUnit.CM))) {
+            if(startDecrease <= hardware.distanceSensor.getDistance(DistanceUnit.CM))
+                newSpeed -= decreaseFactor;
+            hardware.frontLeftDrive.setPower(newSpeed);
+            hardware.rearLeftDrive.setPower(newSpeed);
+            hardware.frontRightDrive.setPower(newSpeed);
+            hardware.rearRightDrive.setPower(newSpeed);
         }
+        stopDrive();
     }
 
-    public double skystoneAlignRight() {
+    public void skystoneAlignRight() {
         double startPosition = hardware.frontLeftDrive.getCurrentPosition();
-        if(hardware.leftColorSensor.alpha() > 20) {
-            setPowerStrafe(0.3);
-            while(opMode.opModeIsActive() && (hardware.leftColorSensor.alpha() > 20)){opMode.sleep(10);}
-            stopDrive();
-
-        }
-        return ((hardware.frontRightDrive.getCurrentPosition() - startPosition) / COUNTS_PER_INCH);
+        setPowerStrafe(0.3);
+        while(opMode.opModeIsActive() && (((hardware.leftColorSensor.red() / hardware.leftColorSensor.blue())*
+                (hardware.leftColorSensor.green() / hardware.leftColorSensor.blue())) <= 2 ))
+        {opMode.sleep(10);}
+        stopDrive();
     }
-
-
 }
 

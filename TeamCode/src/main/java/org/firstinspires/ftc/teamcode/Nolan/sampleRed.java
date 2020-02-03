@@ -35,15 +35,16 @@ public class sampleRed extends LinearOpMode {
 
 		// Run Code
 		lift.linearSlideSet();
-		drive.moveForwardDistanceSensor(5,0.3,5);
-		lift.grabBlock();
+		drive.moveForwardDistanceBreaking(6,0.5,80,0.3);
+		drive.skystoneAlignRight();
+		//lift.grabBlock();
 		//double addedDistance = drive.skystoneAlignRight();
-        drive.driveForward(-15,-15,0.3);
-        drive.strafeRight(80, 0.4);
-        lift.releaseBlock();
-		drive.strafeRight(-25, 0.4);
-		lift.linearSlideIn();
-		drive.driveForward(6,6,0.3);
+        //drive.driveForward(-15,-15,0.3);
+        //drive.strafeRight(80, 0.4);
+        //lift.releaseBlock();
+		//drive.strafeRight(-25, 0.4);
+		//lift.linearSlideIn();
+		//drive.driveForward(6,6,0.3);
 	}
 
 }
