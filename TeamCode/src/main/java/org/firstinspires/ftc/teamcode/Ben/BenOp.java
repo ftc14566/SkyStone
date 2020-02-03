@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.TeleBot;
 
@@ -26,8 +27,58 @@ public class BenOp extends OpMode {
 	/*
 	 * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
 	 */
-
-
+	
+	public void telemetryAdd(double screen, boolean cycleButton) {
+		if (cycleButton = true){
+			screen += 1;
+		}
+		
+		if(screen == 1) {
+			telemetry.clear();
+			telemetry.addData("Screen", screen);
+			telemetry.addData("Right Tower Position", hardware.rightTowerMotor.getCurrentPosition());
+			telemetry.addData("Left Tower Position", hardware.leftTowerMotor.getCurrentPosition());
+			telemetry.update();
+		}
+		if(screen == 2) {
+			telemetry.clear();
+			telemetry.addData("Screen", screen);
+			telemetry.addData("Stick X", gamepad1.left_stick_x);
+			telemetry.addData("Stick Y", gamepad1.left_stick_y);
+			telemetry.addData("Spin", gamepad1.right_stick_x);
+			telemetry.update();
+		}
+		if(screen == 3) {
+			telemetry.clear();
+			telemetry.addData("Screen", screen);
+			telemetry.addLine("Left Color Sensor:");
+			telemetry.addData("		Red", hardware.leftColorSensor.red());
+			telemetry.addData("		Green", hardware.leftColorSensor.green());
+			telemetry.addData("		Blue", hardware.leftColorSensor.blue());
+			telemetry.addData("		Alpha (Light)", hardware.leftColorSensor.alpha());
+			telemetry.addLine("Right Color Sensor:");
+			telemetry.addData("		Red", hardware.rightColorSensor.red());
+			telemetry.addData("		Green", hardware.rightColorSensor.green());
+			telemetry.addData("		Blue", hardware.rightColorSensor.blue());
+			telemetry.addData("		Alpha (Light)", hardware.rightColorSensor.alpha());
+			telemetry.update();
+		}
+		if(screen == 4) {
+			telemetry.clear();
+			telemetry.addData("Screen", screen);
+			telemetry.addData("lStick X", gamepad1.left_stick_x);
+			telemetry.addData("lStick Y", gamepad1.left_stick_y);
+			telemetry.addData("rStick X", gamepad1.right_stick_x);
+			telemetry.addData("rStick Y", gamepad1.right_stick_x);
+			
+			telemetry.addData("up", gamepad1.dpad_up);
+			telemetry.update();
+		}
+		
+		if (screen == 5){
+			screen = 1;
+		}
+	}
 
 	@Override
 	public void init_loop() {
@@ -50,12 +101,12 @@ public class BenOp extends OpMode {
 	@Override
 	public void loop() {
 
-		// Drive
-		bot.driveAndStrafe(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-		//bot.Move(-gamepad1.left_stick_y,gamepad1.left_stick_x);
-		//bot.MoveLR(-gamepad1.left_stick_y,gamepad1.left_stick_x,-gamepad1.right_stick_y,gamepad1.right_stick_x);
+		bot.checkSpeed(gamepad1.left_trigger, -gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+		//bot.driveAndStrafe(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+		//bot.stairDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 		
-		// Lift
+		telemetryAdd(1, gamepad1.right_bumper);
+		
 		bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
 		bot.towerDown(gamepad2.right_trigger);
 
@@ -67,36 +118,10 @@ public class BenOp extends OpMode {
 
 		//bot.moveFoundation(gamepad1.right_bumper);
 
-		telemetry.addData("Right Foundation Position", hardware.rightFoundationServo.getPosition());
-		telemetry.addData("Left Foundation Position", hardware.leftFoundationServo.getPosition());
+		//telemetry.addData("Right Foundation Position", hardware.rightFoundationServo.getPosition());
+		//telemetry.addData("Left Foundation Position", hardware.leftFoundationServo.getPosition());
 	}
 
-/*
-		telemetry.addData("Right Tower Position", hardware.rightTowerMotor.getCurrentPosition());
-		telemetry.addData("Left Tower Position", hardware.leftTowerMotor.getCurrentPosition());
-
-		telemetry.addData("Stick X",gamepad1.left_stick_x);
-		telemetry.addData("Stick Y",gamepad1.left_stick_y);
-		telemetry.addData("Spin",gamepad1.right_stick_x);
-		telemetry.addLine("Left Color Sensor:");
-		telemetry.addData("		Red",hardware.leftColorSensor.red());
-		telemetry.addData("		Green",hardware.leftColorSensor.green());
-		telemetry.addData("		Blue",hardware.leftColorSensor.blue());
-		telemetry.addData("		Alpha (Light)", hardware.leftColorSensor.alpha());
-		telemetry.addLine("Right Color Sensor:");
-		telemetry.addData("		Red",hardware.rightColorSensor.red());
-		telemetry.addData("		Green",hardware.rightColorSensor.green());
-		telemetry.addData("		Blue",hardware.rightColorSensor.blue());
-		telemetry.addData("		Alpha (Light)", hardware.rightColorSensor.alpha());
-
-		telemetry.addData("lStick X",gamepad1.left_stick_x);
-		telemetry.addData("lStick Y",gamepad1.left_stick_y);
-		telemetry.addData("rStick X",gamepad1.right_stick_x);
-		telemetry.addData("rStick Y",gamepad1.right_stick_x);
-
-		telemetry.addData("up",gamepad1.dpad_up);
-		telemetry.update();
-*/
 
 	@Override
 	public void stop() {
