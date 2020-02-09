@@ -78,8 +78,8 @@ public class NathanBot extends TeleBot {
     }
 
 
-    private boolean doAutoGrab = false;
-    private boolean autoExtend = false;
+    public boolean doAutoGrab = false;
+    public boolean autoExtend = false;
 
     public int leftzero = 0;
     public int rightzero = 0;
@@ -87,6 +87,7 @@ public class NathanBot extends TeleBot {
     double time;
     double downTime = 0;
     boolean wasDown = false;
+    public BridgeAction bridgeAction;
 
     public void autoGrab (Gamepad gamepad, double time){
         this.time = time;
@@ -126,20 +127,23 @@ public class NathanBot extends TeleBot {
                 else
                     Lift(LiftAction.idle);
             }
- 
+
 /////////EXTEND/////////////////////////////////////////////////////////////////////////////////////
+
             if (liftPosition<150 && hardware.distanceSensor.getDistance(DistanceUnit.CM)>4 && autoExtend) {
-                if (hardware.bridgeDistance.getDistance(DistanceUnit.CM) < 22)
-                    extend(BridgeAction.out);
-                else if (hardware.bridgeDistance.getDistance(DistanceUnit.CM) > 23)
-                    extend(BridgeAction.inSlow);
+                if (hardware.bridgeDistance.getDistance(DistanceUnit.CM) < 20)
+                    bridgeAction=BridgeAction.out;
+                else if (hardware.bridgeDistance.getDistance(DistanceUnit.CM) > 22)
+                    bridgeAction=BridgeAction.inSlow;
                 else {
-                    extend(BridgeAction.idle);
+                    bridgeAction=BridgeAction.idle;
                     autoExtend = false;
                 }
             }
             else
-                extend(BridgeAction.idle);
+                bridgeAction=BridgeAction.idle;
+            extend(bridgeAction);
+////////////////GRABER//////////////////////////////////////////////////////////////////////////////
 
             if (isBlock)
                 doGraberAction("grab");
@@ -151,7 +155,7 @@ public class NathanBot extends TeleBot {
             //// MANUAL OVERIDE ////////////////////////////////////////////////////////////////////
             LiftAction liftAction = determinLiftActionFromButtons(gamepad.dpad_up, gamepad.dpad_down);
             String grabberAction = determineGrabberAction(gamepad.x, gamepad.b, isBlockInFront(),gamepad.left_bumper);
-            BridgeAction bridgeAction = determinBridgeAction (gamepad.dpad_left, gamepad.dpad_right);
+            bridgeAction = determinBridgeAction (gamepad.dpad_left, gamepad.dpad_right);
 
             Lift(liftAction);
             extend(gamepad.dpad_right,gamepad.dpad_left);

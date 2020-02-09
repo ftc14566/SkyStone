@@ -56,6 +56,10 @@ public class NathanOp extends OpMode {
         telemetry.addData("Bridge","%2.1f", hardware.bridgeDistance.getDistance(DistanceUnit.CM));
         telemetry.addData("Switch", hardware.touchSensor.isPressed()?"PRESSED":"--");
         telemetry.addData("BlockDistance", hardware.distanceSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("Bridge Mode", bot.bridgeAction.name());
+        telemetry.addData("Auto", bot.doAutoGrab);
+        telemetry.addData("Auto Extend", bot.autoExtend);
+        telemetry.addData(":)",null);
         telemetry.update();
     }
 
