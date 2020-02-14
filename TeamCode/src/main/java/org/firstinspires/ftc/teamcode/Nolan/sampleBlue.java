@@ -20,7 +20,7 @@ public class sampleBlue extends LinearOpMode {
 		AutoLift lift = new AutoLift(hardware,this);
         //bot.releaseFoundation();
         lift.releaseBlock();
-		hardware.Lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
+		hardware.Lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN);
 
         hardware.leftColorSensor.enableLed(true);
         hardware.rightColorSensor.enableLed(true);
@@ -33,15 +33,16 @@ public class sampleBlue extends LinearOpMode {
 
 		// Run Code
 		lift.linearSlideSet();
-		drive.moveForwardDistanceSensor(13,0.3,5);
+		drive.moveForwardDistanceSensor(11,0.3,5);
 		lift.grabBlock();
 		//double addedDistance = drive.skystoneAlignRight();
+		lift.upLifter();
         drive.driveForward(-15,-15,0.3);
         drive.strafeRight(-80, 0.4);
         lift.releaseBlock();
-		drive.strafeRight(25, 0.4);
+		drive.strafeRight(35, 0.4);
 		lift.linearSlideIn();
-		drive.driveForward(8,8,0.3);
+		drive.driveForward(6,6,0.3);
 	}
 
 }

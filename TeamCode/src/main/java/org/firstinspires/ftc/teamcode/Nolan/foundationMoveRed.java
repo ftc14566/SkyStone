@@ -20,7 +20,7 @@ public class foundationMoveRed extends LinearOpMode {
 		hardware.init(hardwareMap);
 		AutoDrive drive = new AutoDrive(hardware,this);
 		AutoBot bot = new AutoBot(hardware,this);
-		hardware.Lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
+		hardware.Lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
 
         //bot.releaseFoundation();
 
@@ -50,7 +50,7 @@ public class foundationMoveRed extends LinearOpMode {
 		//bot.waitUntilRunTime(25);
 		//drive.strafeRight(17,0.5);
 		//drive.spinRight(-25,0.4);
-		drive.driveStrait(-47,0.7);
+		drive.driveStrait(-45,0.7);
 		//drive.strafeRight(10,0.3);
 	}
 

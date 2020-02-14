@@ -33,16 +33,16 @@ public class AutoLift {
 
     public void linearSlideSet() {
         hardware.bridgeMotor.setPower(0.3);
-        while(hardware.bridgeDistance.getDistance(DistanceUnit.CM) < 20){opMode.sleep(10);}
+        while(opMode.opModeIsActive() && (hardware.bridgeDistance.getDistance(DistanceUnit.CM) < 20)){opMode.sleep(10);}
         hardware.bridgeMotor.setPower(0);
         hardware.leftTowerMotor.setPower(1); hardware.rightTowerMotor.setPower(1);
-        opMode.sleep(10);
+        opMode.sleep(35);
         hardware.leftTowerMotor.setPower(0.2); hardware.rightTowerMotor.setPower(0.2);
     }
 
     public void upLifter() {
         hardware.leftTowerMotor.setPower(1); hardware.rightTowerMotor.setPower(1);
-        opMode.sleep(2);
+        opMode.sleep(5);
         hardware.leftTowerMotor.setPower(0.2); hardware.rightTowerMotor.setPower(0.2);
     }
 
@@ -53,7 +53,7 @@ public class AutoLift {
 
     public void linearSlideIn() {
         hardware.bridgeMotor.setPower(-0.3);
-        while(hardware.bridgeDistance.getDistance(DistanceUnit.CM) > 10){opMode.sleep(10);}
+        while(opMode.opModeIsActive() && (hardware.bridgeDistance.getDistance(DistanceUnit.CM) > 10)){opMode.sleep(10);}
         hardware.bridgeMotor.setPower(0);
     }
 

@@ -22,7 +22,7 @@ public class sampleRed extends LinearOpMode {
         //bot.releaseFoundation();
         lift.releaseBlock();
 
-        hardware.Lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
+        hardware.Lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
 
         hardware.leftColorSensor.enableLed(true);
         hardware.rightColorSensor.enableLed(true);
@@ -39,6 +39,7 @@ public class sampleRed extends LinearOpMode {
 		//drive.moveForwardDistanceSensor(4,0.1,99);
 		//drive.skystoneAlignRed();
 		lift.grabBlock();
+		lift.upLifter();
 		//double addedDistance = drive.skystoneAlignRight();
         drive.driveForward(-15,-15,0.3);
         drive.strafeRight(80, 0.4);
