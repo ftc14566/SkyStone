@@ -3,239 +3,194 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Nathan.FoundationGrabber;
 import org.firstinspires.ftc.teamcode.Nathan.Grabber;
+import org.firstinspires.ftc.teamcode.Nathan.NathanBot;
 
 public class TeleBot {
-	
-	protected Hardware hardware;
-	
-	public double towerPositionRight;//'' = hardware.rightTowerMotor.getCurrentPosition();
-	public double towerPositionLeft;// = hardware.leftTowerMotor.getCurrentPosition();
-	
-	
-	public TeleBot(Hardware hardware) {
-		
+
+	public TeleBot(Hardware hardware){
+
 		this.hardware = hardware;
 		towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
 		towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
 		grabber = new Grabber(hardware.grabberLeft, hardware.grabberRight);
 		foundationGrabber = new FoundationGrabber(hardware.leftFoundationServo, hardware.rightFoundationServo);
+
+		grabber = new Grabber(hardware.grabberLeft, hardware.grabberRight);
+		foundationGrabber = new FoundationGrabber(hardware.leftFoundationServo, hardware.rightFoundationServo);
 	}
-	
-	Grabber grabber;
-	FoundationGrabber foundationGrabber;
-	
-	public void colorSensorsYellow() {
-		while (hardware.leftColorSensor.red() <= 235 && hardware.leftColorSensor.red() >= 213 && hardware.rightColorSensor.red() <= 235 && hardware.rightColorSensor.red() >= 213) {
-			while (hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235 && hardware.leftColorSensor.green() <= 192 && hardware.leftColorSensor.green() >= 235) {
-				while (hardware.leftColorSensor.blue() <= 52 && hardware.leftColorSensor.blue() >= 52 && hardware.rightColorSensor.blue() <= 52 && hardware.rightColorSensor.blue() >= 52) {
-					//TODO Block Collector Code
-					this.Move(0.0, 0.0); //STOP
-				}
-			}
-		}
+
+	public enum LiftAction{
+		idle,up,down,slowUp,slowDown
+
 	}
-	
-	public void foundationServos(boolean up, boolean down){
-		if (up)
-			foundationGrabber.up();
-		else if (down)
-			foundationGrabber.down();
+	public enum BridgeAction {
+		idle,in,out,inSlow,outSlow
 	}
-	
-	public void towerDown(float towerDownBind) {
-		//towerPositionRight = hardware.rightTowerMotor.getCurrentPosition();
-		//towerPositionLeft = hardware.leftTowerMotor.getCurrentPosition();
-		if (towerDownBind > 0.25) {
-			hardware.leftTowerMotor.setPower(0.9);
-			hardware.rightTowerMotor.setPower(0.9);
-			hardware.leftTowerMotor.setTargetPosition(0);
-			hardware.rightTowerMotor.setTargetPosition(0);
-			hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		}
-		else{
-			hardware.leftTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Stop and Reset
-			hardware.rightTowerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		}
-	}
-	
-	public void encodersWithGrabber(float autoGrabBind, boolean bridgePosition){ //TRUE = OUT :: FALSE = IN
-		double power=0;
-		if(bridgePosition = false)power=0.3;
-		if(bridgePosition = true)power=-0.3;
-		if(autoGrabBind > .25){
-			hardware.bridgeMotor.setPower(power);
-			double toBlock = hardware.distanceSensor.getDistance(DistanceUnit.INCH);
-			int perInch = (int)hardware.COUNTS_PER_INCH;
-			while(toBlock > .01){
-				hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-			}
-			hardware.bridgeMotor.setTargetPosition(perInch);
-			hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		}
-		else{
-			hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		}
-	}
-	
-	public void moveFoundation(float foundationBind){//, double foundationGrabbed, double foundationBack){
-		if(foundationBind > .25){
-			hardware.leftFoundationServo.setPosition(0);
-			hardware.rightFoundationServo.setPosition(0);
-		}
-		else {
-			hardware.leftFoundationServo.setPosition(50);
-			hardware.rightFoundationServo.setPosition(50);
-		}
-	}
-	
-	
-	
-	public void raiseElevators(double elevatorBind, double rate){
-		
-		if(elevatorBind >= .25)
-			hardware.leftTowerMotor.setPower(rate);
-		hardware.rightTowerMotor.setPower(rate);
-		if(elevatorBind <= -.25) {
-			hardware.leftTowerMotor.setPower(-rate);
-			hardware.rightTowerMotor.setPower(-rate);
-		}
-		
-	}
-	
-	
-	
+	public enum BridgePosition{In,Out,Grabbing;}
+	public enum GrabberAction{ idle, open, grab }
+
+	// region fields
+
+	protected Hardware hardware;
+
+	public double towerPositionRight;//'' = hardware.rightTowerMotor.getCurrentPosition();
+	public double towerPositionLeft;// = hardware.leftTowerMotor.getCurrentPosition();
+
+	public boolean doAutoGrab = false;
+	public boolean autoExtend = false;
+	public boolean goToBasement = false;
+	public int leftzero = 0;
+	public int rightzero = 0;
+	public NathanBot.BridgeAction bridgeAction;
+	public NathanBot.LiftAction liftAction;
+	public GrabberAction grabberAction;
+
+
+	private int towerDownPulser = 0;
+
+	boolean wasDown = false;
+
+	double time;
+
+	double downTime = 0;
+
+	public boolean noBlock;
+	public double bridgeDistanceCm;
+	public int liftPosition;
+	public boolean foundationIsGrabbed;
+
+	// endregion
+
+	// region WHEEL STUFF
 	public void DriveForward(double speed){
 		this.Move(speed,0.0);
 	}
-	
+
+	public void driveAndStraif (double forward, double turnRight, double straifRight){
+
+		double scale = 1;
+
+		forward *= scale;
+		turnRight *= scale;
+		straifRight *= scale;
+
+		// combine drive,turn,straif
+		double fl = forward + turnRight + straifRight;
+		double rl = forward + turnRight - straifRight;
+		double fr = forward - turnRight - straifRight;
+		double rr = forward - turnRight + straifRight;
+
+		// limit each drom to 1.0 max
+		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
+		maxPower = Math.max(maxPower,Math.abs(rl));
+		maxPower = Math.max(maxPower,Math.abs(rr));
+		if(maxPower>1.0){
+			fl/=maxPower;
+			fr/=maxPower;
+			rl/=maxPower;
+			rr/=maxPower;
+		}
+		hardware.frontLeftDrive.setPower(fl);
+		hardware.frontRightDrive.setPower(fr);
+		hardware.rearLeftDrive.setPower(rl);
+		hardware.rearRightDrive.setPower(rr);
+
+	}
+
+	private double AdjustInputs(double x){
+		return x*x*x;
+	}
+
 	public void Stop(){
 		this.Move(0.0,0.0);
 	}
-	
+
 	public void StrafeRight(double speed){
 		this.Move(0,speed);
 	}
-	
+
 	public void SpinRight(double speed){;
 		hardware.frontLeftDrive.setPower(speed);
 		hardware.frontRightDrive.setPower(-speed);
 		hardware.rearLeftDrive.setPower(speed);
 		hardware.rearRightDrive.setPower(-speed);
 	}
-	
-	
+
+
 	public void Move(double forward, double rightSpeed){
-		
+
 		double sumLeft=Math.abs(forward)+Math.abs(rightSpeed);
 		if(sumLeft > 1.0){
 			forward/=sumLeft;
 			rightSpeed/=sumLeft;
 		}
-		
+
 		hardware.frontLeftDrive.setPower(forward+rightSpeed);//
 		hardware.rearLeftDrive.setPower(forward-rightSpeed);//
-		
 		hardware.frontRightDrive.setPower(forward-rightSpeed);//
 		hardware.rearRightDrive.setPower(forward+rightSpeed);//
-		
+
 	}
-	
-	public void blockGrabberWithActivate(String action){
-		
-		switch(action){
-			case "open": grabber.open(); break;
-			case "grab": grabber.grab(); break;
+	public void MoveLR(double forwardSpeedLeft, double rightSpeedLeft,double forwardSpeedRight, double rightSpeedRight){
+
+		forwardSpeedLeft = AdjustInputs(forwardSpeedLeft);
+		forwardSpeedRight = AdjustInputs(forwardSpeedRight);
+		rightSpeedLeft = AdjustInputs(rightSpeedLeft);
+		rightSpeedRight = AdjustInputs(rightSpeedRight);
+
+		double sumLeft=Math.abs(forwardSpeedLeft)+Math.abs(rightSpeedLeft);
+		if(sumLeft > 1.0){
+			forwardSpeedLeft/=sumLeft;
+			rightSpeedLeft/=sumLeft;
 		}
-		
+
+		double sumRight=Math.abs(forwardSpeedRight)+Math.abs(rightSpeedRight);
+		if(sumRight > 1.0){
+			forwardSpeedRight/=sumRight;
+			rightSpeedRight/=sumRight;
+		}
+
+		hardware.frontLeftDrive.setPower(forwardSpeedLeft+rightSpeedLeft);//
+		hardware.rearLeftDrive.setPower(forwardSpeedLeft-rightSpeedLeft);//
+		hardware.frontRightDrive.setPower(forwardSpeedRight-rightSpeedRight);//
+		hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
+
 	}
 
-	public void Lift(boolean up, boolean down){
-		if(up)
-			goUp();
-		else if (down)
-			goDownBetter();
 
-		else
-			liftIdle ();
-	}
-	private void goUp(){
-		setTowerPower(0.55);
-	}
-	private void liftIdle(){
-		setTowerPower(0.2);
-	}
-
-	double leftGrabberPosition;
-	double rightGrabberPosition;
-	
-	double strafe = 0.0;
-	double forward = 0.0;
-	double turn = 0.0;
-	
-	private double ramp (double current, double target, double stepUpSize){
-		if(current<target){
-			// going up
-			if(current<0) return 0;
-			return Math.min(target,current + stepUpSize);
-		} else{
-			// going down
-			if(current > 0) return 0;
-			return Math.max(target, current - stepUpSize);
+	public void checkSpeed(float checkButton, double forward, double turnRight, double straifRight) {
+		if (checkButton > .25) {
+			slowDriveAndStrafe(forward, turnRight, straifRight);
+		}
+		else {
+			driveAndStrafe(forward, turnRight, straifRight);
 		}
 	}
-	
-	public String determineGrabberAction(boolean open, boolean close, boolean blockSenser, boolean activateSensor) {
-		String action = "";
-		if (open)
-			action = "open";
-		else if (close)
-			action = "grab";
-		else if (activateSensor && blockSenser)
-			action = "grab";
-		return action;
-	}
-	
-	public void stairDrive(double forward, double turn, double strafe){
+
+	public void driveAndStrafe(double forward, double turnRight, double straifRight) {
+
 		double scale = 1;
-		
+
 		forward *= scale;
-		turn *= scale;
-		strafe *= scale;
-		
-		//Stair Driving Code
-		if ((forward > .33 || turn > .33 || strafe > .33) && (forward < .66 || turn < .66 || strafe < .66)) {
-			//TODO 1/3 Max Power
-			forward *= 1 / 3; //Max Power
-			turn *= 1 / 3; //Max Power
-			strafe *= 1 / 3; //Max Power
-		}
-		if (forward > .66 || turn > .66 || strafe > .66 && (forward < .66 || turn < .66 || strafe < .66)) {
-			//TODO 2/3 Max Power
-			forward *= 2 / 3; //Max Power
-			turn *= 2 / 3; //Max Power
-			strafe *= 2 / 3; //Max Power
-		}
-		if (forward > .99 || turn > .99 || strafe > .99 && (forward < .66 || turn < .66 || strafe < .66)){
-			//TODO Max Power
-			forward *= 1; //Max Power
-			turn *= 1; //Max Power
-			strafe *= 1; //Max Power
-		}
-	
-		double fl = forward + turn + strafe;
-		double rl = forward + turn - strafe;
-		double fr = forward - turn - strafe;
-		double rr = forward - turn + strafe;
-	
-		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
-		maxPower = Math.max(maxPower,Math.abs(rl));
-		maxPower = Math.max(maxPower,Math.abs(rr));
-		if(maxPower > 1.0){
+		turnRight *= scale;
+		straifRight *= scale;
+
+		// combine drive,turn,straif
+		double fl = forward + turnRight + straifRight;
+		double rl = forward + turnRight - straifRight;
+		double fr = forward - turnRight - straifRight;
+		double rr = forward - turnRight + straifRight;
+
+		// limit each drom to 1.0 max
+		double maxPower = Math.max(Math.abs(fl), Math.abs(fr));
+		maxPower = Math.max(maxPower, Math.abs(rl));
+		maxPower = Math.max(maxPower, Math.abs(rr));
+		if (maxPower > 1.0) {
 			fl /= maxPower;
 			fr /= maxPower;
 			rl /= maxPower;
@@ -245,184 +200,278 @@ public class TeleBot {
 		hardware.frontRightDrive.setPower(fr);
 		hardware.rearLeftDrive.setPower(rl);
 		hardware.rearRightDrive.setPower(rr);
+
 	}
-	
-	
-	public void checkSpeed(float checkButton, double forward, double turnRight, double straifRight) {
-		if (checkButton > .25) {
-			slowDriveAndStrafe(forward, turnRight, straifRight);
-		}
-		else {
-			driveAndStrafe(forward, turnRight, straifRight);
-		}
-	}
-	
-	public void squareDrive(double forward, double turn, double strafe) {
-		double scale = 1;
-		
-		forward *= scale;
-		turn *= scale;
-		strafe *= scale;
-		
-		
-		
-		// combine drive,turn,straif
-		double fl = forward + turn + strafe;
-		double rl = forward + turn - strafe;
-		double fr = forward - turn - strafe;
-		double rr = forward - turn + strafe;
-		
-		// limit each drom to 1.0 max
-		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
-		maxPower = Math.max(maxPower,Math.abs(rl));
-		maxPower = Math.max(maxPower,Math.abs(rr));
-		if(maxPower>1.0){
-			fl/=maxPower;
-			fr/=maxPower;
-			rl/=maxPower;
-			rr/=maxPower;
-		}
-		hardware.frontLeftDrive.setPower(fl);
-		hardware.frontRightDrive.setPower(fr);
-		hardware.rearLeftDrive.setPower(rl);
-		hardware.rearRightDrive.setPower(rr);
-		
-	}
-	
-	public void slowDriveAndStrafe (double forward, double turnRight, double straifRight){
-		
+
+
+	public void slowDriveAndStrafe(double forward, double turnRight, double straifRight) {
+
 		double scale = .25;
-		
+
 		forward *= scale;
 		turnRight *= scale;
 		straifRight *= scale;
-		
+
 		// combine drive,turn,straif
 		double fl = forward + turnRight + straifRight;
 		double rl = forward + turnRight - straifRight;
 		double fr = forward - turnRight - straifRight;
 		double rr = forward - turnRight + straifRight;
-		
+
 		// limit each drom to 1.0 max
-		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
-		maxPower = Math.max(maxPower,Math.abs(rl));
-		maxPower = Math.max(maxPower,Math.abs(rr));
-		if(maxPower>1.0){
-			fl/=maxPower;
-			fr/=maxPower;
-			rl/=maxPower;
-			rr/=maxPower;
+		double maxPower = Math.max(Math.abs(fl), Math.abs(fr));
+		maxPower = Math.max(maxPower, Math.abs(rl));
+		maxPower = Math.max(maxPower, Math.abs(rr));
+		if (maxPower > 1.0) {
+			fl /= maxPower;
+			fr /= maxPower;
+			rl /= maxPower;
+			rr /= maxPower;
 		}
 		hardware.frontLeftDrive.setPower(fl);
 		hardware.frontRightDrive.setPower(fr);
 		hardware.rearLeftDrive.setPower(rl);
 		hardware.rearRightDrive.setPower(rr);
-		
+
 	}
-	
-	public void driveAndStrafe (double forward, double turnRight, double straifRight){
-		
-		double scale = 1;
-		
-		forward *= scale;
-		turnRight *= scale;
-		straifRight *= scale;
-		
-		// combine drive,turn,straif
-		double fl = forward + turnRight + straifRight;
-		double rl = forward + turnRight - straifRight;
-		double fr = forward - turnRight - straifRight;
-		double rr = forward - turnRight + straifRight;
-		
-		// limit each drom to 1.0 max
-		double maxPower = Math.max(Math.abs(fl),Math.abs(fr));
-		maxPower = Math.max(maxPower,Math.abs(rl));
-		maxPower = Math.max(maxPower,Math.abs(rr));
-		if(maxPower>1.0){
-			fl/=maxPower;
-			fr/=maxPower;
-			rl/=maxPower;
-			rr/=maxPower;
-		}
-		hardware.frontLeftDrive.setPower(fl);
-		hardware.frontRightDrive.setPower(fr);
-		hardware.rearLeftDrive.setPower(rl);
-		hardware.rearRightDrive.setPower(rr);
-		
+
+
+
+	// endregion
+
+	// region LIFT
+	private void liftIdle(){
+		if (hardware.touchSensor.isPressed() && downTime+1 < time   )
+			setTowerPower(0);
+		else
+			setTowerPower(0.2);
 	}
-	
-	public void grab(boolean open,boolean close){
-		
-		if(open)
-			setGrabberPos(0.5);
-		
-		else if(close)
-			setGrabberPos(0.9);
+	public void Lift(NathanBot.LiftAction action){
+		if(action == NathanBot.LiftAction.up)
+			setTowerPower(0.5);
+		else if (action == NathanBot.LiftAction.slowUp)
+			setTowerPower(0.35);
+		else if(hardware.touchSensor.isPressed()|| hardware.leftTowerMotor.getCurrentPosition()<80 )
+			liftIdle();
+		else if (action == NathanBot.LiftAction.down)
+			goDownBetter();
+		else if (action == NathanBot.LiftAction.slowDown)
+			setTowerPower(0.02);
+		else
+			liftIdle ();
 	}
-	
-	private void setGrabberPos(double pos){
-		hardware.grabberLeft.setPosition(pos);
-		hardware.grabberRight.setPosition(pos);
-		
+	private NathanBot.LiftAction determinLiftActionFromButtons(Gamepad gamepad) {
+		NathanBot.LiftAction action = NathanBot.LiftAction.idle;
+		if (gamepad.dpad_up)
+			return NathanBot.LiftAction.up;
+		if (gamepad.dpad_down)//goes down when grabing block
+			return NathanBot.LiftAction.down;
+		if (gamepad.x)
+			return NathanBot.LiftAction.slowUp;
+		if (gamepad.b)//goes down when grabing block
+			return liftAction.slowDown;
+		return NathanBot.LiftAction.idle;
 	}
-	
-	public boolean isBlockInFront(){
-		
-		return hardware.distanceSensor.getDistance(DistanceUnit.CM)<3.5;
+
+	private void goDown(){
+		setTowerPower(0.01);
 	}
-	
-	public void extend (boolean out, boolean in){
+
+	private void goDownBetter(){
+		if (towerDownPulser <1)
+			setTowerPower(0.0);
+		else
+			setTowerPower(-0.005);
+
+		towerDownPulser += 1;
+		if (towerDownPulser == 2)
+			towerDownPulser = 0;
+	}
+
+	private void setTowerPower(double power){
+		hardware.leftTowerMotor.setPower(power);
+		hardware.rightTowerMotor.setPower(power);
+	}
+
+	// endregion
+
+	//region Bridge
+
+	private NathanBot.BridgeAction determinBridgeAction(boolean dpad_left, boolean dpad_right) {
+		if (dpad_left)
+			return NathanBot.BridgeAction.in;
+		if (dpad_right)
+			return NathanBot.BridgeAction.out;
+		return NathanBot.BridgeAction.idle;
+	}
+
+	public void extend (NathanBot.BridgeAction action){
 		double power = 0;
-		if (out) power = 0.3;
-		if (in) power = -0.3;
-		
+		if (action == NathanBot.BridgeAction.out) power = 0.3;
+		if (action == NathanBot.BridgeAction.in) power = -0.3;
+		if (action == NathanBot.BridgeAction.inSlow) power = -0.2;
+		if (action == NathanBot.BridgeAction.outSlow) power = 0.2;
+
 		hardware.bridgeMotor.setPower(power);
 		hardware.bridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		
+
 	}
-	
-	private double AdjustInputs(double x) {
-		return x * x * x;
+
+	// endregion
+
+	// region grabber
+
+	Grabber grabber;
+
+	public GrabberAction determineGrabberAction(boolean open, boolean close, boolean blockSenser, boolean activateSensor) {
+		if (open) return GrabberAction.open;
+
+		if (close)  return GrabberAction.grab;
+		if (activateSensor && blockSenser) return GrabberAction.grab;
+
+		return GrabberAction.idle;
 	}
-	
-	public void MoveLR(double forwardSpeedLeft, double rightSpeedLeft,double forwardSpeedRight, double rightSpeedRight){
-		
-		forwardSpeedLeft = AdjustInputs(forwardSpeedLeft);
-		forwardSpeedRight = AdjustInputs(forwardSpeedRight);
-		rightSpeedLeft = AdjustInputs(rightSpeedLeft);
-		rightSpeedRight = AdjustInputs(rightSpeedRight);
-		
-		double sumLeft=Math.abs(forwardSpeedLeft)+Math.abs(rightSpeedLeft);
-		if(sumLeft > 1.0){
-			forwardSpeedLeft/=sumLeft;
-			rightSpeedLeft/=sumLeft;
+
+	public void doGraberAction(GrabberAction action){
+
+		switch(action){
+			case open: grabber.open(); break;
+			case grab: grabber.grab(); break;
 		}
-		
-		double sumRight=Math.abs(forwardSpeedRight)+Math.abs(rightSpeedRight);
-		if(sumRight > 1.0){
-			forwardSpeedRight/=sumRight;
-			rightSpeedRight/=sumRight;
-		}
-		
-		hardware.frontLeftDrive.setPower(forwardSpeedLeft+rightSpeedLeft);//
-		hardware.rearLeftDrive.setPower(forwardSpeedLeft-rightSpeedLeft);//
-		hardware.frontRightDrive.setPower(forwardSpeedRight-rightSpeedRight);//
-		hardware.rearRightDrive.setPower(forwardSpeedRight+rightSpeedRight);//
-		
+
 	}
-	
-	public void SetLightColor (double time,boolean foundationDown, boolean grabberDown,boolean grabberOpen){
-		
+
+	// endregion
+
+	// region Foundation
+
+	FoundationGrabber foundationGrabber;
+
+	public void foundationServos(boolean up, boolean down){
+		if (up){
+			foundationGrabber.up();
+			foundationIsGrabbed = false;
+		}
+		else if (down){
+			foundationGrabber.down();
+			foundationIsGrabbed = true;
+		}
+	}
+
+
+	// endregion
+
+	public void autoGrab (Gamepad gamepad, double time){
+		this.time = time;
+
+		if (gamepad.a) {
+			doAutoGrab = true;
+			autoExtend = true;
+			goToBasement = true;
+		}else if (gamepad.dpad_up || gamepad.dpad_right || gamepad.dpad_down || gamepad.dpad_left){
+			doAutoGrab = false;
+			autoExtend = false;
+			goToBasement = false;
+		}
+
+		boolean towerIsDown = hardware.touchSensor.isPressed();
+		if (towerIsDown) {
+			leftzero = hardware.leftTowerMotor.getCurrentPosition();
+			rightzero = hardware.rightTowerMotor.getCurrentPosition();
+			goToBasement = false;
+		}
+		if(!wasDown && towerIsDown) downTime = time;
+		wasDown = towerIsDown; //record for next time
+
+		if (doAutoGrab){
+			boolean isBlock = hardware.distanceSensor.getDistance(DistanceUnit.CM)<6;
+
+			liftPosition = (
+					hardware.leftTowerMotor.getCurrentPosition()-leftzero
+							+hardware.rightTowerMotor.getCurrentPosition()-rightzero
+			)/2;
+			if (isBlock) {
+				liftAction = NathanBot.LiftAction.down;
+			} else {
+				int grabHight = 130;
+				if (goToBasement)
+					liftAction = NathanBot.LiftAction.slowDown;
+				else if (liftPosition < grabHight)
+					liftAction = NathanBot.LiftAction.slowUp;
+				else if (liftPosition > grabHight + 60)
+					liftAction = NathanBot.LiftAction.slowDown;
+				else
+					liftAction = NathanBot.LiftAction.idle;
+			}
+			Lift(liftAction);
+
+///////// BRIDGE EXTEND/////////////////////////////////////////////////////////////////////////////
+
+			noBlock = hardware.distanceSensor.getDistance(DistanceUnit.CM)>4;
+			bridgeDistanceCm = hardware.bridgeDistance.getDistance(DistanceUnit.CM);
+
+
+			if (liftPosition<170 && noBlock && autoExtend) {
+				if ( bridgeDistanceCm < 20)
+					bridgeAction = NathanBot.BridgeAction.outSlow;
+				else if (bridgeDistanceCm > 22)
+					bridgeAction = NathanBot.BridgeAction.inSlow;
+				else {
+					bridgeAction= NathanBot.BridgeAction.idle;
+					autoExtend = false;
+				}
+			}
+			else
+				bridgeAction= NathanBot.BridgeAction.idle;
+			extend(bridgeAction);
+
+////////////////GRABER//////////////////////////////////////////////////////////////////////////////
+
+			if (isBlock) {
+				grabberAction = GrabberAction.grab;
+				doAutoGrab = false;
+			}
+			else
+				grabberAction = GrabberAction.open;
+
+
+		}
+		else {
+			//// MANUAL OVERIDE ////////////////////////////////////////////////////////////////////
+
+			liftAction = determinLiftActionFromButtons(gamepad);
+
+			grabberAction = determineGrabberAction(gamepad.x, gamepad.b, isBlockInFront(),gamepad.left_bumper);
+			bridgeAction = determinBridgeAction (gamepad.dpad_left, gamepad.dpad_right);
+		}
+
+		Lift(liftAction);
+		extend(bridgeAction);
+		doGraberAction(grabberAction);
+
+
+	}
+
+	public boolean isBlockInFront(){
+
+		return hardware.distanceSensor.getDistance(DistanceUnit.CM)<3.5;
+	}
+
+	// region LED lights
+
+	public void SetLightColor(double time, boolean foundationDown, boolean grabberDown, boolean grabberOpen, boolean autoGrab) {
+
 		RevBlinkinLedDriver.BlinkinPattern color;
-		
-		
-		if (foundationDown)
+
+		if (autoGrab)
+			color = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+		else if (foundationDown)
 			color = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
 		else if (grabberDown)
 			color = RevBlinkinLedDriver.BlinkinPattern.GREEN;
 		else if (grabberOpen)
 			color = RevBlinkinLedDriver.BlinkinPattern.GOLD;
-		else if (time <90)
+		else if (time < 90)
 			color = RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
 		else if (time < 90.1)
 			color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
@@ -442,31 +491,13 @@ public class TeleBot {
 			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 		else if (time < 90.9)
 			color = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
-		else if (time <120)
+		else if (time < 120)
 			color = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE;
 		else
 			color = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 		hardware.Lights.setPattern(color);
 	}
 
-	private void setTowerPower(double power){
-		hardware.leftTowerMotor.setPower(power);
-		hardware.rightTowerMotor.setPower(power);
-	}
-
-	private int liftCounter = 0;
-	private void goDownBetter(){
-		if (liftCounter<1)
-			setTowerPower(0.0);
-		else
-			setTowerPower(0.01);
-		liftCounter += 1;
-		if (liftCounter == 2)
-			liftCounter = 0;
-	}
-
-	public void RaiseElevator(){}
-	public void LowerElevator(){}
-	
+	// endregion
 }
 

@@ -59,7 +59,9 @@ public class NathanOp extends OpMode {
         telemetry.addData("Bridge Mode", bot.bridgeAction.name());
         telemetry.addData("Auto", bot.doAutoGrab);
         telemetry.addData("Auto Extend", bot.autoExtend);
-        telemetry.addData(":)",null);
+        telemetry.addData("Lift Pos", bot.liftPosition);
+        telemetry.addData("No Block", bot.noBlock);
+        telemetry.addData(":)",":(");
         telemetry.update();
     }
 

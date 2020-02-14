@@ -107,9 +107,9 @@ public class BenOp extends OpMode {
 		
 		telemetryAdd(1, gamepad1.right_bumper);
 		
-		bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
-		bot.towerDown(gamepad2.right_trigger);
-
+		//bot.Lift(gamepad2.dpad_up, gamepad2.dpad_down);
+		//bot.towerDown(gamepad2.right_trigger);
+/////////////////I BROKE YOUR LIFT (TWO LINES ABOVE) -Nathan ///////////////////////////////////////
 		//TODO bot.encodersWithGrabber(gamepad2.left_trigger, false);
 
 		//bot.extend(gamepad2.y,gamepad2.a);

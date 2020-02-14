@@ -29,9 +29,9 @@ public class DeanDriverOp extends OpMode {
 
 		bot.driveAndStrafe(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
 		bot.deanLift(gamepad2.dpad_up, gamepad2.dpad_down);
-		bot.extend(gamepad2.y, gamepad2.a);
+		//bot.extend(gamepad2.y, gamepad2.a);
 
-		bot.grab(gamepad2.x,bot.isBlockInFront());
+		//bot.grab(gamepad2.x,bot.isBlockInFront());
 		telemetry.addData("Bridge", hardware.bridgeMotor.getCurrentPosition());
 		telemetry.update();
 	}
