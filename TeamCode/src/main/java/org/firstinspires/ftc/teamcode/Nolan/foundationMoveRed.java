@@ -32,8 +32,8 @@ public class foundationMoveRed extends LinearOpMode {
 
 		// Run Code
 		drive.driveForward(5,5,0.4);
-		drive.strafeRight(20,0.4);
-		drive.moveForwardDistanceSensor(4,0.4,3);
+		drive.strafeRight(15,0.4);
+		drive.moveForwardDistanceSensor(5,0.4,3);
 		bot.grabFoundation();
 		//drive.strafeRight(-7,0.4);
 		drive.driveForward(-40,-40,0.5);

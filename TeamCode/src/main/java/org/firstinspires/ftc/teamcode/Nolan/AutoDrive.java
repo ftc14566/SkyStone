@@ -168,13 +168,54 @@ public class AutoDrive {
         stopDrive();
     }
 
-    public void skystoneAlignRight() {
-        double startPosition = hardware.frontLeftDrive.getCurrentPosition();
-        setPowerStrafe(0.3);
-        while(opMode.opModeIsActive() && (((hardware.leftColorSensor.red() / hardware.leftColorSensor.blue())*
-                (hardware.leftColorSensor.green() / hardware.leftColorSensor.blue())) <= 2 ))
-        {opMode.sleep(10);}
+    public void skystoneAlignRed() {
+        double leftGreen = hardware.leftColorSensor.green();
+        double leftRed = hardware.leftColorSensor.red();
+        double rightGreen = hardware.rightColorSensor.green();
+        double rightRed = hardware.rightColorSensor.red();
+
+        if(leftGreen >= (leftRed + (.1*leftGreen))+50 && leftGreen <= (leftRed + (.1*leftGreen))-50){
+            skystoneAlignLeft();
+        } else if(rightGreen >= (rightRed + (.1*rightGreen))+50 && rightGreen <= (rightRed + (.1*rightGreen))-50){
+            skystoneAlignRight();
+        } else{
+            skystoneAlignRight();
+        }
+    }
+
+    public void skystoneAlignRight(){
+        double leftGreen = hardware.leftColorSensor.green();
+        double leftRed = hardware.leftColorSensor.red();
+        hardware.frontLeftDrive.setPower(-0.2);
+        hardware.frontRightDrive.setPower(-0.2);
+        hardware.rearLeftDrive.setPower(0.2);
+        hardware.rearRightDrive.setPower(0.2);
+        while(!(leftGreen >= (leftRed + (.1*leftGreen))+15 && leftGreen <= (leftRed + (.1*leftGreen))-15)){
+            leftGreen = hardware.leftColorSensor.green();
+            leftRed = hardware.leftColorSensor.red();
+            opMode.sleep(10);
+        }
+        stopDrive();
+    }
+
+    public void skystoneAlignLeft(){
+        double rightGreen = hardware.leftColorSensor.green();
+        double rightRed = hardware.leftColorSensor.red();
+        hardware.frontLeftDrive.setPower(0.2);
+        hardware.frontRightDrive.setPower(0.2);
+        hardware.rearLeftDrive.setPower(-0.2);
+        hardware.rearRightDrive.setPower(-0.2);
+        while(!(rightGreen >= (rightRed + (.1*rightGreen))+50 && rightGreen <= (rightRed + (.1*rightGreen))-50)){
+            rightGreen = hardware.leftColorSensor.green();
+            rightRed = hardware.leftColorSensor.red();
+            opMode.sleep(10);
+        }
         stopDrive();
     }
 }
 
+/*
+TODO POSSIBLE EQUATIONS
+ *R = B
+ * G = R + .1G
+ */

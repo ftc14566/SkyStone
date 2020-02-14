@@ -56,7 +56,7 @@ import org.firstinspires.ftc.teamcode.TeleBot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
+@TeleOp(name="NolanTestOp", group="Iterative Opmode")
 //@Disabled
 public class NolanTestOp extends OpMode
 {
@@ -169,17 +169,11 @@ public class NolanTestOp extends OpMode
         grabBlock();
         releaseBlock();
 
-         if((((hardware.leftColorSensor.red() / hardware.leftColorSensor.blue())*
-                 (hardware.leftColorSensor.green() / hardware.leftColorSensor.blue())) <= 2 )) {
+         double leftColorSensor = (((hardware.rightColorSensor.red() * hardware.rightColorSensor.green()) /
+                (hardware.rightColorSensor.blue() * hardware.rightColorSensor.blue())));
 
-             telemetry.addData("left color sensor","Yes");
-         }
-         else {
-             telemetry.addData("left color sensor","No");
-         }
-
-        if((((hardware.rightColorSensor.red() / hardware.rightColorSensor.blue())*
-                (hardware.rightColorSensor.green() / hardware.rightColorSensor.blue())) <= 2 )) {
+        if((((hardware.rightColorSensor.red() * hardware.rightColorSensor.green()) /
+                (hardware.rightColorSensor.blue() * hardware.rightColorSensor.blue())) <= 6 )) {
 
             telemetry.addData("right color sensor","Yes");
         }
@@ -187,7 +181,7 @@ public class NolanTestOp extends OpMode
             telemetry.addData("right color sensor","No");
         }
 
-        telemetry.addData("left color sensor",hardware.leftColorSensor.alpha());
+        telemetry.addData("left color sensor",leftColorSensor);
         telemetry.addData("distance(CM)", hardware.distanceSensor.getDistance(DistanceUnit.CM));
         telemetry.addData("right tower motor", hardware.rightTowerMotor.getCurrentPosition());
         telemetry.addData("left tower motor", hardware.leftTowerMotor.getCurrentPosition());

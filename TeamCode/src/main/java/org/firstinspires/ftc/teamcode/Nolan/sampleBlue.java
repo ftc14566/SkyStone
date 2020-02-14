@@ -33,7 +33,7 @@ public class sampleBlue extends LinearOpMode {
 
 		// Run Code
 		lift.linearSlideSet();
-		drive.moveForwardDistanceSensor(5,0.3,5);
+		drive.moveForwardDistanceSensor(13,0.3,5);
 		lift.grabBlock();
 		//double addedDistance = drive.skystoneAlignRight();
         drive.driveForward(-15,-15,0.3);

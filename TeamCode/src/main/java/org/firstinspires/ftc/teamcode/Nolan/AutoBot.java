@@ -31,7 +31,7 @@ public class AutoBot {
 	}
 
 	public void releaseFoundation() {
-		hardware.leftFoundationServo.setPosition(0.53);
+		hardware.leftFoundationServo.setPosition(0);
 		hardware.rightFoundationServo.setPosition(0.08);
 		opMode.sleep(50);
 	}
